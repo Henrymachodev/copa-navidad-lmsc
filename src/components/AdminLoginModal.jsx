@@ -76,7 +76,7 @@ export default function AdminLoginModal({ isOpen, onClose, onLoginSuccess }) {
               </div>
               <input
                 type="text"
-                placeholder="admin o tu usuario registrado"
+                placeholder="Ingresa tu usuario o correo"
                 value={identifier}
                 onChange={(e) => {
                   setIdentifier(e.target.value);
@@ -97,7 +97,7 @@ export default function AdminLoginModal({ isOpen, onClose, onLoginSuccess }) {
               </div>
               <input
                 type="password"
-                placeholder="Ingresa PIN (predeterminado: admin123)"
+                placeholder="Ingresa tu contraseña o PIN"
                 value={pin}
                 onChange={(e) => {
                   setPin(e.target.value);
@@ -120,7 +120,7 @@ export default function AdminLoginModal({ isOpen, onClose, onLoginSuccess }) {
         </form>
 
         <p className="text-[11px] text-slate-500 text-center mt-4">
-          PIN Maestro predeterminado: <code>admin123</code> (configurable en <code>.env</code> y en el panel de usuarios).
+          Acceso exclusivo y restringido para el comité organizador y administradores autorizados.
         </p>
 
       </div>

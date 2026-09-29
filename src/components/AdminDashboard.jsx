@@ -2130,7 +2130,7 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                 <input
                   type="text"
                   required
-                  placeholder="Ej: clave123 o pin numérico"
+                  placeholder="Ingresa PIN o contraseña segura"
                   value={userModal.pin}
                   onChange={(e) => setUserModal({ ...userModal, pin: e.target.value })}
                   className="w-full px-3 py-2.5 rounded-xl bg-navy-900 text-white border border-slate-700 text-sm font-mono"

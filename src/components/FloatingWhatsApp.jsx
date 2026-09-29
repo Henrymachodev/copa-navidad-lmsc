@@ -54,8 +54,9 @@ export default function FloatingWhatsApp() {
         </svg>
 
         {/* Indicador de Ayuda para móviles */}
-        <span className="sm:hidden absolute -top-1 -right-1 px-1.5 py-0.5 rounded-full bg-navy-950 text-white text-[9px] font-black border border-[#25D366]">
-          SOS
+        <span className="sm:hidden absolute -top-3.5 right-0 whitespace-nowrap px-2.5 py-1 rounded-full bg-navy-950/95 text-slate-100 text-[10px] font-semibold border border-[#25D366] shadow-[0_4px_12px_rgba(0,0,0,0.6)] flex items-center gap-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#25D366] animate-pulse"></span>
+          <span>Ayuda con tu inscripción</span>
         </span>
       </a>
     </div>
