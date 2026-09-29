@@ -3,7 +3,7 @@ import { MessageCircle, X } from 'lucide-react';
 
 export default function FloatingWhatsApp() {
   const [tooltipVisible, setTooltipVisible] = useState(true);
-  const whatsappNumber = '584122053591';
+  const whatsappNumber = '584248302078';
   const message = 'Hola, necesito ayuda con mi inscripción para la Copa Navidad LMSC 2026';
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
 

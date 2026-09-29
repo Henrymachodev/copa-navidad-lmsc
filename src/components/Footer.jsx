@@ -2,7 +2,7 @@ import React from 'react';
 import { Trophy, MessageCircle } from 'lucide-react';
 
 export default function Footer() {
-  const whatsappUrl = "https://wa.me/584122053591?text=Hola%20Henry,%20me%20comunico%20desde%20la%20web%20Copa%20Navidad%20LMSC";
+  const whatsappUrl = "https://wa.me/584248302078?text=Hola%20Henry,%20me%20comunico%20desde%20la%20web%20Copa%20Navidad%20LMSC";
 
   return (
     <footer className="bg-navy-900 border-t border-slate-800/80 py-10 px-4 sm:px-6 lg:px-8 text-center text-slate-400 text-xs">
