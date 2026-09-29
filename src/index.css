@@ -1,0 +1,103 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body, h1, h2, h3, h4, h5, h6, button, input, select, textarea {
+    font-family: 'Poppins', sans-serif;
+  }
+  body {
+    background-color: #0a0f1d;
+    color: #e2e8f0;
+  }
+
+  /* Garantizar visibilidad total y alto contraste en inputs, selects y textareas */
+  input, textarea, select {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    background-color: #060c18 !important;
+    caret-color: #80e100 !important;
+  }
+
+  input::placeholder, textarea::placeholder {
+    color: #94a3b8 !important;
+    -webkit-text-fill-color: #94a3b8 !important;
+    opacity: 1 !important;
+  }
+
+  /* Evitar que autofill de Chrome/Edge oculte el texto o ponga fondos claros */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover, 
+  input:-webkit-autofill:focus,
+  textarea:-webkit-autofill,
+  textarea:-webkit-autofill:hover,
+  textarea:-webkit-autofill:focus,
+  select:-webkit-autofill,
+  select:-webkit-autofill:hover,
+  select:-webkit-autofill:focus {
+    -webkit-text-fill-color: #ffffff !important;
+    -webkit-box-shadow: 0 0 0px 1000px #060c18 inset !important;
+    box-shadow: 0 0 0px 1000px #060c18 inset !important;
+    transition: background-color 5000s ease-in-out 0s !important;
+    caret-color: #80e100 !important;
+  }
+
+  select option {
+    background-color: #0a0f1d !important;
+    color: #ffffff !important;
+  }
+}
+
+/* Fondo con patrón sutil de cancha de pádel y gradientes atmosféricos */
+.bg-padel-grid {
+  background-image: 
+    radial-gradient(1100px 700px at 15% -5%, rgba(128, 225, 0, 0.07), transparent 60%),
+    radial-gradient(900px 600px at 90% 10%, rgba(245, 197, 24, 0.05), transparent 55%),
+    linear-gradient(45deg, rgba(255, 255, 255, 0.012) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, 0.012) 75%),
+    linear-gradient(45deg, rgba(255, 255, 255, 0.012) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, 0.012) 75%);
+  background-size: 100% 100%, 100% 100%, 60px 60px, 60px 60px;
+  background-position: 0 0, 0 0, 0 0, 30px 30px;
+}
+
+/* Glassmorphism custom classes */
+.glass-panel {
+  background: rgba(11, 22, 40, 0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-card {
+  background: rgba(14, 28, 52, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.gold-gradient-text {
+  background: linear-gradient(135deg, #FFF3B0 0%, #F5C518 50%, #D49D00 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.lime-gradient-text {
+  background: linear-gradient(135deg, #ffffff 0%, #a3e635 45%, #80e100 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #07111e;
+}
+::-webkit-scrollbar-thumb {
+  background: #173258;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #80e100;
+}
