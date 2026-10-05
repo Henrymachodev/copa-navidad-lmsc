@@ -18,13 +18,13 @@
   input, textarea, select {
     color: #ffffff !important;
     -webkit-text-fill-color: #ffffff !important;
-    background-color: #0a062f !important;
+    background-color: #082b7c !important;
     caret-color: #A3E229 !important;
   }
 
   input::placeholder, textarea::placeholder {
-    color: #94a3b8 !important;
-    -webkit-text-fill-color: #94a3b8 !important;
+    color: #93c5fd !important;
+    -webkit-text-fill-color: #93c5fd !important;
     opacity: 1 !important;
   }
 
@@ -39,14 +39,14 @@
   select:-webkit-autofill:hover,
   select:-webkit-autofill:focus {
     -webkit-text-fill-color: #ffffff !important;
-    -webkit-box-shadow: 0 0 0px 1000px #0a062f inset !important;
-    box-shadow: 0 0 0px 1000px #0a062f inset !important;
+    -webkit-box-shadow: 0 0 0px 1000px #082b7c inset !important;
+    box-shadow: 0 0 0px 1000px #082b7c inset !important;
     transition: background-color 5000s ease-in-out 0s !important;
     caret-color: #A3E229 !important;
   }
 
   select option {
-    background-color: #0b0736 !important;
+    background-color: #082b7c !important;
     color: #ffffff !important;
   }
 }
@@ -64,17 +64,17 @@
 
 /* Glassmorphism custom classes */
 .glass-panel {
-  background: rgba(11, 22, 40, 0.82);
+  background: rgba(10, 56, 156, 0.55);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(163, 226, 41, 0.25);
 }
 
 .glass-card {
-  background: rgba(14, 28, 52, 0.65);
+  background: rgba(8, 43, 124, 0.65);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(163, 226, 41, 0.2);
 }
 
 .gold-gradient-text {

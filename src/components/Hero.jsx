@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, MapPin, Award, Users, Sparkles, ExternalLink, ArrowRight, Trophy } from 'lucide-react';
+import { Sparkles, ExternalLink, ArrowRight, Trophy } from 'lucide-react';
 import { subscribeToLandingConfig, DEFAULT_LANDING_CONFIG } from '../services/firebase';
 
 export default function Hero() {
@@ -15,11 +15,11 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="relative overflow-hidden pt-8 pb-16 md:pt-14 md:pb-24 bg-gradient-to-b from-[#0a389c] via-[#082b7c] to-[#051c54]">
-      {/* Luces y resplandores atmosféricos para máxima luminosidad (estilo referencia oficial) */}
+    <section className="relative overflow-hidden pt-8 pb-16 md:pt-12 md:pb-20 bg-gradient-to-b from-[#0a389c] via-[#082b7c] to-[#071f5c]">
+      {/* Luces y resplandores atmosféricos para máxima luminosidad */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         {/* Halo resplandeciente azul eléctrico */}
-        <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-[#2a39d1]/35 rounded-full blur-[120px]"></div>
+        <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-[#2a39d1]/30 rounded-full blur-[120px]"></div>
         {/* Destello verde lima dinámico */}
         <div className="absolute top-1/3 -right-24 w-[500px] h-[500px] bg-[#A3E229]/20 rounded-full blur-[140px]"></div>
         {/* Resplandor lateral izquierdo */}
@@ -30,10 +30,10 @@ export default function Hero() {
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Grid de 2 Columnas estilo Referencia de Diseño */}
+        {/* Grid de 2 Columnas: Textos a la izquierda y Visual de Jugadores a la derecha */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
           
-          {/* COLUMNA IZQUIERDA: Textos y Títulos de Gran Impacto */}
+          {/* COLUMNA IZQUIERDA: Copa Navidad 2026 y Botón Inscríbete Aquí */}
           <div className="lg:col-span-7 text-center lg:text-left">
             
             {/* Cinta superior: Cupos Limitados (24 parejas por categoría) */}
@@ -43,7 +43,7 @@ export default function Hero() {
               <span>{config.heroCintillo || 'Cupos Limitados (24 parejas por categoría)'}</span>
             </div>
 
-            {/* Título Principal con Tipografía del Brandbook y la 'O' estilizada como Pelota de Pádel */}
+            {/* Título Principal: COPA NAVIDAD 2026 (sin el III edición) */}
             <div className="font-orbitron font-black tracking-tight uppercase leading-[0.95] mb-5 select-none">
               
               {/* Línea 1: COPA con pelota de pádel en la 'O' */}
@@ -52,7 +52,6 @@ export default function Hero() {
                 <span className="relative inline-flex items-center justify-center mx-1 my-auto">
                   {/* Pelota de pádel luminosa verde/amarilla */}
                   <span className="w-[0.78em] h-[0.78em] rounded-full bg-gradient-to-tr from-[#86ca15] via-[#A3E229] to-[#d8ff66] shadow-[0_0_30px_rgba(163,226,41,0.85)] border-2 sm:border-[3px] border-white/90 inline-flex items-center justify-center relative overflow-hidden">
-                    {/* Costura curva característica de pelota de tenis/pádel */}
                     <span className="absolute inset-0 rounded-full border-t-[2px] border-b-[2px] border-[#071f5c]/50 transform -rotate-45 scale-110"></span>
                     <span className="w-1.5 h-1.5 rounded-full bg-white/70 absolute top-1 left-1.5 blur-[0.5px]"></span>
                   </span>
@@ -65,9 +64,9 @@ export default function Hero() {
                 NAVIDAD
               </div>
 
-              {/* Línea 3: III EDICIÓN • 2026 */}
-              <div className="text-2xl sm:text-4xl md:text-5xl text-[#A3E229] drop-shadow-[0_0_30px_rgba(163,226,41,0.6)] mt-2 font-black tracking-widest">
-                III EDICIÓN • 2026
+              {/* Línea 3: 2026 en Verde Lima Oficial */}
+              <div className="text-4xl sm:text-6xl md:text-7xl text-[#A3E229] drop-shadow-[0_0_30px_rgba(163,226,41,0.6)] mt-2 font-black">
+                2026
               </div>
             </div>
 
@@ -82,7 +81,7 @@ export default function Hero() {
             </p>
 
             {/* Datos clave del torneo (Barra Compacta Elegante: Fecha / Sede / Inversión) */}
-            <div className="grid grid-cols-3 gap-2 sm:gap-4 p-3.5 sm:p-4 rounded-2xl bg-[#082363]/80 border border-blue-400/25 backdrop-blur-md mb-8 max-w-xl mx-auto lg:mx-0 shadow-lg">
+            <div className="grid grid-cols-3 gap-2 sm:gap-4 p-3.5 sm:p-4 rounded-2xl bg-[#0a389c]/70 border border-blue-400/25 backdrop-blur-md mb-8 max-w-xl mx-auto lg:mx-0 shadow-lg">
               
               <div className="text-center lg:text-left border-r border-blue-400/20 pr-2">
                 <span className="text-[10px] font-bold text-blue-200/80 uppercase tracking-wider block">Fecha</span>
@@ -107,13 +106,13 @@ export default function Hero() {
 
             </div>
 
-            {/* BOTONES DE LLAMADA A LA ACCIÓN: VERDE CON LETRAS AZULES SEGÚN BRANDBOOK */}
+            {/* BOTONES DE ACCIÓN: "INSCRÍBETE AQUÍ" (VERDE CON LETRAS AZULES) */}
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-6">
               <a
                 href="#formulario"
                 className="w-full sm:w-auto px-9 py-4 rounded-full font-orbitron text-base sm:text-lg font-black bg-[#A3E229] hover:bg-[#b6f23d] text-[#150D8B] shadow-[0_0_35px_rgba(163,226,41,0.6)] hover:shadow-[0_0_50px_rgba(163,226,41,0.85)] transition-all transform hover:-translate-y-1 active:translate-y-0 text-center tracking-wider uppercase inline-flex items-center justify-center gap-3 group"
               >
-                <span>INSCRIBIR PAREJA</span>
+                <span>INSCRÍBETE AQUÍ</span>
                 <ArrowRight className="w-5 h-5 text-[#150D8B] transform group-hover:translate-x-1.5 transition-transform" />
               </a>
 
@@ -121,7 +120,7 @@ export default function Hero() {
                 href="https://app.fvp.com.ve/2danacional/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full sm:w-auto px-6 py-4 rounded-full font-bold text-xs sm:text-sm bg-[#082363]/85 hover:bg-[#0b3b95] text-white border border-[#A3E229]/50 hover:border-[#A3E229] transition-all text-center backdrop-blur-md inline-flex items-center justify-center gap-2 group shadow-md"
+                className="w-full sm:w-auto px-6 py-4 rounded-full font-bold text-xs sm:text-sm bg-[#0a389c]/80 hover:bg-[#0b3b95] text-white border border-[#A3E229]/50 hover:border-[#A3E229] transition-all text-center backdrop-blur-md inline-flex items-center justify-center gap-2 group shadow-md"
               >
                 <span className="text-[#A3E229] group-hover:text-white transition-colors">Ver ranking FVP</span>
                 <ExternalLink className="w-4 h-4 text-[#A3E229] group-hover:translate-x-0.5 transition-transform" />
@@ -130,47 +129,47 @@ export default function Hero() {
 
           </div>
 
-          {/* COLUMNA DERECHA: Visual de Alta Gama con Jugadores de Pádel (Inspirado en la Referencia) */}
-          <div className="lg:col-span-5 relative flex items-center justify-center mt-4 lg:mt-0">
+          {/* COLUMNA DERECHA: Presentación Atractiva y Moderna de las Fotos de Pádel */}
+          <div className="lg:col-span-5 relative flex items-center justify-center mt-6 lg:mt-0">
             
-            {/* Halo de luz trasera azul zafiro */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-[#2a39d1]/40 via-[#A3E229]/25 to-transparent rounded-3xl blur-2xl transform scale-105"></div>
+            {/* Halo de luz trasera en degradado */}
+            <div className="absolute inset-0 bg-gradient-to-tr from-[#2a39d1]/45 via-[#A3E229]/25 to-transparent rounded-[3rem] blur-2xl transform scale-105 pointer-events-none"></div>
 
-            {/* Composición de Tarjetas Inclinadas de Jugadores */}
-            <div className="relative w-full max-w-md h-[380px] sm:h-[460px] flex items-center justify-center">
+            {/* Showcase Visual Dual: Dos Cápsulas Atléticas Elegantes */}
+            <div className="relative w-full max-w-lg grid grid-cols-2 gap-3 sm:gap-4 p-2 sm:p-3 rounded-[2.5rem] bg-[#0a389c]/50 border border-blue-400/30 backdrop-blur-xl shadow-2xl">
               
-              {/* Tarjeta 1: Jugador Masculino (Inclinada hacia la izquierda) */}
-              <div className="absolute left-2 sm:left-4 top-2 w-[55%] h-[82%] rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.6)] border-2 border-white/20 transform -rotate-6 hover:-rotate-3 transition-transform duration-500 z-10 group">
+              {/* Cápsula 1: Jugador Masculino */}
+              <div className="relative group rounded-[2rem] overflow-hidden border-2 border-blue-400/40 shadow-lg bg-[#071f5c] h-[340px] sm:h-[400px]">
                 <img 
                   src="./assets/jugador_masculino.jpg" 
                   alt="Jugador de pádel La Marina Sport Club" 
                   className="w-full h-full object-cover object-center filter contrast-110 brightness-105 group-hover:scale-105 transition-transform duration-700"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#071f5c]/90 via-transparent to-transparent"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-[#071f5c] via-[#071f5c]/25 to-transparent"></div>
+                <div className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-[#0a389c]/90 border border-blue-400/40 backdrop-blur-md">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-blue-200">Masculino</span>
+                </div>
                 <div className="absolute bottom-3 left-3 right-3 text-left">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#A3E229]">Categorías Masculino</span>
-                  <span className="block text-xs font-black text-white font-orbitron">2da a 7ma Categoría</span>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#A3E229] block">2da a 7ma</span>
+                  <span className="text-xs sm:text-sm font-black text-white font-orbitron block leading-tight">Categorías Oficiales</span>
                 </div>
               </div>
 
-              {/* Tarjeta 2: Jugadora Femenina (Inclinada hacia la derecha) */}
-              <div className="absolute right-2 sm:right-4 bottom-2 w-[56%] h-[84%] rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.7)] border-2 border-[#A3E229]/60 transform rotate-6 hover:rotate-3 transition-transform duration-500 z-20 group">
+              {/* Cápsula 2: Jugadora Femenina */}
+              <div className="relative group rounded-[2rem] overflow-hidden border-2 border-[#A3E229]/60 shadow-lg bg-[#071f5c] h-[340px] sm:h-[400px]">
                 <img 
                   src="./assets/jugadora_femenina.jpg" 
                   alt="Jugadora de pádel La Marina Sport Club" 
                   className="w-full h-full object-cover object-center filter contrast-110 brightness-105 group-hover:scale-105 transition-transform duration-700"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#071f5c]/90 via-transparent to-transparent"></div>
-                <div className="absolute bottom-3 left-3 right-3 text-left">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#A3E229]">Categorías Femenino</span>
-                  <span className="block text-xs font-black text-white font-orbitron">3ra a 7ma & Master</span>
+                <div className="absolute inset-0 bg-gradient-to-t from-[#071f5c] via-[#071f5c]/25 to-transparent"></div>
+                <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-[#A3E229] text-[#150D8B] font-bold">
+                  <span className="text-[10px] font-black uppercase tracking-wider">Femenino</span>
                 </div>
-              </div>
-
-              {/* BADGE FLOTANTE CENTRAL: 24 PAREJAS POR CATEGORÍA */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 px-5 py-2.5 rounded-full bg-[#A3E229] text-[#150D8B] font-orbitron font-black text-xs sm:text-sm tracking-wider uppercase shadow-[0_0_30px_rgba(163,226,41,0.8)] border-2 border-white/80 flex items-center gap-2 whitespace-nowrap animate-bounce duration-1000">
-                <Trophy className="w-4 h-4 text-[#150D8B]" />
-                <span>24 PAREJAS POR CATEGORÍA</span>
+                <div className="absolute bottom-3 left-3 right-3 text-left">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#A3E229] block">3ra a 7ma & Master</span>
+                  <span className="text-xs sm:text-sm font-black text-white font-orbitron block leading-tight">Cuadro Femenino</span>
+                </div>
               </div>
 
             </div>

@@ -44,7 +44,7 @@ export default function ConfirmedPlayersList() {
   });
 
   return (
-    <section id="jugadores-confirmados" className="py-16 sm:py-24 bg-navy-900/95 border-t border-slate-800/80 relative">
+    <section id="jugadores-confirmados" className="py-16 sm:py-24 bg-gradient-to-b from-[#071f5c] via-[#082b7c] to-[#071f5c] border-t border-blue-400/20 relative">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Cabecera de la sección */}

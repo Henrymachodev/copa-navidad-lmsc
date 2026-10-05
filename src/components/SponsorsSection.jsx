@@ -23,7 +23,7 @@ export default function SponsorsSection() {
   }, []);
 
   return (
-    <section id="patrocinadores" className="py-16 sm:py-24 bg-navy-950/90 border-t border-slate-800/80 relative">
+    <section id="patrocinadores" className="py-16 sm:py-24 bg-gradient-to-b from-[#071f5c] to-[#082b7c] border-t border-blue-400/20 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Cabecera de la sección estilo Premier Padel / Vellora */}

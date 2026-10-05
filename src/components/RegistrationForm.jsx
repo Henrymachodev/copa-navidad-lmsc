@@ -354,7 +354,7 @@ export default function RegistrationForm({ onSuccess }) {
     const p = formData[playerKey];
 
     return (
-      <div className="bg-gradient-to-b from-navy-800/80 via-navy-850/80 to-navy-900/90 p-5 sm:p-7 rounded-3xl border border-slate-700/70 shadow-xl relative space-y-4 backdrop-blur-md">
+      <div className="bg-gradient-to-b from-[#0a389c]/85 via-[#082b7c]/85 to-[#071f5c]/90 p-5 sm:p-7 rounded-3xl border border-blue-400/30 shadow-xl relative space-y-4 backdrop-blur-md">
         <div className="flex items-center justify-between pb-3 border-b border-slate-700/60">
           <div className="flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-2xl bg-[#80e100]/15 text-[#80e100] border border-[#80e100]/30 flex items-center justify-center font-black text-sm shadow-[0_0_15px_rgba(128,225,0,0.2)]">
@@ -673,7 +673,7 @@ export default function RegistrationForm({ onSuccess }) {
   };
 
   return (
-    <section id="formulario" className="py-12 sm:py-20 relative">
+    <section id="formulario" className="py-12 sm:py-20 relative bg-gradient-to-b from-[#071f5c] via-[#082b7c] to-[#071f5c] border-t border-blue-400/20">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Cabecera del formulario: Título atlético limpio 'INSCRÍBETE AQUÍ' */}
@@ -727,7 +727,7 @@ export default function RegistrationForm({ onSuccess }) {
           <form onSubmit={handleSubmit} noValidate className="space-y-8">
 
             {/* SECCIÓN 1: CATEGORÍA DE PAREJA */}
-            <div className="bg-navy-800/60 p-5 sm:p-6 rounded-2xl border border-slate-700/60">
+            <div className="bg-[#0a389c]/65 p-5 sm:p-6 rounded-2xl border border-blue-400/30">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
                 <label htmlFor="categoria-select" className="text-base font-bold text-white flex items-center gap-2">
                   <Trophy className="w-5 h-5 text-gold-400" />
@@ -809,7 +809,7 @@ export default function RegistrationForm({ onSuccess }) {
             </div>
 
             {/* NORMATIVA OFICIAL DEL CLUB (CONSULTA DE REGLAMENTO) */}
-            <div className="p-6 sm:p-7 rounded-3xl bg-[#0f0a42]/90 border border-slate-700/80 hover:border-[#A3E229]/40 transition-colors shadow-xl">
+            <div className="p-6 sm:p-7 rounded-3xl bg-[#0a389c]/70 border border-blue-400/30 hover:border-[#A3E229]/40 transition-colors shadow-xl">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="space-y-1">
                   <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#A3E229]/15 text-[#A3E229] text-[11px] font-bold border border-[#A3E229]/30 uppercase tracking-wider mb-1">

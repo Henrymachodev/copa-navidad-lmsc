@@ -91,7 +91,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#092b7c] via-[#071f5c] to-[#05153f] text-[#f3f4f2] flex flex-col font-sans selection:bg-[#A3E229] selection:text-[#150D8B]">
+    <div className="min-h-screen bg-gradient-to-b from-[#0a389c] via-[#082b7c] to-[#071f5c] text-[#f3f4f2] flex flex-col font-sans selection:bg-[#A3E229] selection:text-[#150D8B]">
       
       {/* HEADER NAVEGABLE (Sin accesos visibles de administración) */}
       <Header 

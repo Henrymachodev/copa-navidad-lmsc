@@ -5,7 +5,7 @@ export default function Header({ currentView, setCurrentView }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="relative z-40 bg-gradient-to-b from-[#0b3b95]/95 via-[#082b7c]/95 to-[#071f5c]/95 backdrop-blur-md border-b border-blue-400/25 shadow-[0_10px_35px_rgba(11,59,149,0.4)]">
+    <header className="relative z-40 bg-[#0a389c] border-b border-blue-400/20 shadow-[0_4px_25px_rgba(10,56,156,0.35)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* ÁREA CENTRAL PRINCIPAL: LOGO DEL CLUB & PATROCINADOR FLOTANTE */}
