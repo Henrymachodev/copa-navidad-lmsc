@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, MapPin, Award, Users, Sparkles, ExternalLink, ArrowRight } from 'lucide-react';
+import { Calendar, MapPin, Award, Users, Sparkles, ExternalLink, ArrowRight, Trophy } from 'lucide-react';
 import { subscribeToLandingConfig, DEFAULT_LANDING_CONFIG } from '../services/firebase';
 
 export default function Hero() {
@@ -15,155 +15,166 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="relative overflow-hidden pt-8 pb-14 md:pt-14 md:pb-24">
-      {/* Background Graphic con la imagen ganadora compuesta de pádel en opacidad (ambos jugadores superpuestos sin fondo) */}
-      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-        <img 
-          src="./assets/padel_hero_composite.jpg" 
-          alt="Jugadores de pádel Copa Navidad LMSC" 
-          className="w-full h-full object-cover object-top sm:object-center opacity-30 md:opacity-35 scale-105 transform filter contrast-125 transition-opacity duration-700"
-        />
-        {/* Degradados atmosféricos para fusionar con el fondo azul profundo corporativo (#070422 / #0b0736) */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#070422]/90 via-[#070422]/60 to-[#070422]"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-transparent via-[#070422]/60 to-[#070422]"></div>
+    <section className="relative overflow-hidden pt-8 pb-16 md:pt-14 md:pb-24 bg-gradient-to-b from-[#0a389c] via-[#082b7c] to-[#051c54]">
+      {/* Luces y resplandores atmosféricos para máxima luminosidad (estilo referencia oficial) */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {/* Halo resplandeciente azul eléctrico */}
+        <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-[#2a39d1]/35 rounded-full blur-[120px]"></div>
+        {/* Destello verde lima dinámico */}
+        <div className="absolute top-1/3 -right-24 w-[500px] h-[500px] bg-[#A3E229]/20 rounded-full blur-[140px]"></div>
+        {/* Resplandor lateral izquierdo */}
+        <div className="absolute bottom-10 -left-20 w-[450px] h-[450px] bg-[#00d2ff]/15 rounded-full blur-[130px]"></div>
+        {/* Patrón de líneas sutiles de cancha de pádel */}
+        <div className="absolute inset-0 bg-padel-grid opacity-25"></div>
       </div>
 
-      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Eyebrow badge superior / Cinta Verde: 'Cupos Limitados (24 parejas por categoría)' */}
-        <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-[#A3E229]/15 border border-[#A3E229]/60 text-[#A3E229] text-xs sm:text-sm font-extrabold tracking-wider uppercase mb-5 shadow-[0_0_25px_rgba(163,226,41,0.25)] backdrop-blur-md">
-          <span className="w-2 h-2 rounded-full bg-[#A3E229] animate-pulse"></span>
-          <Sparkles className="w-4 h-4 text-[#A3E229] shrink-0" />
-          <span>{config.heroCintillo || 'Cupos Limitados (24 parejas por categoría)'}</span>
-        </div>
-
-        {/* Gran Título Persuasivo y Atlético con Máximo Impacto Tipográfico (Orbitron) */}
-        <h1 className="font-orbitron text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight text-white uppercase leading-[1.05] mb-5">
-          {(!config.heroTitulo || config.heroTitulo === '¡Inscripciones abiertas!') ? (
-            <>
-              <span className="text-white drop-shadow-[0_4px_24px_rgba(0,0,0,0.9)]">¡Inscripciones</span>{' '}
-              <span className="text-[#A3E229] drop-shadow-[0_0_40px_rgba(163,226,41,0.55)]">
-                abiertas!
-              </span>
-            </>
-          ) : (
-            <span className="text-white">
-              {config.heroTitulo}
-            </span>
-          )}
-        </h1>
-
-        {/* Cintillo de fechas oficiales */}
-        <div className="inline-flex items-center gap-2.5 px-6 py-2 rounded-full bg-[#0b0736]/90 border border-slate-700/80 hover:border-[#A3E229]/40 text-[#f3f4f2] text-xs sm:text-sm font-bold mb-6 shadow-lg backdrop-blur-md transition-all">
-          <Calendar className="w-4 h-4 text-[#A3E229] shrink-0" />
-          <span className="tracking-widest uppercase">
-            {config.heroFechas || 'del xx al xx de diciembre'}
-          </span>
-        </div>
-
-        {/* Subtítulo persuasivo conectado con la configuración dinámica */}
-        <p className="max-w-3xl mx-auto text-base sm:text-lg md:text-xl text-slate-300 leading-relaxed font-normal mb-8">
-          {config.heroSubtitulo || (
-            <>
-              Cierra el año compitiendo en el evento de pádel más importante del oriente del país. 
-              Válido por <strong className="text-white font-bold">1000 puntos para el ranking oficial de la Federación Venezolana de Pádel (FVP)</strong>. 
-              Reúne a tu dupla y asegura tu cupo en la grilla oficial.
-            </>
-          )}
-        </p>
-
-        {/* BOTÓN CENTRADO: VER RANKING ACTUALIZADO FVP */}
-        <div className="flex justify-center mb-9">
-          <a
-            href="https://app.fvp.com.ve/2danacional/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2.5 px-6 py-2.5 rounded-full bg-[#0f0a42]/90 hover:bg-[#150D8B] text-white font-bold text-xs sm:text-sm border border-[#A3E229]/50 hover:border-[#A3E229] shadow-[0_0_20px_rgba(163,226,41,0.2)] hover:scale-105 transition-all duration-300 group"
-          >
-            <span className="text-[#A3E229] group-hover:text-white transition-colors">Ver ranking actualizado FVP</span>
-            <ExternalLink className="w-4 h-4 text-[#A3E229] group-hover:translate-x-0.5 transition-transform" />
-          </a>
-        </div>
-
-        {/* HUD CHIPS / STATS COUNTERS */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-3xl mx-auto mb-10">
-          <div className="bg-[#0f0a42]/80 backdrop-blur-md p-3.5 sm:p-4 rounded-2xl border border-slate-800 text-center">
-            <span className="block text-2xl sm:text-3xl font-black text-[#A3E229] font-mono">1000</span>
-            <span className="text-[10px] sm:text-xs uppercase tracking-wider text-slate-400 font-semibold">Ptos Ranking FVP</span>
-          </div>
-
-          <div className="bg-[#0f0a42]/80 backdrop-blur-md p-3.5 sm:p-4 rounded-2xl border border-slate-800 text-center">
-            <span className="block text-2xl sm:text-3xl font-black text-white font-mono">24</span>
-            <span className="text-[10px] sm:text-xs uppercase tracking-wider text-slate-400 font-semibold">Máx Parejas / Cat</span>
-          </div>
-
-          <div className="bg-[#0f0a42]/80 backdrop-blur-md p-3.5 sm:p-4 rounded-2xl border border-slate-800 text-center">
-            <span className="block text-2xl sm:text-3xl font-black text-[#A3E229] font-mono">
-              {config.montoInscripcion || '$150'}
-            </span>
-            <span className="text-[10px] sm:text-xs uppercase tracking-wider text-slate-400 font-semibold">Inversión Dupla</span>
-          </div>
-
-          <div className="bg-[#0f0a42]/80 backdrop-blur-md p-3.5 sm:p-4 rounded-2xl border border-slate-800 text-center">
-            <span className="block text-2xl sm:text-3xl font-black text-white font-mono">FVP1</span>
-            <span className="text-[10px] sm:text-xs uppercase tracking-wider text-slate-400 font-semibold">Torneo Nacional</span>
-          </div>
-        </div>
-
-        {/* BOTÓN PRINCIPAL SEGÚN BRANDBOOK: VERDE CON LETRAS AZULES (#A3E229 fondo, #150D8B texto) */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-14">
-          <a
-            href="#formulario"
-            className="w-full sm:w-auto px-10 py-4 sm:py-5 rounded-full font-orbitron text-base sm:text-lg font-black bg-[#A3E229] hover:bg-[#b6f23d] text-[#150D8B] shadow-[0_0_35px_rgba(163,226,41,0.55)] hover:shadow-[0_0_50px_rgba(163,226,41,0.75)] transition-all transform hover:-translate-y-1 active:translate-y-0 text-center tracking-wider uppercase inline-flex items-center justify-center gap-3 group"
-          >
-            <span>INSCRÍBETE AQUÍ</span>
-            <ArrowRight className="w-5 h-5 text-[#150D8B] transform group-hover:translate-x-1.5 transition-transform" />
-          </a>
-          <a
-            href="#jugadores-confirmados"
-            className="w-full sm:w-auto px-8 py-4 sm:py-5 rounded-full text-sm sm:text-base font-bold bg-[#0f0a42]/90 hover:bg-[#150D8B] text-white border border-slate-700 hover:border-[#A3E229]/60 transition-all text-center backdrop-blur-sm"
-          >
-            Ver Parejas Confirmadas
-          </a>
-        </div>
-
-        {/* Tarjetas de Información Rápida (Features) */}
-        <div id="detalles" className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-left">
+        {/* Grid de 2 Columnas estilo Referencia de Diseño */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
           
-          <div className="bg-[#0f0a42]/70 backdrop-blur-md p-5 rounded-2xl border border-slate-800/80 hover:border-[#A3E229]/40 transition-colors">
-            <div className="w-10 h-10 rounded-xl bg-[#A3E229]/15 flex items-center justify-center mb-3 text-[#A3E229]">
-              <Calendar className="w-5 h-5" />
+          {/* COLUMNA IZQUIERDA: Textos y Títulos de Gran Impacto */}
+          <div className="lg:col-span-7 text-center lg:text-left">
+            
+            {/* Cinta superior: Cupos Limitados (24 parejas por categoría) */}
+            <div className="inline-flex items-center gap-2.5 px-4 sm:px-5 py-2 rounded-full bg-[#A3E229]/15 border border-[#A3E229]/60 text-[#A3E229] text-xs sm:text-sm font-extrabold tracking-wider uppercase mb-5 shadow-[0_0_25px_rgba(163,226,41,0.25)] backdrop-blur-md">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#A3E229] animate-pulse"></span>
+              <Sparkles className="w-4 h-4 text-[#A3E229] shrink-0" />
+              <span>{config.heroCintillo || 'Cupos Limitados (24 parejas por categoría)'}</span>
             </div>
-            <h2 className="text-white font-bold text-sm">Fechas Oficiales</h2>
-            <p className="text-slate-400 text-xs mt-1">
-              {config.heroFechas || 'Del xx al xx de diciembre'}. Cuadros programados y fase eliminatoria.
+
+            {/* Título Principal con Tipografía del Brandbook y la 'O' estilizada como Pelota de Pádel */}
+            <div className="font-orbitron font-black tracking-tight uppercase leading-[0.95] mb-5 select-none">
+              
+              {/* Línea 1: COPA con pelota de pádel en la 'O' */}
+              <div className="text-5xl sm:text-7xl md:text-8xl text-white drop-shadow-[0_4px_30px_rgba(0,0,0,0.8)] flex items-center justify-center lg:justify-start gap-1">
+                <span>C</span>
+                <span className="relative inline-flex items-center justify-center mx-1 my-auto">
+                  {/* Pelota de pádel luminosa verde/amarilla */}
+                  <span className="w-[0.78em] h-[0.78em] rounded-full bg-gradient-to-tr from-[#86ca15] via-[#A3E229] to-[#d8ff66] shadow-[0_0_30px_rgba(163,226,41,0.85)] border-2 sm:border-[3px] border-white/90 inline-flex items-center justify-center relative overflow-hidden">
+                    {/* Costura curva característica de pelota de tenis/pádel */}
+                    <span className="absolute inset-0 rounded-full border-t-[2px] border-b-[2px] border-[#071f5c]/50 transform -rotate-45 scale-110"></span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-white/70 absolute top-1 left-1.5 blur-[0.5px]"></span>
+                  </span>
+                </span>
+                <span>PA</span>
+              </div>
+
+              {/* Línea 2: NAVIDAD */}
+              <div className="text-5xl sm:text-7xl md:text-8xl text-white drop-shadow-[0_4px_30px_rgba(0,0,0,0.8)] mt-1">
+                NAVIDAD
+              </div>
+
+              {/* Línea 3: III EDICIÓN • 2026 */}
+              <div className="text-2xl sm:text-4xl md:text-5xl text-[#A3E229] drop-shadow-[0_0_30px_rgba(163,226,41,0.6)] mt-2 font-black tracking-widest">
+                III EDICIÓN • 2026
+              </div>
+            </div>
+
+            {/* Subtítulo oficial con mención a 500 puntos para el ranking FVP */}
+            <p className="max-w-2xl mx-auto lg:mx-0 text-base sm:text-lg text-blue-100/90 leading-relaxed font-normal mb-7 drop-shadow-sm">
+              {config.heroSubtitulo || (
+                <>
+                  Cierra el año en el torneo de pádel más importante del oriente del país. 
+                  Válido por <strong className="text-white font-black underline decoration-[#A3E229] decoration-2 underline-offset-4">500 puntos</strong> para el ranking oficial de la Federación Venezolana de Pádel (FVP).
+                </>
+              )}
             </p>
+
+            {/* Datos clave del torneo (Barra Compacta Elegante: Fecha / Sede / Inversión) */}
+            <div className="grid grid-cols-3 gap-2 sm:gap-4 p-3.5 sm:p-4 rounded-2xl bg-[#082363]/80 border border-blue-400/25 backdrop-blur-md mb-8 max-w-xl mx-auto lg:mx-0 shadow-lg">
+              
+              <div className="text-center lg:text-left border-r border-blue-400/20 pr-2">
+                <span className="text-[10px] font-bold text-blue-200/80 uppercase tracking-wider block">Fecha</span>
+                <span className="text-xs sm:text-sm font-black text-white font-orbitron block mt-0.5 truncate">
+                  {config.heroFechas || '12 al 15 Dic'}
+                </span>
+              </div>
+
+              <div className="text-center lg:text-left border-r border-blue-400/20 pr-2">
+                <span className="text-[10px] font-bold text-blue-200/80 uppercase tracking-wider block">Sede</span>
+                <span className="text-xs sm:text-sm font-black text-[#A3E229] font-orbitron block mt-0.5 truncate">
+                  La Marina SC
+                </span>
+              </div>
+
+              <div className="text-center lg:text-left pl-1">
+                <span className="text-[10px] font-bold text-blue-200/80 uppercase tracking-wider block">Inversión</span>
+                <span className="text-xs sm:text-sm font-black text-white font-orbitron block mt-0.5">
+                  $150 / dupla
+                </span>
+              </div>
+
+            </div>
+
+            {/* BOTONES DE LLAMADA A LA ACCIÓN: VERDE CON LETRAS AZULES SEGÚN BRANDBOOK */}
+            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-6">
+              <a
+                href="#formulario"
+                className="w-full sm:w-auto px-9 py-4 rounded-full font-orbitron text-base sm:text-lg font-black bg-[#A3E229] hover:bg-[#b6f23d] text-[#150D8B] shadow-[0_0_35px_rgba(163,226,41,0.6)] hover:shadow-[0_0_50px_rgba(163,226,41,0.85)] transition-all transform hover:-translate-y-1 active:translate-y-0 text-center tracking-wider uppercase inline-flex items-center justify-center gap-3 group"
+              >
+                <span>INSCRIBIR PAREJA</span>
+                <ArrowRight className="w-5 h-5 text-[#150D8B] transform group-hover:translate-x-1.5 transition-transform" />
+              </a>
+
+              <a
+                href="https://app.fvp.com.ve/2danacional/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto px-6 py-4 rounded-full font-bold text-xs sm:text-sm bg-[#082363]/85 hover:bg-[#0b3b95] text-white border border-[#A3E229]/50 hover:border-[#A3E229] transition-all text-center backdrop-blur-md inline-flex items-center justify-center gap-2 group shadow-md"
+              >
+                <span className="text-[#A3E229] group-hover:text-white transition-colors">Ver ranking FVP</span>
+                <ExternalLink className="w-4 h-4 text-[#A3E229] group-hover:translate-x-0.5 transition-transform" />
+              </a>
+            </div>
+
           </div>
 
-          <div className="bg-[#0f0a42]/70 backdrop-blur-md p-5 rounded-2xl border border-slate-800/80 hover:border-[#A3E229]/40 transition-colors">
-            <div className="w-10 h-10 rounded-xl bg-[#A3E229]/15 flex items-center justify-center mb-3 text-[#A3E229]">
-              <MapPin className="w-5 h-5" />
-            </div>
-            <h2 className="text-white font-bold text-sm">Sede Oficial</h2>
-            <p className="text-slate-400 text-xs mt-1">
-              {config.heroSede || 'Canchas de pádel profesionales en La Marina Sport Club (LMSC).'}
-            </p>
-          </div>
+          {/* COLUMNA DERECHA: Visual de Alta Gama con Jugadores de Pádel (Inspirado en la Referencia) */}
+          <div className="lg:col-span-5 relative flex items-center justify-center mt-4 lg:mt-0">
+            
+            {/* Halo de luz trasera azul zafiro */}
+            <div className="absolute inset-0 bg-gradient-to-tr from-[#2a39d1]/40 via-[#A3E229]/25 to-transparent rounded-3xl blur-2xl transform scale-105"></div>
 
-          <div className="bg-[#0f0a42]/70 backdrop-blur-md p-5 rounded-2xl border border-slate-800/80 hover:border-[#2a39d1]/40 transition-colors">
-            <div className="w-10 h-10 rounded-xl bg-[#2a39d1]/20 flex items-center justify-center mb-3 text-blue-400">
-              <Users className="w-5 h-5" />
-            </div>
-            <h2 className="text-white font-bold text-sm">Categorías del Torneo</h2>
-            <p className="text-slate-400 text-xs mt-1">Masculino (2da a 7ma), Femenino (3ra a 7ma) y Master +45.</p>
-          </div>
+            {/* Composición de Tarjetas Inclinadas de Jugadores */}
+            <div className="relative w-full max-w-md h-[380px] sm:h-[460px] flex items-center justify-center">
+              
+              {/* Tarjeta 1: Jugador Masculino (Inclinada hacia la izquierda) */}
+              <div className="absolute left-2 sm:left-4 top-2 w-[55%] h-[82%] rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.6)] border-2 border-white/20 transform -rotate-6 hover:-rotate-3 transition-transform duration-500 z-10 group">
+                <img 
+                  src="./assets/jugador_masculino.jpg" 
+                  alt="Jugador de pádel La Marina Sport Club" 
+                  className="w-full h-full object-cover object-center filter contrast-110 brightness-105 group-hover:scale-105 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#071f5c]/90 via-transparent to-transparent"></div>
+                <div className="absolute bottom-3 left-3 right-3 text-left">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#A3E229]">Categorías Masculino</span>
+                  <span className="block text-xs font-black text-white font-orbitron">2da a 7ma Categoría</span>
+                </div>
+              </div>
 
-          <div className="bg-[#0f0a42]/70 backdrop-blur-md p-5 rounded-2xl border border-slate-800/80 hover:border-[#A3E229]/40 transition-colors">
-            <div className="w-10 h-10 rounded-xl bg-[#A3E229]/15 flex items-center justify-center mb-3 text-[#A3E229]">
-              <Award className="w-5 h-5" />
+              {/* Tarjeta 2: Jugadora Femenina (Inclinada hacia la derecha) */}
+              <div className="absolute right-2 sm:right-4 bottom-2 w-[56%] h-[84%] rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.7)] border-2 border-[#A3E229]/60 transform rotate-6 hover:rotate-3 transition-transform duration-500 z-20 group">
+                <img 
+                  src="./assets/jugadora_femenina.jpg" 
+                  alt="Jugadora de pádel La Marina Sport Club" 
+                  className="w-full h-full object-cover object-center filter contrast-110 brightness-105 group-hover:scale-105 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#071f5c]/90 via-transparent to-transparent"></div>
+                <div className="absolute bottom-3 left-3 right-3 text-left">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#A3E229]">Categorías Femenino</span>
+                  <span className="block text-xs font-black text-white font-orbitron">3ra a 7ma & Master</span>
+                </div>
+              </div>
+
+              {/* BADGE FLOTANTE CENTRAL: 24 PAREJAS POR CATEGORÍA */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 px-5 py-2.5 rounded-full bg-[#A3E229] text-[#150D8B] font-orbitron font-black text-xs sm:text-sm tracking-wider uppercase shadow-[0_0_30px_rgba(163,226,41,0.8)] border-2 border-white/80 flex items-center gap-2 whitespace-nowrap animate-bounce duration-1000">
+                <Trophy className="w-4 h-4 text-[#150D8B]" />
+                <span>24 PAREJAS POR CATEGORÍA</span>
+              </div>
+
             </div>
-            <h2 className="text-white font-bold text-sm">Premios & Ranking</h2>
-            <p className="text-slate-400 text-xs mt-1">1000 ptos FVP, trofeos de campeones y subcampeones, welcome pack oficial.</p>
+
           </div>
 
         </div>

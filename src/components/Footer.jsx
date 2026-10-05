@@ -5,22 +5,21 @@ export default function Footer() {
   const whatsappUrl = "https://wa.me/584248302078?text=Hola%20Henry,%20me%20comunico%20desde%20la%20web%20Copa%20Navidad%20LMSC";
 
   return (
-    <footer className="bg-navy-900 border-t border-slate-800/80 py-10 px-4 sm:px-6 lg:px-8 text-center text-slate-400 text-xs">
+    <footer className="bg-[#071f5c] border-t border-blue-900/60 py-10 px-4 sm:px-6 lg:px-8 text-center text-slate-300 text-xs">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
         
-        {/* Identidad */}
+        {/* Identidad con Logo Oficial */}
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-gold-500/20 flex items-center justify-center text-gold-400">
-            <Trophy className="w-4 h-4" />
-          </div>
-          <span className="text-white font-bold text-sm tracking-wide">
-            La Marina Sport Club
-          </span>
+          <img 
+            src="./assets/IMG_2966.PNG" 
+            alt="La Marina Sport Club" 
+            className="h-9 sm:h-11 w-auto object-contain drop-shadow-[0_0_15px_rgba(163,226,41,0.25)]"
+          />
         </div>
 
-        {/* Copyright y Sede */}
-        <div className="flex flex-col items-center md:items-center text-center text-xs text-slate-400">
-          <span>© 2026 Copa Navidad LMSC • Torneo avalado por la FVP • Puerto La Cruz, estado Anzoátegui.</span>
+        {/* Copyright, Sede y Aval FVP */}
+        <div className="flex flex-col items-center md:items-center text-center text-xs text-slate-300">
+          <span>© 2026 Copa Navidad LMSC • Torneo Estadal 500 pts para el ranking FVP • Puerto La Cruz, estado Anzoátegui.</span>
         </div>
 
         {/* Crédito: Desarrollado por Henry Macho (WhatsApp) */}

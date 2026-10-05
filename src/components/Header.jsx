@@ -5,11 +5,11 @@ export default function Header({ currentView, setCurrentView }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="relative z-40 bg-navy-900/95 backdrop-blur-md border-b border-slate-800/90 shadow-2xl">
+    <header className="relative z-40 bg-gradient-to-b from-[#0b3b95]/95 via-[#082b7c]/95 to-[#071f5c]/95 backdrop-blur-md border-b border-blue-400/25 shadow-[0_10px_35px_rgba(11,59,149,0.4)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* ÁREA CENTRAL PRINCIPAL: LOGO DEL CLUB & PATROCINADOR FLOTANTE */}
-        <div className="py-6 sm:py-8 md:py-10 flex flex-col items-center justify-center relative">
+        <div className="py-6 sm:py-8 md:py-9 flex flex-col items-center justify-center relative">
           
           {/* Logo del Club */}
           <div 
@@ -21,23 +21,23 @@ export default function Header({ currentView, setCurrentView }) {
           >
             <div className="relative">
               <img 
-                src="/assets/IMG_2966.PNG" 
+                src="./assets/IMG_2966.PNG" 
                 alt="Logo La Marina Sport Club" 
-                className="h-28 sm:h-36 md:h-44 lg:h-52 w-auto object-contain filter drop-shadow-[0_0_35px_rgba(128,225,0,0.3)] transition-all duration-300 group-hover:drop-shadow-[0_0_45px_rgba(128,225,0,0.5)]"
+                className="h-28 sm:h-36 md:h-44 lg:h-52 w-auto object-contain filter drop-shadow-[0_0_35px_rgba(163,226,41,0.35)] transition-all duration-300 group-hover:drop-shadow-[0_0_50px_rgba(163,226,41,0.55)]"
               />
             </div>
             
             {/* Título de Alta Gama: Copa Navidad 2026 */}
             <div className="mt-3 flex flex-col items-center text-center">
-              <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black tracking-[0.25em] text-white uppercase drop-shadow-md">
-                COPA NAVIDAD <span className="text-[#80e100] drop-shadow-[0_0_16px_rgba(128,225,0,0.45)]">2026</span>
+              <h1 className="font-orbitron text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black tracking-[0.25em] text-white uppercase drop-shadow-[0_2px_15px_rgba(0,0,0,0.6)]">
+                COPA NAVIDAD <span className="text-[#A3E229] drop-shadow-[0_0_20px_rgba(163,226,41,0.55)]">2026</span>
               </h1>
             </div>
           </div>
 
           {/* ESPACIO PARA AUSPICIADOR PRINCIPAL: "PRESENTADO POR" + LOGO 100% FLOTANTE SIN CONTENEDORES */}
-          <div className="mt-5 flex flex-col items-center justify-center">
-            <span className="text-[10px] sm:text-xs font-extrabold uppercase tracking-[0.35em] text-slate-400 mb-2">
+          <div className="mt-4 flex flex-col items-center justify-center">
+            <span className="text-[10px] sm:text-xs font-black uppercase tracking-[0.35em] text-blue-200/80 mb-2">
               Presentado por
             </span>
             {/* Logo completamente libre, limpio y flotante directamente sobre el fondo */}
@@ -49,21 +49,21 @@ export default function Header({ currentView, setCurrentView }) {
               title="El Parador del Puerto"
             >
               <img 
-                src="/assets/sponsor_el_parador.png" 
+                src="./assets/sponsor_el_parador.png" 
                 alt="El Parador del Puerto - Patrocinador Principal" 
-                className="h-11 sm:h-14 md:h-16 w-auto object-contain filter drop-shadow-[0_4px_16px_rgba(0,0,0,0.45)]"
+                className="h-11 sm:h-14 md:h-16 w-auto object-contain filter drop-shadow-[0_6px_20px_rgba(0,0,0,0.45)]"
               />
             </a>
           </div>
 
-          {/* INTERTÍTULO CENTRADO DESTACADO: TORNEO FVP1 - 1000 PTOS */}
-          <div className="mt-6 w-full flex justify-center">
-            <div className="inline-flex items-center gap-2.5 px-5 sm:px-8 py-2.5 sm:py-3 rounded-full bg-gradient-to-r from-navy-800/90 via-navy-700/80 to-navy-800/90 border border-gold-500/40 shadow-glow-gold backdrop-blur-md">
-              <Award className="w-5 h-5 text-gold-400 shrink-0" />
-              <span className="text-xs sm:text-sm md:text-base font-extrabold text-white tracking-wider uppercase text-center">
-                TORNEO FVP1 - 1000 ptos para el ranking FVP
+          {/* INTERTÍTULO CENTRADO DESTACADO: TORNEO ESTADAL - 500 PTOS */}
+          <div className="mt-5 w-full flex justify-center">
+            <div className="inline-flex items-center gap-2.5 px-6 sm:px-8 py-2.5 sm:py-3 rounded-full bg-[#082363]/85 border border-[#A3E229]/50 shadow-[0_0_25px_rgba(163,226,41,0.25)] backdrop-blur-md">
+              <Award className="w-5 h-5 text-[#A3E229] shrink-0" />
+              <span className="text-xs sm:text-sm md:text-base font-black text-white tracking-wider uppercase text-center font-orbitron">
+                Torneo Estadal - 500 pts para el ranking FVP
               </span>
-              <Trophy className="w-5 h-5 text-gold-400 shrink-0 hidden sm:inline" />
+              <Trophy className="w-5 h-5 text-[#A3E229] shrink-0 hidden sm:inline" />
             </div>
           </div>
 

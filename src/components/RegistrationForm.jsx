@@ -278,11 +278,6 @@ export default function RegistrationForm({ onSuccess }) {
       newErrors['jugador2.cedula'] = 'La cédula del Jugador 2 debe ser distinta a la del Jugador 1';
     }
 
-    // Aceptación global del reglamento
-    if (formData.aceptaReglamento !== 'si') {
-      newErrors.aceptaReglamento = 'Debes confirmar y aceptar el reglamento del club con la opción "Sí" para formalizar la inscripción';
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -813,52 +808,8 @@ export default function RegistrationForm({ onSuccess }) {
               {renderPlayerForm('jugador2', 'Datos del Jugador 2', 2)}
             </div>
 
-            {/* SECCIÓN 4: RESUMEN DE INVERSIÓN Y MÉTODOS DE PAGO */}
-            <div className="p-6 sm:p-8 rounded-3xl bg-[#0f0a42]/90 border border-[#A3E229]/40 shadow-xl space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-700/80">
-                <div>
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#A3E229]/15 text-[#A3E229] text-xs font-bold border border-[#A3E229]/30 uppercase tracking-wider mb-2">
-                    <DollarSign className="w-3.5 h-3.5" />
-                    <span>Inversión Oficial</span>
-                  </div>
-                  <h3 className="font-orbitron text-xl sm:text-2xl font-black text-white flex items-center gap-2">
-                    <CreditCard className="w-5 h-5 text-[#A3E229]" />
-                    <span>Inversión por Pareja: $150 USD</span>
-                  </h3>
-                  <p className="text-xs text-slate-300 mt-1">
-                    Equivalente a <strong>$75 por jugador</strong>. Incluye derecho a competencia, arbitraje oficial, hidratación continua y welcome pack oficial.
-                  </p>
-                </div>
-                <div className="bg-[#070422] px-5 py-3 rounded-2xl border border-[#A3E229]/50 text-center shadow-[0_0_20px_rgba(163,226,41,0.2)] w-fit self-start sm:self-auto">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Total Dupla</span>
-                  <span className="text-2xl sm:text-3xl font-black text-[#A3E229] font-mono">
-                    $150 USD
-                  </span>
-                </div>
-              </div>
-
-              {/* Indicación de métodos de pago en ventana post-registro */}
-              <div className="p-4 rounded-2xl bg-[#070422]/80 border border-slate-700/80 flex items-start gap-3">
-                <Info className="w-5 h-5 text-[#A3E229] shrink-0 mt-0.5" />
-                <div className="text-xs text-slate-300 space-y-1">
-                  <p className="font-semibold text-white">
-                    ¿Cómo y dónde realizar el pago?
-                  </p>
-                  <p>
-                    Al hacer clic en <strong className="text-[#A3E229]">"INSCRIBIR PAREJA"</strong>, se registrará la dupla y aparecerá automáticamente una ventana con los detalles bancarios de los <strong>4 métodos de pago autorizados</strong>:
-                  </p>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 text-[11px] font-bold text-white">
-                    <span className="px-2.5 py-1 rounded-lg bg-[#0f0a42] border border-slate-700 text-center">📱 Pago Móvil (BCV)</span>
-                    <span className="px-2.5 py-1 rounded-lg bg-[#0f0a42] border border-slate-700 text-center">💳 Zelle Directo</span>
-                    <span className="px-2.5 py-1 rounded-lg bg-[#0f0a42] border border-slate-700 text-center">💵 Efectivo en Club</span>
-                    <span className="px-2.5 py-1 rounded-lg bg-[#0f0a42] border border-slate-700 text-center">🏦 Cuenta Internacional</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* SECCIÓN 5: ACEPTACIÓN DEL REGLAMENTO OFICIAL DEL CLUB (OBLIGATORIO SÍ) */}
-            <div className="p-6 sm:p-7 rounded-3xl bg-[#0f0a42]/90 border border-slate-700/80 hover:border-[#A3E229]/40 transition-colors shadow-xl space-y-4">
+            {/* NORMATIVA OFICIAL DEL CLUB (CONSULTA DE REGLAMENTO) */}
+            <div className="p-6 sm:p-7 rounded-3xl bg-[#0f0a42]/90 border border-slate-700/80 hover:border-[#A3E229]/40 transition-colors shadow-xl">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="space-y-1">
                   <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#A3E229]/15 text-[#A3E229] text-[11px] font-bold border border-[#A3E229]/30 uppercase tracking-wider mb-1">
@@ -867,11 +818,10 @@ export default function RegistrationForm({ onSuccess }) {
                   </div>
                   <h4 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
                     <FileCheck2 className="w-5 h-5 text-[#A3E229] shrink-0" />
-                    <span>Aceptación del Reglamento Oficial LMSC</span>
-                    <span className="text-red-400">*</span>
+                    <span>Reglamento y Condiciones LMSC</span>
                   </h4>
                   <p className="text-xs text-slate-300 max-w-xl leading-relaxed">
-                    Es requisito federativo e institucional que ambos integrantes de la dupla conozcan y acepten la normativa deportiva de La Marina Sport Club.
+                    Consulta la normativa deportiva, horarios, indumentaria y reglamento oficial de La Marina Sport Club aplicable a la Copa Navidad 2026.
                   </p>
                 </div>
 
@@ -885,42 +835,6 @@ export default function RegistrationForm({ onSuccess }) {
                   <span>Ver Reglamento Oficial LMSC</span>
                 </button>
               </div>
-
-              {/* Opciones interactivas Sí / No estilizadas como chips modernos */}
-              <div className="pt-2 grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-md">
-                <button
-                  type="button"
-                  onClick={() => handleSimpleChange('aceptaReglamento', 'si')}
-                  className={`p-3.5 rounded-2xl border text-center font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2.5 select-none active:scale-95 ${
-                    formData.aceptaReglamento === 'si'
-                      ? 'bg-[#A3E229] text-[#150D8B] border-[#A3E229] shadow-[0_0_20px_rgba(163,226,41,0.4)] font-black'
-                      : 'bg-[#070422] text-slate-300 border-slate-700/80 hover:border-slate-500'
-                  }`}
-                >
-                  <CheckCircle className="w-4 h-4" />
-                  <span>Sí, acepto y confirmo el reglamento</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleSimpleChange('aceptaReglamento', 'no')}
-                  className={`p-3.5 rounded-2xl border text-center font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2.5 select-none active:scale-95 ${
-                    formData.aceptaReglamento === 'no'
-                      ? 'bg-red-500 text-white border-red-400 shadow-[0_0_20px_rgba(239,68,68,0.35)] font-black'
-                      : 'bg-[#070422] text-slate-300 border-slate-700/80 hover:border-slate-500'
-                  }`}
-                >
-                  <X className="w-4 h-4" />
-                  <span>No acepto</span>
-                </button>
-              </div>
-
-              {errors.aceptaReglamento && (
-                <p className="text-xs text-red-400 font-medium flex items-center gap-1 pt-1">
-                  <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                  {errors.aceptaReglamento}
-                </p>
-              )}
             </div>
 
             {/* BOTÓN DE ENVIAR: VERDE CON LETRAS AZULES SEGÚN BRANDBOOK (#A3E229 fondo, #150D8B texto) */}

@@ -67,29 +67,25 @@ export default function ConfirmedPlayersList() {
             onClick={() => setSelectedCategory('ALL')}
             className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
               selectedCategory === 'ALL'
-                ? 'bg-gold-500 text-navy-900 shadow-glow-gold'
-                : 'bg-navy-800/80 text-slate-300 hover:text-white border border-slate-700/60'
+                ? 'bg-[#A3E229] text-[#150D8B] font-black shadow-[0_0_20px_rgba(163,226,41,0.4)]'
+                : 'bg-[#0f0a42]/80 text-slate-300 hover:text-white border border-slate-700/60'
             }`}
           >
-            Todas ({confirmedList.length})
+            Todas
           </button>
-          {CATEGORIAS.map(cat => {
-            const count = confirmedList.filter(c => c.categoria === cat.label).length;
-            const max = categoryLimits[cat.label] || categoryLimits.defaultMax || DEFAULT_MAX_PAIRS_PER_CATEGORY;
-            return (
-              <button
-                key={cat.id}
-                onClick={() => setSelectedCategory(cat.label)}
-                className={`px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
-                  selectedCategory === cat.label
-                    ? 'bg-gold-500 text-navy-900 shadow-glow-gold'
-                    : 'bg-navy-800/80 text-slate-300 hover:text-white border border-slate-700/60'
-                }`}
-              >
-                {cat.label} ({count}/{max})
-              </button>
-            );
-          })}
+          {CATEGORIAS.map(cat => (
+            <button
+              key={cat.id}
+              onClick={() => setSelectedCategory(cat.label)}
+              className={`px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+                selectedCategory === cat.label
+                  ? 'bg-[#A3E229] text-[#150D8B] font-black shadow-[0_0_20px_rgba(163,226,41,0.4)]'
+                  : 'bg-[#0f0a42]/80 text-slate-300 hover:text-white border border-slate-700/60'
+              }`}
+            >
+              {cat.label}
+            </button>
+          ))}
         </div>
 
         {/* Listado de Parejas Confirmadas */}
