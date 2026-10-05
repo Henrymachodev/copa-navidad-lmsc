@@ -211,16 +211,6 @@ export default function RegistrationForm({ onSuccess }) {
       newErrors.categoria = 'Por favor selecciona la categoría de la pareja';
     }
 
-    // Método de Pago
-    if (!formData.metodoPago) {
-      newErrors.metodoPago = 'Por favor selecciona el método de pago';
-    }
-
-    // Referencia / ID de Pago
-    if (!formData.referenciaPago.trim()) {
-      newErrors.referenciaPago = 'El ID o referencia de pago es obligatorio';
-    }
-
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const phoneRegex = /^[0-9+() -]{7,20}$/;
 
@@ -823,180 +813,60 @@ export default function RegistrationForm({ onSuccess }) {
               {renderPlayerForm('jugador2', 'Datos del Jugador 2', 2)}
             </div>
 
-            {/* SECCIÓN 4: PAGO & COMPROBANTE */}
-            <div className="bg-gradient-to-b from-navy-800/80 via-navy-850/80 to-navy-900/90 p-6 sm:p-8 rounded-3xl border border-gold-500/30 shadow-2xl space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-slate-700/80">
+            {/* SECCIÓN 4: RESUMEN DE INVERSIÓN Y MÉTODOS DE PAGO */}
+            <div className="p-6 sm:p-8 rounded-3xl bg-[#0f0a42]/90 border border-[#A3E229]/40 shadow-xl space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-700/80">
                 <div>
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-500/15 text-gold-300 text-xs font-bold border border-gold-500/30 uppercase tracking-wider mb-2">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#A3E229]/15 text-[#A3E229] text-xs font-bold border border-[#A3E229]/30 uppercase tracking-wider mb-2">
                     <DollarSign className="w-3.5 h-3.5" />
                     <span>Inversión Oficial</span>
                   </div>
-                  <h3 className="text-xl font-black text-white flex items-center gap-2">
-                    <CreditCard className="w-5 h-5 text-gold-400" />
-                    Sección de Pago Oficial
+                  <h3 className="font-orbitron text-xl sm:text-2xl font-black text-white flex items-center gap-2">
+                    <CreditCard className="w-5 h-5 text-[#A3E229]" />
+                    <span>Inversión por Pareja: $150 USD</span>
                   </h3>
                   <p className="text-xs text-slate-300 mt-1">
-                    Inversión oficial: <strong>$150 por pareja</strong> ($75 por jugador). Incluye arbitraje, hidratación y welcome pack.
+                    Equivalente a <strong>$75 por jugador</strong>. Incluye derecho a competencia, arbitraje oficial, hidratación continua y welcome pack oficial.
                   </p>
                 </div>
-                <div className="bg-navy-950 px-4 py-2.5 rounded-2xl border border-gold-500/40 text-center shadow-glow-gold w-fit self-start sm:self-auto">
+                <div className="bg-[#070422] px-5 py-3 rounded-2xl border border-[#A3E229]/50 text-center shadow-[0_0_20px_rgba(163,226,41,0.2)] w-fit self-start sm:self-auto">
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Total Dupla</span>
-                  <span className="text-xl sm:text-2xl font-black text-gold-400 font-mono">
+                  <span className="text-2xl sm:text-3xl font-black text-[#A3E229] font-mono">
                     $150 USD
                   </span>
                 </div>
               </div>
 
-              {/* Selector de Método de Pago */}
-              <div>
-                <label className="block text-xs font-bold text-slate-200 uppercase tracking-wider mb-2.5">
-                  Selecciona el Método de Pago <span className="text-red-400">*</span>
-                </label>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                  {METODOS_PAGO.map((metodo) => {
-                    const isSelected = formData.metodoPago === metodo.label;
-                    return (
-                      <button
-                        type="button"
-                        key={metodo.id}
-                        onClick={() => handleSimpleChange('metodoPago', metodo.label)}
-                        className={`min-h-[48px] py-2 px-2 rounded-2xl border text-center font-bold text-xs sm:text-sm transition-all flex items-center justify-center select-none active:scale-95 leading-tight ${
-                          isSelected
-                            ? 'bg-[#80e100] text-navy-950 border-[#80e100] shadow-[0_0_20px_rgba(128,225,0,0.35)] font-black'
-                            : 'bg-navy-950 text-slate-300 border-slate-700/80 hover:border-slate-500 hover:text-white hover:bg-navy-900'
-                        }`}
-                      >
-                        <span className="w-full text-center leading-snug">{metodo.label}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-                {errors.metodoPago && (
-                  <p className="mt-2 text-xs text-red-400 font-medium flex items-center gap-1">
-                    <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                    {errors.metodoPago}
+              {/* Indicación de métodos de pago en ventana post-registro */}
+              <div className="p-4 rounded-2xl bg-[#070422]/80 border border-slate-700/80 flex items-start gap-3">
+                <Info className="w-5 h-5 text-[#A3E229] shrink-0 mt-0.5" />
+                <div className="text-xs text-slate-300 space-y-1">
+                  <p className="font-semibold text-white">
+                    ¿Cómo y dónde realizar el pago?
                   </p>
-                )}
-              </div>
-
-              {/* Caja de Datos de Transferencia: ALTO CONTRASTE */}
-              {formData.metodoPago && getMetodoDetalle() && (
-                <div className="p-5 rounded-2xl bg-black/90 border border-[#80e100]/40 shadow-xl space-y-3">
-                  <div className="flex items-center justify-between pb-2 border-b border-slate-800">
-                    <div className="flex items-center gap-2 text-[#80e100] font-bold text-xs sm:text-sm uppercase tracking-wide">
-                      <Info className="w-4 h-4 shrink-0" />
-                      <span>Datos bancarios oficiales para pagar con {formData.metodoPago}:</span>
-                    </div>
-                    <span className="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-[#80e100]/15 text-[#80e100] border border-[#80e100]/30">
-                      Cuenta Oficial
-                    </span>
+                  <p>
+                    Al hacer clic en <strong className="text-[#A3E229]">"INSCRIBIR PAREJA"</strong>, se registrará la dupla y aparecerá automáticamente una ventana con los detalles bancarios de los <strong>4 métodos de pago autorizados</strong>:
+                  </p>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 text-[11px] font-bold text-white">
+                    <span className="px-2.5 py-1 rounded-lg bg-[#0f0a42] border border-slate-700 text-center">📱 Pago Móvil (BCV)</span>
+                    <span className="px-2.5 py-1 rounded-lg bg-[#0f0a42] border border-slate-700 text-center">💳 Zelle Directo</span>
+                    <span className="px-2.5 py-1 rounded-lg bg-[#0f0a42] border border-slate-700 text-center">💵 Efectivo en Club</span>
+                    <span className="px-2.5 py-1 rounded-lg bg-[#0f0a42] border border-slate-700 text-center">🏦 Cuenta Internacional</span>
                   </div>
-                  <pre className="font-mono text-white text-xs sm:text-sm leading-relaxed p-4 rounded-xl bg-navy-950 border border-slate-800 select-all whitespace-pre-line font-bold">
-                    {getMetodoDetalle()}
-                  </pre>
-                  <p className="text-[11px] text-slate-400 flex items-center gap-1.5">
-                    <ShieldCheck className="w-3.5 h-3.5 text-[#80e100] shrink-0" />
-                    <span>Realiza la transferencia antes de ingresar la referencia de pago.</span>
-                  </p>
                 </div>
-              )}
-
-              {/* Referencia y Carga de Archivo */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                
-                {/* Referencia / ID de Pago */}
-                <div>
-                  <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-                    ID / Referencia alfanumérica de pago <span className="text-red-400">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Ej. REF-98234123 o Hash de transacción"
-                    value={formData.referenciaPago}
-                    onChange={(e) => handleSimpleChange('referenciaPago', e.target.value)}
-                    className={`w-full px-4 py-3 rounded-xl bg-navy-950 text-white border text-sm focus:outline-none focus:ring-2 transition-all ${
-                      errors.referenciaPago ? 'border-red-500 focus:ring-red-500/50' : 'border-slate-700 focus:border-[#80e100] focus:ring-[#80e100]/25'
-                    }`}
-                  />
-                  {errors.referenciaPago && (
-                    <p className="mt-1 text-xs text-red-400 flex items-center gap-1 font-medium">
-                      <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                      {errors.referenciaPago}
-                    </p>
-                  )}
-                  <span className="text-[11px] text-slate-400 mt-1 block">
-                    Número único emitido por tu banco o plataforma de pago.
-                  </span>
-                </div>
-
-                {/* Adjuntar comprobante */}
-                <div>
-                  <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5 flex items-center justify-between">
-                    <span>Adjuntar Comprobante de Pago</span>
-                    <span className="text-[11px] text-[#80e100] font-semibold">Máx 1 MB</span>
-                  </label>
-
-                  {formData.comprobantePagoUrl ? (
-                    <div className="p-3.5 rounded-xl bg-navy-950 border border-emerald-500/40 flex items-center justify-between">
-                      <div className="flex items-center gap-2.5 overflow-hidden">
-                        <FileCheck className="w-6 h-6 text-emerald-400 shrink-0" />
-                        <div className="truncate text-xs">
-                          <p className="font-semibold text-white truncate">{formData.comprobanteNombre}</p>
-                          <span className="text-[11px] text-slate-400">
-                            {(formData.comprobanteSize / 1024).toFixed(1)} KB • Archivo adjunto
-                          </span>
-                        </div>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={handleRemoveFile}
-                        className="p-1.5 rounded-lg text-slate-400 hover:text-red-400 hover:bg-navy-800 transition-colors"
-                        title="Quitar comprobante"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="relative">
-                      <label className="flex flex-col items-center justify-center p-3.5 border-2 border-dashed border-slate-700 hover:border-[#80e100]/60 rounded-xl bg-navy-950/70 cursor-pointer transition-colors text-center">
-                        <UploadCloud className="w-6 h-6 text-slate-400 mb-1" />
-                        <span className="text-xs font-medium text-slate-300">
-                          Haz clic para subir comprobante
-                        </span>
-                        <span className="text-[10px] text-slate-500 mt-0.5">
-                          Formatos: JPG, JPEG, PNG o PDF (menor a 1 MB)
-                        </span>
-                        <input
-                          type="file"
-                          accept=".jpg,.jpeg,.png,.pdf"
-                          onChange={handleFileChange}
-                          className="hidden"
-                        />
-                      </label>
-                    </div>
-                  )}
-
-                  {errors.comprobante && (
-                    <p className="mt-1 text-xs text-red-400 flex items-center gap-1 font-medium">
-                      <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                      {errors.comprobante}
-                    </p>
-                  )}
-                </div>
-
               </div>
             </div>
 
             {/* SECCIÓN 5: ACEPTACIÓN DEL REGLAMENTO OFICIAL DEL CLUB (OBLIGATORIO SÍ) */}
-            <div className="p-6 sm:p-7 rounded-3xl bg-gradient-to-r from-navy-800/90 via-navy-850/90 to-navy-900/90 border border-slate-700/80 hover:border-gold-500/40 transition-colors shadow-xl space-y-4">
+            <div className="p-6 sm:p-7 rounded-3xl bg-[#0f0a42]/90 border border-slate-700/80 hover:border-[#A3E229]/40 transition-colors shadow-xl space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="space-y-1">
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-500/15 text-gold-400 text-[11px] font-bold border border-gold-500/30 uppercase tracking-wider mb-1">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#A3E229]/15 text-[#A3E229] text-[11px] font-bold border border-[#A3E229]/30 uppercase tracking-wider mb-1">
                     <ShieldCheck className="w-3.5 h-3.5" />
                     <span>Normativa Oficial del Club</span>
                   </div>
                   <h4 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-                    <FileCheck2 className="w-5 h-5 text-emerald-400 shrink-0" />
+                    <FileCheck2 className="w-5 h-5 text-[#A3E229] shrink-0" />
                     <span>Aceptación del Reglamento Oficial LMSC</span>
                     <span className="text-red-400">*</span>
                   </h4>
@@ -1009,9 +879,9 @@ export default function RegistrationForm({ onSuccess }) {
                 <button
                   type="button"
                   onClick={() => setShowReglamentoModal(true)}
-                  className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-gold-500 via-amber-400 to-gold-500 hover:from-gold-400 hover:to-amber-300 text-navy-950 font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-glow-gold transition-all transform hover:scale-105 active:scale-95 shrink-0"
+                  className="px-6 py-3.5 rounded-2xl bg-[#A3E229] hover:bg-[#b6f23d] text-[#150D8B] font-orbitron font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(163,226,41,0.35)] transition-all transform hover:scale-105 active:scale-95 shrink-0"
                 >
-                  <FileText className="w-4 h-4 text-navy-950" />
+                  <FileText className="w-4 h-4 text-[#150D8B]" />
                   <span>Ver Reglamento Oficial LMSC</span>
                 </button>
               </div>
@@ -1023,8 +893,8 @@ export default function RegistrationForm({ onSuccess }) {
                   onClick={() => handleSimpleChange('aceptaReglamento', 'si')}
                   className={`p-3.5 rounded-2xl border text-center font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2.5 select-none active:scale-95 ${
                     formData.aceptaReglamento === 'si'
-                      ? 'bg-emerald-500 text-navy-950 border-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.35)] font-black'
-                      : 'bg-navy-950 text-slate-300 border-slate-700/80 hover:border-slate-500'
+                      ? 'bg-[#A3E229] text-[#150D8B] border-[#A3E229] shadow-[0_0_20px_rgba(163,226,41,0.4)] font-black'
+                      : 'bg-[#070422] text-slate-300 border-slate-700/80 hover:border-slate-500'
                   }`}
                 >
                   <CheckCircle className="w-4 h-4" />
@@ -1037,7 +907,7 @@ export default function RegistrationForm({ onSuccess }) {
                   className={`p-3.5 rounded-2xl border text-center font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2.5 select-none active:scale-95 ${
                     formData.aceptaReglamento === 'no'
                       ? 'bg-red-500 text-white border-red-400 shadow-[0_0_20px_rgba(239,68,68,0.35)] font-black'
-                      : 'bg-navy-950 text-slate-300 border-slate-700/80 hover:border-slate-500'
+                      : 'bg-[#070422] text-slate-300 border-slate-700/80 hover:border-slate-500'
                   }`}
                 >
                   <X className="w-4 h-4" />
@@ -1053,30 +923,30 @@ export default function RegistrationForm({ onSuccess }) {
               )}
             </div>
 
-            {/* BOTÓN DE ENVIAR */}
+            {/* BOTÓN DE ENVIAR: VERDE CON LETRAS AZULES SEGÚN BRANDBOOK (#A3E229 fondo, #150D8B texto) */}
             <div className="pt-4">
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full py-4 sm:py-5 px-8 rounded-full text-base sm:text-lg font-black bg-[#80e100] hover:bg-[#90f00a] text-navy-950 shadow-[0_0_35px_rgba(128,225,0,0.4)] hover:shadow-[0_0_45px_rgba(128,225,0,0.6)] transition-all transform active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-3 uppercase tracking-wider"
+                className="w-full py-5 px-8 rounded-full font-orbitron text-base sm:text-xl font-black bg-[#A3E229] hover:bg-[#b6f23d] text-[#150D8B] shadow-[0_0_35px_rgba(163,226,41,0.55)] hover:shadow-[0_0_50px_rgba(163,226,41,0.75)] transition-all transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-3 uppercase tracking-wider"
               >
                 {submitting ? (
                   <>
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                    <span>Guardando datos y registrando comprobante...</span>
+                    <Loader2 className="w-6 h-6 animate-spin text-[#150D8B]" />
+                    <span>Registrando pareja...</span>
                   </>
                 ) : (
                   <>
-                    <Sparkles className="w-5 h-5 text-navy-950" />
+                    <Sparkles className="w-5 h-5 text-[#150D8B]" />
                     <span>
-                      {isWaitlist ? 'Registrar en Lista de Espera' : 'Confirmar Inscripción de Pareja ($150)'}
+                      {isWaitlist ? 'REGISTRAR EN LISTA DE ESPERA' : 'INSCRIBIR PAREJA'}
                     </span>
                   </>
                 )}
               </button>
               <p className="text-center text-xs text-slate-400 mt-3 flex items-center justify-center gap-1.5">
-                <ShieldCheck className="w-4 h-4 text-[#80e100]" />
-                Inscripción oficial y protegida con validación estricta de cupos.
+                <ShieldCheck className="w-4 h-4 text-[#A3E229]" />
+                <span>Al inscribir tu pareja, se mostrará la ventana oficial con los métodos de pago.</span>
               </p>
             </div>
 

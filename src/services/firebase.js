@@ -118,6 +118,8 @@ export const DEFAULT_LANDING_CONFIG = {
   // Detalles bancarios y de pago
   pagoMovilDetalle: 'Banco: Banesco (0134)\nTeléfono: 0414-8889900\nRIF: J-50000000-0\nTitular: La Marina Sport Club C.A.\nTasa oficial BCV del día',
   zelleDetalle: 'Correo Zelle: pagos@copanavidadlmsc.com\nTitular: LMSC Padel Operations LLC',
+  efectivoDetalle: 'Recepción y Administración de La Marina Sport Club (Puerto La Cruz, Anzoátegui).\nPago directo en efectivo (Divisas USD o Bolívares) en taquilla oficial con el comité organizador.\nHorario: Lunes a Domingo de 8:00 AM a 9:00 PM.',
+  cuentaInternacionalDetalle: 'Banco: Banesco Panamá\nCuenta Corriente USD: 1029384756\nBeneficiario: LMSC Corp Panamá\nSWIFT / BIC: BAPAPAXX\nAcepta transferencias ACH y Wire internacionales.',
   banescoPanamaDetalle: 'Banco: Banesco Panamá\nCuenta Corriente USD: 1029384756\nBeneficiario: LMSC Corp Panamá\nSWIFT: BAPAPAXX',
   binancePayDetalle: 'Binance Pay ID: 849201948\nAlias: @CopaNavidadLMSC\nMoneda: USDT (Red BEP20 o Pay)',
 
@@ -411,6 +413,41 @@ export async function updateRegistrationStatus(id, newStatus) {
     const updated = existing.map(item => {
       if (item.id === id) {
         return { ...item, status: newStatus, updatedAtISO: new Date().toISOString() };
+      }
+      return item;
+    });
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updated));
+    return true;
+  }
+}
+
+/**
+ * Actualiza los datos de pago y comprobante de una inscripción
+ */
+export async function updateRegistrationPayment(id, paymentData) {
+  if (isFirebaseConfigured() && db && !id.startsWith('loc_')) {
+    try {
+      const docRef = doc(db, COLLECTION_NAME, id);
+      await updateDoc(docRef, { 
+        ...paymentData,
+        status: 'esperando pago',
+        updatedAt: serverTimestamp()
+      });
+      return true;
+    } catch (e) {
+      console.error('Error al actualizar pago en Firestore:', e);
+      throw e;
+    }
+  } else {
+    const existing = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '[]');
+    const updated = existing.map(item => {
+      if (item.id === id) {
+        return { 
+          ...item, 
+          ...paymentData, 
+          status: 'esperando pago',
+          updatedAtISO: new Date().toISOString() 
+        };
       }
       return item;
     });

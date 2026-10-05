@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
-import PaymentInfoSection from './components/PaymentInfoSection';
 import RegistrationForm from './components/RegistrationForm';
 import ConfirmedPlayersList from './components/ConfirmedPlayersList';
 import SponsorsSection from './components/SponsorsSection';
@@ -92,7 +91,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-navy-900 text-slate-100 flex flex-col font-sans selection:bg-gold-500 selection:text-navy-900">
+    <div className="min-h-screen bg-[#070422] text-[#f3f4f2] flex flex-col font-sans selection:bg-[#A3E229] selection:text-[#150D8B]">
       
       {/* HEADER NAVEGABLE (Sin accesos visibles de administración) */}
       <Header 
@@ -105,7 +104,6 @@ export default function App() {
         {currentView === 'landing' ? (
           <>
             <Hero />
-            <PaymentInfoSection />
             <RegistrationForm onSuccess={(data) => setSuccessData(data)} />
             <ConfirmedPlayersList />
             <SponsorsSection />

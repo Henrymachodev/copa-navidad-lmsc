@@ -86,42 +86,35 @@ export default function Header({ currentView, setCurrentView }) {
               if (currentView !== 'landing') setCurrentView('landing');
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
-            className="text-sm font-semibold text-gold-400 hover:text-gold-300 transition-colors"
+            className="text-sm font-semibold text-[#A3E229] hover:text-[#b6f23d] transition-colors"
           >
             Inicio
           </button>
           <a 
             href="#formulario" 
             onClick={() => { if (currentView !== 'landing') setCurrentView('landing'); }}
-            className="text-sm font-semibold text-slate-300 hover:text-[#80e100] transition-colors"
+            className="text-sm font-semibold text-slate-300 hover:text-[#A3E229] transition-colors"
           >
-            Inscripción de Parejas
-          </a>
-          <a 
-            href="#inversion-pagos" 
-            onClick={() => { if (currentView !== 'landing') setCurrentView('landing'); }}
-            className="text-sm font-semibold text-slate-300 hover:text-[#80e100] transition-colors"
-          >
-            Valor & Pagos
+            Inscríbete Aquí
           </a>
           <a 
             href="#jugadores-confirmados" 
             onClick={() => { if (currentView !== 'landing') setCurrentView('landing'); }}
-            className="text-sm font-semibold text-slate-300 hover:text-emerald-400 transition-colors"
+            className="text-sm font-semibold text-slate-300 hover:text-[#A3E229] transition-colors"
           >
             Parejas Confirmadas
           </a>
           <a 
             href="#detalles" 
             onClick={() => { if (currentView !== 'landing') setCurrentView('landing'); }}
-            className="text-sm font-semibold text-slate-300 hover:text-[#80e100] transition-colors"
+            className="text-sm font-semibold text-slate-300 hover:text-[#A3E229] transition-colors"
           >
             Categorías & Premios
           </a>
           <a 
             href="#patrocinadores" 
             onClick={() => { if (currentView !== 'landing') setCurrentView('landing'); }}
-            className="text-sm font-semibold text-slate-300 hover:text-[#80e100] transition-colors"
+            className="text-sm font-semibold text-slate-300 hover:text-[#A3E229] transition-colors"
           >
             Patrocinadores
           </a>
@@ -146,19 +139,9 @@ export default function Header({ currentView, setCurrentView }) {
                 if (currentView !== 'landing') setCurrentView('landing');
                 setMobileMenuOpen(false);
               }}
-              className="block text-center py-2.5 text-sm font-semibold text-slate-200 hover:bg-navy-800 rounded-xl"
+              className="block text-center py-2.5 text-sm font-semibold text-[#A3E229] hover:bg-navy-800 rounded-xl"
             >
-              Inscripción de Parejas
-            </a>
-            <a
-              href="#inversion-pagos"
-              onClick={() => {
-                if (currentView !== 'landing') setCurrentView('landing');
-                setMobileMenuOpen(false);
-              }}
-              className="block text-center py-2.5 text-sm font-semibold text-slate-200 hover:bg-navy-800 rounded-xl"
-            >
-              Valor & Pagos ($150)
+              Inscríbete Aquí
             </a>
             <a
               href="#jugadores-confirmados"
@@ -166,7 +149,7 @@ export default function Header({ currentView, setCurrentView }) {
                 if (currentView !== 'landing') setCurrentView('landing');
                 setMobileMenuOpen(false);
               }}
-              className="block text-center py-2.5 text-sm font-semibold text-emerald-400 hover:bg-navy-800 rounded-xl"
+              className="block text-center py-2.5 text-sm font-semibold text-slate-200 hover:bg-navy-800 rounded-xl"
             >
               Parejas Confirmadas
             </a>

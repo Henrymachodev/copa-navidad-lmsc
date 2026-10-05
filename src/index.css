@@ -3,20 +3,23 @@
 @tailwind utilities;
 
 @layer base {
-  body, h1, h2, h3, h4, h5, h6, button, input, select, textarea {
+  body, button, input, select, textarea {
     font-family: 'Poppins', sans-serif;
   }
+  h1, h2, h3, .font-brand-title {
+    font-family: 'Orbitron', 'Poppins', sans-serif;
+  }
   body {
-    background-color: #0a0f1d;
-    color: #e2e8f0;
+    background-color: #070422;
+    color: #f3f4f2;
   }
 
-  /* Garantizar visibilidad total y alto contraste en inputs, selects y textareas */
+  /* Visibilidad total y alto contraste en inputs de acuerdo al brandbook */
   input, textarea, select {
     color: #ffffff !important;
     -webkit-text-fill-color: #ffffff !important;
-    background-color: #060c18 !important;
-    caret-color: #80e100 !important;
+    background-color: #0a062f !important;
+    caret-color: #A3E229 !important;
   }
 
   input::placeholder, textarea::placeholder {
@@ -36,14 +39,14 @@
   select:-webkit-autofill:hover,
   select:-webkit-autofill:focus {
     -webkit-text-fill-color: #ffffff !important;
-    -webkit-box-shadow: 0 0 0px 1000px #060c18 inset !important;
-    box-shadow: 0 0 0px 1000px #060c18 inset !important;
+    -webkit-box-shadow: 0 0 0px 1000px #0a062f inset !important;
+    box-shadow: 0 0 0px 1000px #0a062f inset !important;
     transition: background-color 5000s ease-in-out 0s !important;
-    caret-color: #80e100 !important;
+    caret-color: #A3E229 !important;
   }
 
   select option {
-    background-color: #0a0f1d !important;
+    background-color: #0b0736 !important;
     color: #ffffff !important;
   }
 }
