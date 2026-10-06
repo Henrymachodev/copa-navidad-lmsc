@@ -349,22 +349,22 @@ export default function RegistrationForm({ onSuccess }) {
     }
   };
 
-  // Renderizador de campos para un jugador
+  // Renderizador de campos para un jugador con tarjeta blanca de máxima legibilidad y sin truncamiento
   const renderPlayerForm = (playerKey, playerTitle, numberBadge) => {
     const p = formData[playerKey];
 
     return (
-      <div className="bg-gradient-to-b from-[#0a389c]/85 via-[#082b7c]/85 to-[#071f5c]/90 p-5 sm:p-7 rounded-3xl border border-blue-400/30 shadow-xl relative space-y-4 backdrop-blur-md">
-        <div className="flex items-center justify-between pb-3 border-b border-slate-700/60">
+      <div className="form-card bg-white p-5 sm:p-7 rounded-3xl border border-blue-200/60 shadow-2xl relative space-y-4 text-slate-800">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-200">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-2xl bg-[#80e100]/15 text-[#80e100] border border-[#80e100]/30 flex items-center justify-center font-black text-sm shadow-[0_0_15px_rgba(128,225,0,0.2)]">
+            <div className="w-9 h-9 rounded-2xl bg-[#150D8B] text-[#A3E229] border border-[#150D8B] flex items-center justify-center font-orbitron font-black text-sm shadow-md">
               {numberBadge}
             </div>
-            <h3 className="text-lg sm:text-xl font-black text-white tracking-wide">
+            <h3 className="text-lg sm:text-xl font-orbitron font-black text-[#150D8B] tracking-wide">
               {playerTitle}
             </h3>
           </div>
-          <span className="text-[11px] font-semibold text-[#80e100] uppercase tracking-wider">
+          <span className="text-[10px] sm:text-[11px] font-extrabold text-rose-600 uppercase tracking-wider">
             * Campos obligatorios
           </span>
         </div>
@@ -372,8 +372,8 @@ export default function RegistrationForm({ onSuccess }) {
         {/* Fila: Nombre y Apellido + Cédula */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-              Nombre y Apellido <span className="text-red-400">*</span>
+            <label className="block text-xs font-black text-slate-800 uppercase tracking-wider mb-1.5">
+              Nombre y Apellido <span className="text-rose-500">*</span>
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -384,13 +384,15 @@ export default function RegistrationForm({ onSuccess }) {
                 placeholder="Ej: Carlos Mendoza"
                 value={p.nombre}
                 onChange={(e) => handlePlayerChange(playerKey, 'nombre', e.target.value)}
-                className={`w-full pl-10 pr-3.5 py-3 rounded-xl bg-navy-950 text-white border text-sm focus:outline-none focus:ring-2 transition-all ${
-                  errors[`${playerKey}.nombre`] ? 'border-red-500 focus:ring-red-500/50' : 'border-slate-700 focus:border-[#80e100] focus:ring-[#80e100]/25'
+                className={`w-full pl-10 pr-3.5 py-2.5 rounded-xl border text-sm font-medium focus:outline-none focus:ring-2 transition-all ${
+                  errors[`${playerKey}.nombre`] 
+                    ? 'border-rose-500 focus:ring-rose-500/25 bg-rose-50/50' 
+                    : 'border-slate-300 focus:border-[#150D8B] focus:ring-[#150D8B]/20'
                 }`}
               />
             </div>
             {errors[`${playerKey}.nombre`] && (
-              <p className="mt-1 text-xs text-red-400 flex items-center gap-1 font-medium">
+              <p className="mt-1 text-xs text-rose-600 flex items-center gap-1 font-semibold">
                 <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                 {errors[`${playerKey}.nombre`]}
               </p>
@@ -398,20 +400,22 @@ export default function RegistrationForm({ onSuccess }) {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-              Cédula de Identidad <span className="text-red-400">*</span>
+            <label className="block text-xs font-black text-slate-800 uppercase tracking-wider mb-1.5">
+              Cédula de Identidad <span className="text-rose-500">*</span>
             </label>
             <input
               type="text"
               placeholder="Ej: V-18.456.789"
               value={p.cedula}
               onChange={(e) => handlePlayerChange(playerKey, 'cedula', e.target.value)}
-              className={`w-full px-3.5 py-3 rounded-xl bg-navy-950 text-white border text-sm focus:outline-none focus:ring-2 transition-all ${
-                errors[`${playerKey}.cedula`] ? 'border-red-500 focus:ring-red-500/50' : 'border-slate-700 focus:border-[#80e100] focus:ring-[#80e100]/25'
+              className={`w-full px-3.5 py-2.5 rounded-xl border text-sm font-medium focus:outline-none focus:ring-2 transition-all ${
+                errors[`${playerKey}.cedula`] 
+                  ? 'border-rose-500 focus:ring-rose-500/25 bg-rose-50/50' 
+                  : 'border-slate-300 focus:border-[#150D8B] focus:ring-[#150D8B]/20'
               }`}
             />
             {errors[`${playerKey}.cedula`] && (
-              <p className="mt-1 text-xs text-red-400 flex items-center gap-1 font-medium">
+              <p className="mt-1 text-xs text-rose-600 flex items-center gap-1 font-semibold">
                 <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                 {errors[`${playerKey}.cedula`]}
               </p>
@@ -422,8 +426,8 @@ export default function RegistrationForm({ onSuccess }) {
         {/* Fila: Correo + Teléfono */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-              Correo Electrónico <span className="text-red-400">*</span>
+            <label className="block text-xs font-black text-slate-800 uppercase tracking-wider mb-1.5">
+              Correo Electrónico <span className="text-rose-500">*</span>
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -434,13 +438,15 @@ export default function RegistrationForm({ onSuccess }) {
                 placeholder="ejemplo@correo.com"
                 value={p.email}
                 onChange={(e) => handlePlayerChange(playerKey, 'email', e.target.value)}
-                className={`w-full pl-10 pr-3.5 py-3 rounded-xl bg-navy-950 text-white border text-sm focus:outline-none focus:ring-2 transition-all ${
-                  errors[`${playerKey}.email`] ? 'border-red-500 focus:ring-red-500/50' : 'border-slate-700 focus:border-[#80e100] focus:ring-[#80e100]/25'
+                className={`w-full pl-10 pr-3.5 py-2.5 rounded-xl border text-sm font-medium focus:outline-none focus:ring-2 transition-all ${
+                  errors[`${playerKey}.email`] 
+                    ? 'border-rose-500 focus:ring-rose-500/25 bg-rose-50/50' 
+                    : 'border-slate-300 focus:border-[#150D8B] focus:ring-[#150D8B]/20'
                 }`}
               />
             </div>
             {errors[`${playerKey}.email`] && (
-              <p className="mt-1 text-xs text-red-400 flex items-center gap-1 font-medium">
+              <p className="mt-1 text-xs text-rose-600 flex items-center gap-1 font-semibold">
                 <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                 {errors[`${playerKey}.email`]}
               </p>
@@ -448,8 +454,8 @@ export default function RegistrationForm({ onSuccess }) {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-              Número de Teléfono / WhatsApp <span className="text-red-400">*</span>
+            <label className="block text-xs font-black text-slate-800 uppercase tracking-wider mb-1.5">
+              Número de Teléfono / WhatsApp <span className="text-rose-500">*</span>
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -460,13 +466,15 @@ export default function RegistrationForm({ onSuccess }) {
                 placeholder="+58 414 1234567"
                 value={p.telefono}
                 onChange={(e) => handlePlayerChange(playerKey, 'telefono', e.target.value)}
-                className={`w-full pl-10 pr-3.5 py-3 rounded-xl bg-navy-950 text-white border text-sm focus:outline-none focus:ring-2 transition-all ${
-                  errors[`${playerKey}.telefono`] ? 'border-red-500 focus:ring-red-500/50' : 'border-slate-700 focus:border-[#80e100] focus:ring-[#80e100]/25'
+                className={`w-full pl-10 pr-3.5 py-2.5 rounded-xl border text-sm font-medium focus:outline-none focus:ring-2 transition-all ${
+                  errors[`${playerKey}.telefono`] 
+                    ? 'border-rose-500 focus:ring-rose-500/25 bg-rose-50/50' 
+                    : 'border-slate-300 focus:border-[#150D8B] focus:ring-[#150D8B]/20'
                 }`}
               />
             </div>
             {errors[`${playerKey}.telefono`] && (
-              <p className="mt-1 text-xs text-red-400 flex items-center gap-1 font-medium">
+              <p className="mt-1 text-xs text-rose-600 flex items-center gap-1 font-semibold">
                 <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                 {errors[`${playerKey}.telefono`]}
               </p>
@@ -474,11 +482,11 @@ export default function RegistrationForm({ onSuccess }) {
           </div>
         </div>
 
-        {/* Fila: Talla Franela + Lado de Juego con chips táctiles modernos */}
+        {/* Fila: Talla Franela + Lado de Juego con chips táctiles sin truncamiento */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-              Talla de Franela Oficial <span className="text-red-400">*</span>
+            <label className="block text-xs font-black text-slate-800 uppercase tracking-wider mb-1.5">
+              Talla de Franela Oficial <span className="text-rose-500">*</span>
             </label>
             <div className="grid grid-cols-5 gap-1.5 sm:gap-2">
               {TALLAS_FRANELA.map((talla) => (
@@ -486,18 +494,18 @@ export default function RegistrationForm({ onSuccess }) {
                   type="button"
                   key={talla}
                   onClick={() => handlePlayerChange(playerKey, 'tallaFranela', talla)}
-                  className={`min-h-[44px] py-2 px-1 flex items-center justify-center text-xs sm:text-sm font-bold rounded-xl border transition-all duration-200 select-none active:scale-95 leading-none text-center ${
+                  className={`min-h-[42px] py-2 px-1 flex items-center justify-center text-xs font-black rounded-xl border transition-all duration-200 select-none active:scale-95 leading-none text-center ${
                     p.tallaFranela === talla
-                      ? 'bg-[#80e100] text-navy-950 border-[#80e100] shadow-[0_0_16px_rgba(128,225,0,0.35)] font-black'
-                      : 'bg-navy-950 text-slate-300 border-slate-700/80 hover:border-slate-500 hover:text-white'
+                      ? 'bg-[#150D8B] text-[#A3E229] border-[#150D8B] shadow-md font-black'
+                      : 'bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200 hover:text-slate-900'
                   }`}
                 >
-                  <span className="truncate w-full block text-center">{talla}</span>
+                  <span className="w-full block text-center whitespace-nowrap">{talla}</span>
                 </button>
               ))}
             </div>
             {errors[`${playerKey}.tallaFranela`] && (
-              <p className="mt-1 text-xs text-red-400 flex items-center gap-1 font-medium">
+              <p className="mt-1 text-xs text-rose-600 flex items-center gap-1 font-semibold">
                 <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                 {errors[`${playerKey}.tallaFranela`]}
               </p>
@@ -505,8 +513,8 @@ export default function RegistrationForm({ onSuccess }) {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-              Lado de Juego <span className="text-red-400">*</span>
+            <label className="block text-xs font-black text-slate-800 uppercase tracking-wider mb-1.5">
+              Lado de Juego <span className="text-rose-500">*</span>
             </label>
             <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
               {LADOS_JUEGO.map((lado) => (
@@ -514,18 +522,18 @@ export default function RegistrationForm({ onSuccess }) {
                   type="button"
                   key={lado}
                   onClick={() => handlePlayerChange(playerKey, 'ladoJuego', lado)}
-                  className={`min-h-[44px] py-2 px-1 sm:px-2 flex items-center justify-center text-[10px] sm:text-xs md:text-sm font-bold rounded-xl border transition-all duration-200 select-none active:scale-95 leading-tight text-center break-words ${
+                  className={`min-h-[42px] py-2 px-1 sm:px-2 flex items-center justify-center text-xs font-black rounded-xl border transition-all duration-200 select-none active:scale-95 leading-none text-center ${
                     p.ladoJuego === lado
-                      ? 'bg-[#80e100] text-navy-950 border-[#80e100] shadow-[0_0_16px_rgba(128,225,0,0.35)] font-black'
-                      : 'bg-navy-950 text-slate-300 border-slate-700/80 hover:border-slate-500 hover:text-white'
+                      ? 'bg-[#150D8B] text-[#A3E229] border-[#150D8B] shadow-md font-black'
+                      : 'bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200 hover:text-slate-900'
                   }`}
                 >
-                  <span className="w-full text-center leading-tight truncate">{lado}</span>
+                  <span className="w-full text-center whitespace-nowrap">{lado}</span>
                 </button>
               ))}
             </div>
             {errors[`${playerKey}.ladoJuego`] && (
-              <p className="mt-1 text-xs text-red-400 flex items-center gap-1 font-medium">
+              <p className="mt-1 text-xs text-rose-600 flex items-center gap-1 font-semibold">
                 <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                 {errors[`${playerKey}.ladoJuego`]}
               </p>
@@ -536,20 +544,22 @@ export default function RegistrationForm({ onSuccess }) {
         {/* Fila: Categoría habitual + Liga/Torneo actual */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-              Categoría Habitual de Juego <span className="text-red-400">*</span>
+            <label className="block text-xs font-black text-slate-800 uppercase tracking-wider mb-1.5">
+              Categoría Habitual de Juego <span className="text-rose-500">*</span>
             </label>
             <input
               type="text"
               placeholder="Ej. 4ta Categoría / 5ta FVP"
               value={p.categoriaHabitual}
               onChange={(e) => handlePlayerChange(playerKey, 'categoriaHabitual', e.target.value)}
-              className={`w-full px-3.5 py-3 rounded-xl bg-navy-950 text-white border text-sm focus:outline-none focus:ring-2 transition-all ${
-                errors[`${playerKey}.categoriaHabitual`] ? 'border-red-500 focus:ring-red-500/50' : 'border-slate-700 focus:border-[#80e100] focus:ring-[#80e100]/25'
+              className={`w-full px-3.5 py-2.5 rounded-xl border text-sm font-medium focus:outline-none focus:ring-2 transition-all ${
+                errors[`${playerKey}.categoriaHabitual`] 
+                  ? 'border-rose-500 focus:ring-rose-500/25 bg-rose-50/50' 
+                  : 'border-slate-300 focus:border-[#150D8B] focus:ring-[#150D8B]/20'
               }`}
             />
             {errors[`${playerKey}.categoriaHabitual`] && (
-              <p className="mt-1 text-xs text-red-400 flex items-center gap-1 font-medium">
+              <p className="mt-1 text-xs text-rose-600 flex items-center gap-1 font-semibold">
                 <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                 {errors[`${playerKey}.categoriaHabitual`]}
               </p>
@@ -557,20 +567,22 @@ export default function RegistrationForm({ onSuccess }) {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-              Liga o Torneo donde participas actualmente <span className="text-red-400">*</span>
+            <label className="block text-xs font-black text-slate-800 uppercase tracking-wider mb-1.5">
+              Liga o Torneo donde participas actualmente <span className="text-rose-500">*</span>
             </label>
             <input
               type="text"
               placeholder="Ej. Circuito FVP Oriente / Liga Local / Ninguno"
               value={p.torneoActual}
               onChange={(e) => handlePlayerChange(playerKey, 'torneoActual', e.target.value)}
-              className={`w-full px-3.5 py-3 rounded-xl bg-navy-950 text-white border text-sm focus:outline-none focus:ring-2 transition-all ${
-                errors[`${playerKey}.torneoActual`] ? 'border-red-500 focus:ring-red-500/50' : 'border-slate-700 focus:border-[#80e100] focus:ring-[#80e100]/25'
+              className={`w-full px-3.5 py-2.5 rounded-xl border text-sm font-medium focus:outline-none focus:ring-2 transition-all ${
+                errors[`${playerKey}.torneoActual`] 
+                  ? 'border-rose-500 focus:ring-rose-500/25 bg-rose-50/50' 
+                  : 'border-slate-300 focus:border-[#150D8B] focus:ring-[#150D8B]/20'
               }`}
             />
             {errors[`${playerKey}.torneoActual`] && (
-              <p className="mt-1 text-xs text-red-400 flex items-center gap-1 font-medium">
+              <p className="mt-1 text-xs text-rose-600 flex items-center gap-1 font-semibold">
                 <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                 {errors[`${playerKey}.torneoActual`]}
               </p>
@@ -580,10 +592,10 @@ export default function RegistrationForm({ onSuccess }) {
 
         {/* Historial de últimos torneos */}
         <div>
-          <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5 flex items-center justify-between">
+          <label className="block text-xs font-black text-slate-800 uppercase tracking-wider mb-1.5 flex items-center justify-between">
             <span className="flex items-center gap-1.5">
-              <Award className="w-3.5 h-3.5 text-gold-400" />
-              Historial de últimos torneos jugados (Nivel y resultados) <span className="text-red-400">*</span>
+              <Award className="w-3.5 h-3.5 text-amber-500" />
+              Historial de últimos torneos jugados (Nivel y resultados) <span className="text-rose-500">*</span>
             </span>
           </label>
           <textarea
@@ -591,12 +603,14 @@ export default function RegistrationForm({ onSuccess }) {
             placeholder="Ej. Torneo Aniversario LMSC: Campeón 5ta Cat; 2da Nacional FVP: Cuartos de final..."
             value={p.historialTorneos}
             onChange={(e) => handlePlayerChange(playerKey, 'historialTorneos', e.target.value)}
-            className={`w-full px-3.5 py-2.5 rounded-xl bg-navy-950 text-white border text-xs sm:text-sm focus:outline-none focus:ring-2 transition-all resize-none ${
-              errors[`${playerKey}.historialTorneos`] ? 'border-red-500 focus:ring-red-500/50' : 'border-slate-700 focus:border-[#80e100] focus:ring-[#80e100]/25'
+            className={`w-full px-3.5 py-2.5 rounded-xl border text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 transition-all resize-none ${
+              errors[`${playerKey}.historialTorneos`] 
+                ? 'border-rose-500 focus:ring-rose-500/25 bg-rose-50/50' 
+                : 'border-slate-300 focus:border-[#150D8B] focus:ring-[#150D8B]/20'
             }`}
           ></textarea>
           {errors[`${playerKey}.historialTorneos`] && (
-            <p className="mt-1 text-xs text-red-400 flex items-center gap-1 font-medium">
+            <p className="mt-1 text-xs text-rose-600 flex items-center gap-1 font-semibold">
               <AlertCircle className="w-3.5 h-3.5 shrink-0" />
               {errors[`${playerKey}.historialTorneos`]}
             </p>
@@ -605,21 +619,23 @@ export default function RegistrationForm({ onSuccess }) {
 
         {/* Alergias o restricciones alimenticias */}
         <div>
-          <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
-            <HeartPulse className="w-3.5 h-3.5 text-red-400" />
-            ¿Padece alguna alergia o restricción alimenticia? <span className="text-red-400">*</span>
+          <label className="block text-xs font-black text-slate-800 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+            <HeartPulse className="w-3.5 h-3.5 text-rose-500" />
+            ¿Padece alguna alergia o restricción alimenticia? <span className="text-rose-500">*</span>
           </label>
           <input
             type="text"
             placeholder="Ej. Ninguna / Alérgico a mariscos / Intolerancia a la lactosa"
             value={p.alergias}
             onChange={(e) => handlePlayerChange(playerKey, 'alergias', e.target.value)}
-            className={`w-full px-3.5 py-3 rounded-xl bg-navy-950 text-white border text-sm focus:outline-none focus:ring-2 transition-all ${
-              errors[`${playerKey}.alergias`] ? 'border-red-500 focus:ring-red-500/50' : 'border-slate-700 focus:border-[#80e100] focus:ring-[#80e100]/25'
+            className={`w-full px-3.5 py-2.5 rounded-xl border text-sm font-medium focus:outline-none focus:ring-2 transition-all ${
+              errors[`${playerKey}.alergias`] 
+                ? 'border-rose-500 focus:ring-rose-500/25 bg-rose-50/50' 
+                : 'border-slate-300 focus:border-[#150D8B] focus:ring-[#150D8B]/20'
             }`}
           />
           {errors[`${playerKey}.alergias`] && (
-            <p className="mt-1 text-xs text-red-400 flex items-center gap-1 font-medium">
+            <p className="mt-1 text-xs text-rose-600 flex items-center gap-1 font-semibold">
               <AlertCircle className="w-3.5 h-3.5 shrink-0" />
               {errors[`${playerKey}.alergias`]}
             </p>
@@ -627,19 +643,19 @@ export default function RegistrationForm({ onSuccess }) {
         </div>
 
         {/* Aceptación del reglamento por jugador con chips interactivos */}
-        <div className="pt-2 bg-navy-950/80 p-4 rounded-2xl border border-slate-700/70">
+        <div className="pt-2 bg-slate-100/90 p-4 rounded-2xl border border-slate-200">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <span className="text-xs sm:text-sm font-semibold text-white">
-              ¿Acepta y confirma el reglamento del club? <span className="text-red-400">*</span>
+            <span className="text-xs sm:text-sm font-black text-slate-900">
+              ¿Acepta y confirma el reglamento del club? <span className="text-rose-500">*</span>
             </span>
             <div className="grid grid-cols-2 gap-2 sm:w-auto w-full">
               <button
                 type="button"
                 onClick={() => handlePlayerChange(playerKey, 'aceptaReglamento', 'si')}
-                className={`px-4 py-2 text-xs font-bold rounded-xl border transition-all flex items-center justify-center gap-1.5 select-none active:scale-95 ${
+                className={`px-4 py-2 text-xs font-black rounded-xl border transition-all flex items-center justify-center gap-1.5 select-none active:scale-95 ${
                   p.aceptaReglamento === 'si'
-                    ? 'bg-emerald-500 text-navy-950 border-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.35)] font-extrabold'
-                    : 'bg-navy-900 text-slate-300 border-slate-700 hover:border-slate-500'
+                    ? 'bg-[#A3E229] text-[#150D8B] border-[#A3E229] shadow-md font-black'
+                    : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'
                 }`}
               >
                 <CheckCircle className="w-3.5 h-3.5" />
@@ -649,10 +665,10 @@ export default function RegistrationForm({ onSuccess }) {
               <button
                 type="button"
                 onClick={() => handlePlayerChange(playerKey, 'aceptaReglamento', 'no')}
-                className={`px-4 py-2 text-xs font-bold rounded-xl border transition-all flex items-center justify-center gap-1.5 select-none active:scale-95 ${
+                className={`px-4 py-2 text-xs font-black rounded-xl border transition-all flex items-center justify-center gap-1.5 select-none active:scale-95 ${
                   p.aceptaReglamento === 'no'
-                    ? 'bg-red-500 text-white border-red-400 shadow-[0_0_15px_rgba(239,68,68,0.35)] font-extrabold'
-                    : 'bg-navy-900 text-slate-300 border-slate-700 hover:border-slate-500'
+                    ? 'bg-rose-500 text-white border-rose-500 shadow-md font-black'
+                    : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'
                 }`}
               >
                 <X className="w-3.5 h-3.5" />
@@ -661,7 +677,7 @@ export default function RegistrationForm({ onSuccess }) {
             </div>
           </div>
           {errors[`${playerKey}.aceptaReglamento`] && (
-            <p className="mt-2 text-xs text-red-400 font-medium flex items-center gap-1">
+            <p className="mt-2 text-xs text-rose-600 font-semibold flex items-center gap-1">
               <AlertCircle className="w-3.5 h-3.5 shrink-0" />
               {errors[`${playerKey}.aceptaReglamento`]}
             </p>
@@ -673,68 +689,68 @@ export default function RegistrationForm({ onSuccess }) {
   };
 
   return (
-    <section id="formulario" className="py-12 sm:py-20 relative bg-gradient-to-b from-[#071f5c] via-[#082b7c] to-[#071f5c] border-t border-blue-400/20">
+    <section id="formulario" className="py-6 sm:py-10 relative bg-gradient-to-b from-[#071f5c] via-[#082b7c] to-[#071f5c] border-t border-blue-400/20">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Cabecera del formulario: Título atlético limpio 'INSCRÍBETE AQUÍ' */}
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#80e100]/10 border border-[#80e100]/40 text-[#80e100] text-xs font-bold tracking-widest uppercase mb-4 shadow-[0_0_20px_rgba(128,225,0,0.18)]">
+        <div className="text-center mb-6">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#A3E229]/15 border border-[#A3E229]/50 text-[#A3E229] text-xs font-bold tracking-widest uppercase mb-3 shadow-[0_0_20px_rgba(163,226,41,0.2)]">
             <Sparkles className="w-3.5 h-3.5" />
             <span>Formulario Oficial de Inscripción</span>
           </div>
-          <h2 className="text-4xl sm:text-6xl md:text-7xl font-black text-white tracking-tight uppercase leading-tight drop-shadow-xl">
-            INSCRÍBETE <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#80e100] via-[#a6f728] to-[#80e100] drop-shadow-[0_0_35px_rgba(128,225,0,0.4)]">AQUÍ</span>
+          <h2 className="font-orbitron text-3xl sm:text-5xl md:text-6xl font-black text-white tracking-tight uppercase leading-tight drop-shadow-xl">
+            INSCRÍBETE <span className="text-[#A3E229] drop-shadow-[0_0_30px_rgba(163,226,41,0.5)]">AQUÍ</span>
           </h2>
 
           {/* BOTONES AUXILIARES CENTRADOS */}
-          <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+          <div className="mt-3.5 flex flex-wrap items-center justify-center gap-2.5">
             <a
               href="https://app.fvp.com.ve/2danacional/"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-navy-800/90 hover:bg-navy-700 border border-[#80e100]/50 hover:border-[#80e100] text-white font-bold text-xs shadow-lg transition-all group"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#0a389c]/80 hover:bg-[#0b3b95] border border-[#A3E229]/50 hover:border-[#A3E229] text-white font-bold text-xs shadow-md transition-all group"
             >
-              <span className="text-[#80e100]">Ver ranking actualizado FVP</span>
-              <ExternalLink className="w-3.5 h-3.5 text-[#80e100] group-hover:translate-x-0.5 transition-transform" />
+              <span className="text-[#A3E229]">Ver ranking actualizado FVP</span>
+              <ExternalLink className="w-3.5 h-3.5 text-[#A3E229] group-hover:translate-x-0.5 transition-transform" />
             </a>
 
             {/* BOTÓN INTERACTIVO: Ver reglamento oficial */}
             <button
               type="button"
               onClick={() => setShowReglamentoModal(true)}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gold-500/15 hover:bg-gold-500/25 border border-gold-500/40 text-gold-300 font-bold text-xs shadow-lg transition-all"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#0a389c]/80 hover:bg-[#0b3b95] border border-blue-400/40 text-blue-200 font-bold text-xs shadow-md transition-all"
             >
-              <FileText className="w-3.5 h-3.5 text-gold-400" />
+              <FileText className="w-3.5 h-3.5 text-[#A3E229]" />
               <span>Ver Reglamento Oficial LMSC</span>
             </button>
           </div>
 
-          <p className="mt-4 text-slate-300 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
+          <p className="mt-3 text-blue-100/80 text-xs sm:text-sm max-w-xl mx-auto leading-relaxed">
             Completa la información obligatoria de ambos jugadores para asegurar el cupo oficial de tu dupla en el cuadro de juego.
           </p>
         </div>
 
         {/* Card Principal del Formulario */}
-        <div className="glass-panel p-6 sm:p-10 rounded-3xl shadow-2xl relative">
+        <div className="glass-panel p-4 sm:p-7 rounded-3xl shadow-2xl relative">
           
           {submitError && (
-            <div className="mb-6 p-4 rounded-xl bg-red-500/20 border border-red-500/50 text-red-200 text-sm flex items-center gap-3">
-              <AlertCircle className="w-5 h-5 text-red-400 shrink-0" />
+            <div className="mb-5 p-3.5 rounded-xl bg-red-500/20 border border-red-500/50 text-red-200 text-xs sm:text-sm flex items-center gap-2.5">
+              <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
               <span>{submitError}</span>
             </div>
           )}
 
-          <form onSubmit={handleSubmit} noValidate className="space-y-8">
+          <form onSubmit={handleSubmit} noValidate className="space-y-6">
 
-            {/* SECCIÓN 1: CATEGORÍA DE PAREJA */}
-            <div className="bg-[#0a389c]/65 p-5 sm:p-6 rounded-2xl border border-blue-400/30">
+            {/* SECCIÓN 1: CATEGORÍA DE PAREJA CON TARJETA BLANCA DE ALTO CONTRASTE */}
+            <div className="form-card bg-white p-5 sm:p-6 rounded-3xl border border-blue-200/60 shadow-xl text-slate-800">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
-                <label htmlFor="categoria-select" className="text-base font-bold text-white flex items-center gap-2">
-                  <Trophy className="w-5 h-5 text-gold-400" />
-                  Categoría Oficial de la Pareja <span className="text-red-400">*</span>
+                <label htmlFor="categoria-select" className="text-base font-orbitron font-black text-[#150D8B] flex items-center gap-2">
+                  <Trophy className="w-5 h-5 text-[#150D8B]" />
+                  Categoría Oficial de la Pareja <span className="text-rose-500">*</span>
                 </label>
-                <span className="text-xs text-slate-400">
-                  Límite máximo: <strong>{maxAllowedForCat} duplas</strong>
+                <span className="text-xs font-bold text-slate-500">
+                  Límite máximo: <strong className="text-slate-800">{maxAllowedForCat} duplas</strong>
                 </span>
               </div>
 
@@ -742,10 +758,10 @@ export default function RegistrationForm({ onSuccess }) {
                 id="categoria-select"
                 value={formData.categoria}
                 onChange={(e) => handleSimpleChange('categoria', e.target.value)}
-                className={`w-full px-4 py-3.5 rounded-xl bg-navy-900 text-white border text-sm sm:text-base focus:outline-none focus:ring-2 transition-all ${
+                className={`w-full px-4 py-3 rounded-xl border text-sm sm:text-base font-semibold focus:outline-none focus:ring-2 transition-all ${
                   errors.categoria 
-                    ? 'border-red-500 focus:ring-red-500/50' 
-                    : 'border-slate-700 focus:border-gold-500 focus:ring-gold-500/20'
+                    ? 'border-rose-500 focus:ring-rose-500/25 bg-rose-50/50' 
+                    : 'border-slate-300 focus:border-[#150D8B] focus:ring-[#150D8B]/20'
                 }`}
               >
                 <option value="">-- Selecciona la categoría de competencia --</option>
@@ -803,24 +819,24 @@ export default function RegistrationForm({ onSuccess }) {
             </div>
 
             {/* SECCIÓN 2 & 3: FORMULARIOS DETALLADOS JUGADOR 1 Y JUGADOR 2 */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6">
               {renderPlayerForm('jugador1', 'Datos del Jugador 1', 1)}
               {renderPlayerForm('jugador2', 'Datos del Jugador 2', 2)}
             </div>
 
             {/* NORMATIVA OFICIAL DEL CLUB (CONSULTA DE REGLAMENTO) */}
-            <div className="p-6 sm:p-7 rounded-3xl bg-[#0a389c]/70 border border-blue-400/30 hover:border-[#A3E229]/40 transition-colors shadow-xl">
+            <div className="form-card bg-white p-5 sm:p-6 rounded-3xl border border-blue-200/60 shadow-xl text-slate-800">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="space-y-1">
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#A3E229]/15 text-[#A3E229] text-[11px] font-bold border border-[#A3E229]/30 uppercase tracking-wider mb-1">
-                    <ShieldCheck className="w-3.5 h-3.5" />
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#150D8B]/10 text-[#150D8B] text-[11px] font-extrabold border border-[#150D8B]/20 uppercase tracking-wider mb-1">
+                    <ShieldCheck className="w-3.5 h-3.5 text-[#150D8B]" />
                     <span>Normativa Oficial del Club</span>
                   </div>
-                  <h4 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-                    <FileCheck2 className="w-5 h-5 text-[#A3E229] shrink-0" />
+                  <h4 className="text-base sm:text-lg font-orbitron font-black text-[#150D8B] flex items-center gap-2">
+                    <FileCheck2 className="w-5 h-5 text-[#150D8B] shrink-0" />
                     <span>Reglamento y Condiciones LMSC</span>
                   </h4>
-                  <p className="text-xs text-slate-300 max-w-xl leading-relaxed">
+                  <p className="text-xs text-slate-600 max-w-xl leading-relaxed">
                     Consulta la normativa deportiva, horarios, indumentaria y reglamento oficial de La Marina Sport Club aplicable a la Copa Navidad 2026.
                   </p>
                 </div>
@@ -829,7 +845,7 @@ export default function RegistrationForm({ onSuccess }) {
                 <button
                   type="button"
                   onClick={() => setShowReglamentoModal(true)}
-                  className="px-6 py-3.5 rounded-2xl bg-[#A3E229] hover:bg-[#b6f23d] text-[#150D8B] font-orbitron font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(163,226,41,0.35)] transition-all transform hover:scale-105 active:scale-95 shrink-0"
+                  className="px-6 py-3.5 rounded-2xl bg-[#A3E229] hover:bg-[#b6f23d] text-[#150D8B] font-orbitron font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md transition-all transform hover:scale-105 active:scale-95 shrink-0"
                 >
                   <FileText className="w-4 h-4 text-[#150D8B]" />
                   <span>Ver Reglamento Oficial LMSC</span>

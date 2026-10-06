@@ -44,31 +44,31 @@ export default function ConfirmedPlayersList() {
   });
 
   return (
-    <section id="jugadores-confirmados" className="py-16 sm:py-24 bg-gradient-to-b from-[#071f5c] via-[#082b7c] to-[#071f5c] border-t border-blue-400/20 relative">
+    <section id="jugadores-confirmados" className="py-8 sm:py-12 bg-gradient-to-b from-[#071f5c] via-[#082b7c] to-[#071f5c] border-t border-blue-400/20 relative">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Cabecera de la sección */}
-        <div className="text-center max-w-3xl mx-auto mb-10">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-bold border border-emerald-500/30 mb-3">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+        <div className="text-center max-w-3xl mx-auto mb-6">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#A3E229]/15 text-[#A3E229] text-xs font-bold border border-[#A3E229]/40 mb-2.5">
+            <CheckCircle2 className="w-4 h-4 text-[#A3E229]" />
             <span>Cuadro Oficial de Competencia</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white">
+          <h2 className="font-orbitron text-2xl sm:text-4xl font-black text-white uppercase">
             Parejas Confirmadas
           </h2>
-          <p className="mt-2 text-slate-300 text-xs sm:text-sm">
+          <p className="mt-2 text-blue-100/80 text-xs sm:text-sm">
             {landingConfig.parejasSubtitulo || 'Listado oficial de duplas con inscripción y pago verificado por el comité organizador'}
           </p>
         </div>
 
         {/* Pestañas / Filtro de Categoría */}
-        <div className="flex items-center justify-start sm:justify-center gap-2 overflow-x-auto pb-4 mb-8 no-scrollbar">
+        <div className="flex items-center justify-start sm:justify-center gap-2 overflow-x-auto pb-3 mb-6 no-scrollbar">
           <button
             onClick={() => setSelectedCategory('ALL')}
             className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
               selectedCategory === 'ALL'
                 ? 'bg-[#A3E229] text-[#150D8B] font-black shadow-[0_0_20px_rgba(163,226,41,0.4)]'
-                : 'bg-[#0f0a42]/80 text-slate-300 hover:text-white border border-slate-700/60'
+                : 'bg-[#0a389c]/80 text-blue-100 hover:text-white border border-blue-400/40'
             }`}
           >
             Todas
@@ -80,7 +80,7 @@ export default function ConfirmedPlayersList() {
               className={`px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
                 selectedCategory === cat.label
                   ? 'bg-[#A3E229] text-[#150D8B] font-black shadow-[0_0_20px_rgba(163,226,41,0.4)]'
-                  : 'bg-[#0f0a42]/80 text-slate-300 hover:text-white border border-slate-700/60'
+                  : 'bg-[#0a389c]/80 text-blue-100 hover:text-white border border-blue-400/40'
               }`}
             >
               {cat.label}

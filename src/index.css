@@ -49,6 +49,36 @@
     background-color: #082b7c !important;
     color: #ffffff !important;
   }
+
+  /* Estilos específicos de alto contraste para las tarjetas blancas del formulario */
+  .form-card input, 
+  .form-card textarea, 
+  .form-card select {
+    color: #0f172a !important;
+    -webkit-text-fill-color: #0f172a !important;
+    background-color: #f8fafc !important;
+    caret-color: #150D8B !important;
+  }
+
+  .form-card input::placeholder, 
+  .form-card textarea::placeholder {
+    color: #94a3b8 !important;
+    -webkit-text-fill-color: #94a3b8 !important;
+    opacity: 1 !important;
+  }
+
+  .form-card select option {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+  }
+
+  .form-card input:-webkit-autofill,
+  .form-card select:-webkit-autofill,
+  .form-card textarea:-webkit-autofill {
+    -webkit-text-fill-color: #0f172a !important;
+    -webkit-box-shadow: 0 0 0px 1000px #f8fafc inset !important;
+    box-shadow: 0 0 0px 1000px #f8fafc inset !important;
+  }
 }
 
 /* Fondo con patrón sutil de cancha de pádel y gradientes atmosféricos */

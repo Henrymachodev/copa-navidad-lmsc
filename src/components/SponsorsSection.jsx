@@ -23,40 +23,36 @@ export default function SponsorsSection() {
   }, []);
 
   return (
-    <section id="patrocinadores" className="py-16 sm:py-24 bg-gradient-to-b from-[#071f5c] to-[#082b7c] border-t border-blue-400/20 relative">
+    <section id="patrocinadores" className="py-8 sm:py-12 bg-gradient-to-b from-[#071f5c] to-[#082b7c] border-t border-blue-400/20 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Cabecera de la sección estilo Premier Padel / Vellora */}
-        <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#80e100]/10 text-[#80e100] text-xs font-bold mb-3 border border-[#80e100]/30 uppercase tracking-widest">
+        {/* Cabecera de la sección con espaciado optimizado */}
+        <div className="text-center max-w-3xl mx-auto mb-6 sm:mb-8">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#A3E229]/15 text-[#A3E229] text-xs font-extrabold mb-2.5 border border-[#A3E229]/40 uppercase tracking-widest shadow-sm">
             <Handshake className="w-3.5 h-3.5" />
             <span>Alianzas Oficiales & Comerciales</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white uppercase tracking-tight">
-            Patrocinadores & <span className="text-[#80e100]">Aliados</span>
+          <h2 className="font-orbitron text-2xl sm:text-4xl md:text-5xl font-black text-white uppercase tracking-tight">
+            Patrocinadores & <span className="text-[#A3E229]">Aliados</span>
           </h2>
-          <p className="mt-3 text-slate-400 text-xs sm:text-sm leading-relaxed max-w-2xl mx-auto">
+          <p className="mt-2 text-blue-100/80 text-xs sm:text-sm leading-relaxed max-w-2xl mx-auto">
             Marcas oficiales que hacen posible la Copa Navidad 2026 y respaldan el desarrollo competitivo del pádel nacional.
           </p>
         </div>
 
-        {/* CONTENEDOR FLEX: LOGOS 100% LIMPIOS Y FLOTANTES
-            - Sin recuadros, fondos ni bordes artificiales
-            - Escala de grises sutil con transición fluida a color vivo y zoom al hover
-            - Distribución centrada y fluida perfectamente adaptada a mobile y desktop */}
-        <div className="flex flex-wrap items-center justify-center gap-10 sm:gap-14 md:gap-20 py-4 max-w-5xl mx-auto">
+        {/* CONTENEDOR FLEX: LOGOS TODOS DEL MISMO TAMAÑO (DEL MÁS GRANDE), LIMPIOS Y FLOTANTES */}
+        <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10 md:gap-14 py-2 max-w-6xl mx-auto">
           {sponsorsList.map((sponsor) => {
             const logoElement = (
-              <div className="flex items-center justify-center p-2 group transition-all duration-300">
+              <div className="h-20 sm:h-24 md:h-28 w-44 sm:w-56 md:w-64 flex items-center justify-center p-2 group transition-all duration-300">
                 {sponsor.logo ? (
                   <img
                     src={sponsor.logo}
                     alt={sponsor.name}
-                    style={{ height: `${sponsor.logoHeight || 65}px`, maxHeight: `${(sponsor.logoHeight || 65) * 1.25}px` }}
-                    className="w-auto max-w-[160px] sm:max-w-[240px] md:max-w-[300px] object-contain filter grayscale contrast-125 brightness-95 opacity-70 group-hover:grayscale-0 group-hover:brightness-100 group-hover:opacity-100 group-hover:scale-105 drop-shadow-[0_4px_16px_rgba(0,0,0,0.4)] transition-all duration-300"
+                    className="max-h-full max-w-full w-auto h-auto object-contain filter grayscale contrast-125 brightness-105 opacity-80 group-hover:grayscale-0 group-hover:brightness-110 group-hover:opacity-100 group-hover:scale-110 drop-shadow-[0_6px_20px_rgba(0,0,0,0.5)] transition-all duration-300"
                   />
                 ) : (
-                  <span className="text-base sm:text-lg font-black tracking-wider uppercase text-slate-400 group-hover:text-[#80e100] transition-colors">
+                  <span className="font-orbitron text-base sm:text-lg font-black tracking-wider uppercase text-blue-200 group-hover:text-[#A3E229] transition-colors text-center">
                     {sponsor.name}
                   </span>
                 )}
@@ -70,7 +66,7 @@ export default function SponsorsSection() {
                   href={sponsor.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="outline-none focus:ring-2 focus:ring-gold-500/50 rounded-xl"
+                  className="outline-none focus:ring-2 focus:ring-[#A3E229]/50 rounded-2xl"
                   title={`Visitar sitio de ${sponsor.name}`}
                 >
                   {logoElement}
