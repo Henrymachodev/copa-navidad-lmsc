@@ -2,7 +2,7 @@ import React from 'react';
 import { MessageCircle, Instagram } from 'lucide-react';
 
 export default function Footer() {
-  const whatsappUrl = "https://wa.me/584248302078?text=Hola%20Henry,%20me%20comunico%20desde%20la%20web%20Copa%20Navidad%20LMSC";
+  const whatsappUrl = "https://api.whatsapp.com/send/?phone=584122053591";
   const instagramUrl = "https://www.instagram.com/lamarinasportclub/";
 
   return (
