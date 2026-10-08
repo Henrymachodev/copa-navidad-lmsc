@@ -1,20 +1,33 @@
 import React from 'react';
-import { MessageCircle } from 'lucide-react';
+import { MessageCircle, Instagram } from 'lucide-react';
 
 export default function Footer() {
   const whatsappUrl = "https://wa.me/584248302078?text=Hola%20Henry,%20me%20comunico%20desde%20la%20web%20Copa%20Navidad%20LMSC";
+  const instagramUrl = "https://www.instagram.com/lamarinasportclub/";
 
   return (
-    <footer className="bg-[#082b7c] border-t border-blue-400/25 py-4 sm:py-5 px-4 sm:px-6 lg:px-8 text-center text-slate-300 text-xs">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+    <footer className="bg-[#082b7c] border-t border-blue-400/25 py-5 sm:py-6 px-4 sm:px-6 lg:px-8 text-center text-slate-300 text-xs">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-5">
         
-        {/* Identidad con Logo Oficial de La Marina */}
-        <div className="flex items-center gap-3">
+        {/* Identidad con Logo Oficial de La Marina e Instagram */}
+        <div className="flex flex-col sm:flex-row items-center gap-3.5">
           <img 
             src="./assets/IMG_2966.PNG" 
             alt="La Marina Sport Club" 
             className="h-14 sm:h-16 md:h-20 w-auto object-contain drop-shadow-[0_0_20px_rgba(163,226,41,0.4)] transition-transform hover:scale-105"
           />
+          <a
+            href={instagramUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[#833ab4]/30 via-[#fd1d1d]/30 to-[#fcb045]/30 hover:from-[#833ab4]/50 hover:via-[#fd1d1d]/50 hover:to-[#fcb045]/50 border border-pink-400/50 hover:border-pink-300 text-white font-semibold text-xs shadow-md transition-all transform hover:scale-105"
+            title="Seguir a La Marina Sport Club en Instagram (@lamarinasportclub)"
+          >
+            <div className="w-5 h-5 rounded-full bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 flex items-center justify-center text-white shadow-sm">
+              <Instagram className="w-3.5 h-3.5" />
+            </div>
+            <span className="tracking-wide">@lamarinasportclub</span>
+          </a>
         </div>
 
         {/* Copyright, Sede y Aval FVP */}

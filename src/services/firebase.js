@@ -111,6 +111,7 @@ export const DEFAULT_LANDING_CONFIG = {
   heroSubtitulo: 'Cierra el año compitiendo en el evento de pádel más importante del oriente del país. Válido por 500 puntos para el ranking oficial de la Federación Venezolana de Pádel (FVP). Reúne a tu dupla y asegura tu cupo en la grilla oficial.',
   heroFechas: 'del 7 al 12 de diciembre',
   heroSede: 'La Marina Sport Club, Lechería',
+  heroInversion: '$150 por pareja',
   parejasSubtitulo: 'Listado oficial de duplas con inscripción y pago verificado por el comité organizador',
   cuposLimitados: 'Cupos Limitados',
   montoInscripcion: '$150',
@@ -179,7 +180,7 @@ export const INITIAL_SPONSORS = [
     id: 'sp_1',
     name: 'Colegio Juan XXIII',
     tier: 'Auspiciador Principal',
-    logo: '/assets/LOGO-JUAN-XXIII-WHT.png',
+    logo: './assets/LOGO-JUAN-XXIII-WHT.png',
     link: 'https://www.instagram.com',
     isHero: true,
     logoHeight: 110
@@ -533,7 +534,14 @@ export async function getSponsors() {
       const snap = await getDocs(collection(db, SPONSORS_COLLECTION));
       if (!snap.empty) {
         const list = [];
-        snap.forEach(d => list.push({ id: d.id, ...d.data() }));
+        snap.forEach(d => {
+          const s = d.data();
+          let logo = s.logo;
+          if (logo && logo.startsWith('/') && !logo.startsWith('//')) {
+            logo = '.' + logo;
+          }
+          list.push({ id: d.id, ...s, logo });
+        });
         return list;
       }
     } catch (e) {
@@ -548,11 +556,19 @@ export async function getSponsors() {
   try {
     const parsed = JSON.parse(local);
     // Filtramos sponsors de semillas anteriores (ej. sp_2, sp_3 o logos viejos)
-    const cleanList = parsed.filter(s => 
-      !s.logo?.includes('sponsor_el_parador') && 
-      s.id !== 'sp_2' && 
-      s.id !== 'sp_3'
-    );
+    const cleanList = parsed
+      .filter(s => 
+        !s.logo?.includes('sponsor_el_parador') && 
+        s.id !== 'sp_2' && 
+        s.id !== 'sp_3'
+      )
+      .map(s => {
+        let logo = s.logo;
+        if (logo && logo.startsWith('/') && !logo.startsWith('//')) {
+          logo = '.' + logo;
+        }
+        return { ...s, logo };
+      });
     if (cleanList.length === 0) {
       localStorage.setItem(LOCAL_STORAGE_SPONSORS_KEY, JSON.stringify(INITIAL_SPONSORS));
       return INITIAL_SPONSORS;

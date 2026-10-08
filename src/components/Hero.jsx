@@ -82,8 +82,8 @@ export default function Hero() {
 
               <div className="text-center lg:text-left pl-1">
                 <span className="text-[10px] font-bold text-blue-200/80 uppercase tracking-wider block">Inversión</span>
-                <span className="text-xs sm:text-sm font-black text-white font-orbitron block mt-0.5">
-                  $150 / dupla
+                <span className="text-xs sm:text-sm font-black text-white font-orbitron block mt-0.5 truncate">
+                  {config.heroInversion || '$150 / dupla'}
                 </span>
               </div>
 
@@ -134,11 +134,8 @@ export default function Hero() {
                   <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-blue-200">Masculino</span>
                 </div>
                 <div className="absolute bottom-2.5 left-3 right-2.5 text-left">
-                  <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-[#A3E229] block leading-tight">
+                  <span className="text-xs sm:text-sm font-black font-orbitron uppercase tracking-wider text-[#A3E229] block leading-tight drop-shadow-md">
                     2da a 7ma
-                  </span>
-                  <span className="text-xs sm:text-sm font-black text-white font-orbitron block leading-tight mt-0.5">
-                    Cuadro Masculino
                   </span>
                 </div>
               </div>
@@ -156,11 +153,8 @@ export default function Hero() {
                   <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-[#A3E229]">Máster Masc</span>
                 </div>
                 <div className="absolute bottom-2.5 left-3 right-2.5 text-left">
-                  <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-[#A3E229] block leading-tight">
+                  <span className="text-xs sm:text-sm font-black font-orbitron uppercase tracking-wider text-[#A3E229] block leading-tight drop-shadow-md">
                     +45 y +55
-                  </span>
-                  <span className="text-xs sm:text-sm font-black text-white font-orbitron block leading-tight mt-0.5">
-                    Veteranos LMSC
                   </span>
                 </div>
               </div>
@@ -178,11 +172,8 @@ export default function Hero() {
                   <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider">Femenino</span>
                 </div>
                 <div className="absolute bottom-2.5 left-3 right-2.5 text-left">
-                  <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-[#A3E229] block leading-tight">
+                  <span className="text-xs sm:text-sm font-black font-orbitron uppercase tracking-wider text-[#A3E229] block leading-tight drop-shadow-md">
                     3ra a 7ma
-                  </span>
-                  <span className="text-xs sm:text-sm font-black text-white font-orbitron block leading-tight mt-0.5">
-                    Cuadro Femenino
                   </span>
                 </div>
               </div>
@@ -200,11 +191,8 @@ export default function Hero() {
                   <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider">Máster Fem</span>
                 </div>
                 <div className="absolute bottom-2.5 left-3 right-2.5 text-left">
-                  <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-[#A3E229] block leading-tight">
+                  <span className="text-xs sm:text-sm font-black font-orbitron uppercase tracking-wider text-[#A3E229] block leading-tight drop-shadow-md">
                     Máster Femenino
-                  </span>
-                  <span className="text-xs sm:text-sm font-black text-white font-orbitron block leading-tight mt-0.5">
-                    Cuadro Especial
                   </span>
                 </div>
               </div>

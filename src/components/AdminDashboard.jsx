@@ -734,28 +734,44 @@ export default function AdminDashboard({ onLogout, currentUser }) {
 
                 <div>
                   <label className="block text-xs font-semibold text-slate-300 mb-1">
-                    Fechas Oficiales del Torneo
+                    Fechas Oficiales (Cuadro Banner)
                   </label>
                   <input
                     type="text"
                     value={landingForm.heroFechas || ''}
                     onChange={(e) => setLandingForm({ ...landingForm, heroFechas: e.target.value })}
-                    placeholder="del xx al xx de diciembre"
+                    placeholder="7 al 12 Dic"
                     className="w-full px-3 py-2.5 rounded-xl bg-navy-900 text-white border border-slate-700 text-sm"
                   />
                 </div>
 
                 <div>
                   <label className="block text-xs font-semibold text-slate-300 mb-1">
-                    Sede Oficial
+                    Sede Oficial (Cuadro Banner)
                   </label>
                   <input
                     type="text"
                     value={landingForm.heroSede || ''}
                     onChange={(e) => setLandingForm({ ...landingForm, heroSede: e.target.value })}
-                    placeholder="La Marina Sport Club, Lechería"
+                    placeholder="La Marina SC, Lechería"
                     className="w-full px-3 py-2.5 rounded-xl bg-navy-900 text-white border border-slate-700 text-sm"
                   />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    Inversión Oficial (Cuadro Banner)
+                  </label>
+                  <input
+                    type="text"
+                    value={landingForm.heroInversion || ''}
+                    onChange={(e) => setLandingForm({ ...landingForm, heroInversion: e.target.value })}
+                    placeholder="$150 / dupla"
+                    className="w-full px-3 py-2.5 rounded-xl bg-navy-900 text-white border border-slate-700 text-sm"
+                  />
+                  <span className="text-[11px] text-blue-300/70 mt-1 block">
+                    Edita el texto del tercer bloque del cuadro del banner principal (ej: $150 / dupla o $150 por pareja).
+                  </span>
                 </div>
               </div>
 

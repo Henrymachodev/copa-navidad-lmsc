@@ -52,6 +52,8 @@ export default function SponsorsSection() {
             - Si hay más de 4-5 logos: se distribuyen en filas centradas naturalmente */}
         <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-12 md:gap-14 py-2 max-w-5xl mx-auto">
           {sponsorsList.map((sponsor) => {
+            const rawLogo = sponsor.logo || '';
+            const logoSrc = rawLogo.startsWith('/') && !rawLogo.startsWith('//') ? '.' + rawLogo : rawLogo;
             const logoElement = (
               <div 
                 className={`flex items-center justify-center p-3 group transition-all duration-300 ${
@@ -60,9 +62,9 @@ export default function SponsorsSection() {
                     : 'h-20 sm:h-24 md:h-28 w-48 sm:w-56 md:w-60 max-w-[240px]'
                 }`}
               >
-                {sponsor.logo ? (
+                {logoSrc ? (
                   <img
-                    src={sponsor.logo}
+                    src={logoSrc}
                     alt={sponsor.name}
                     className="max-h-full max-w-full w-auto h-auto object-contain filter grayscale contrast-125 brightness-105 opacity-85 group-hover:grayscale-0 group-hover:brightness-110 group-hover:opacity-100 group-hover:scale-105 drop-shadow-[0_8px_25px_rgba(0,0,0,0.5)] transition-all duration-300"
                   />
