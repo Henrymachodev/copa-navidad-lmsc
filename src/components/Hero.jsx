@@ -118,88 +118,92 @@ export default function Hero() {
             {/* Halo de luz trasera en degradado */}
             <div className="absolute inset-0 bg-gradient-to-tr from-[#2a39d1]/45 via-[#A3E229]/25 to-transparent rounded-[3rem] blur-2xl transform scale-105 pointer-events-none"></div>
 
-            {/* Showcase Visual Cuádruple: 4 Cápsulas Atléticas */}
-            <div className="relative w-full max-w-lg grid grid-cols-2 gap-2.5 sm:gap-3 p-2.5 sm:p-3 rounded-[2.5rem] bg-[#0a389c]/50 border border-blue-400/30 backdrop-blur-xl shadow-2xl">
+            {/* Showcase Visual Cuádruple: 4 Cápsulas Atléticas Optimizadas */}
+            <div className="relative w-full max-w-lg grid grid-cols-2 gap-3 sm:gap-3.5 p-2.5 sm:p-3.5 rounded-[2.5rem] bg-[#0a389c]/50 border border-blue-400/30 backdrop-blur-xl shadow-2xl">
               
               {/* Foto 1: Masculino (2da a 7ma) */}
-              <div className="relative group rounded-2xl overflow-hidden border border-blue-400/40 shadow-md bg-[#071f5c] h-[175px] sm:h-[205px]">
+              <div className="relative group rounded-2xl overflow-hidden border border-blue-400/40 shadow-md bg-[#071f5c] h-[205px] sm:h-[245px] md:h-[265px]">
                 <img 
                   src="./assets/Masculino.jpg" 
                   alt="Categoría Masculino La Marina Sport Club" 
-                  className="w-full h-full object-cover object-top filter contrast-105 brightness-105 group-hover:scale-105 transition-transform duration-700"
+                  style={{ objectPosition: 'center 20%' }}
+                  className="w-full h-full object-cover filter contrast-105 brightness-105 group-hover:scale-105 transition-transform duration-700"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#071f5c] via-[#071f5c]/40 to-transparent"></div>
-                <div className="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-[#0a389c]/90 border border-blue-400/40 backdrop-blur-md">
+                <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#071f5c] via-[#071f5c]/75 to-transparent"></div>
+                <div className="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full bg-[#0a389c]/90 border border-blue-400/40 backdrop-blur-md shadow-sm">
                   <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-blue-200">Masculino</span>
                 </div>
-                <div className="absolute bottom-2 left-2.5 right-2 text-left">
+                <div className="absolute bottom-2.5 left-3 right-2.5 text-left">
                   <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-[#A3E229] block leading-tight">
                     2da a 7ma
                   </span>
-                  <span className="text-[11px] sm:text-xs font-black text-white font-orbitron block leading-tight mt-0.5">
+                  <span className="text-xs sm:text-sm font-black text-white font-orbitron block leading-tight mt-0.5">
                     Cuadro Masculino
                   </span>
                 </div>
               </div>
 
               {/* Foto 2: Máster Masculino (+45 y +55) */}
-              <div className="relative group rounded-2xl overflow-hidden border border-blue-400/40 shadow-md bg-[#071f5c] h-[175px] sm:h-[205px]">
+              <div className="relative group rounded-2xl overflow-hidden border border-blue-400/40 shadow-md bg-[#071f5c] h-[205px] sm:h-[245px] md:h-[265px]">
                 <img 
                   src="./assets/Master_masculino.jpg" 
                   alt="Categoría Máster Masculino La Marina Sport Club" 
-                  className="w-full h-full object-cover object-top filter contrast-105 brightness-105 group-hover:scale-105 transition-transform duration-700"
+                  style={{ objectPosition: 'center 46%' }}
+                  className="w-full h-full object-cover filter contrast-105 brightness-105 group-hover:scale-105 transition-transform duration-700"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#071f5c] via-[#071f5c]/40 to-transparent"></div>
-                <div className="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-[#082363]/90 border border-[#A3E229]/50 backdrop-blur-md">
+                <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#071f5c] via-[#071f5c]/75 to-transparent"></div>
+                <div className="absolute top-2.5 right-2.5 px-2.5 py-0.5 rounded-full bg-[#082363]/90 border border-[#A3E229]/50 backdrop-blur-md shadow-sm">
                   <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-[#A3E229]">Máster Masc</span>
                 </div>
-                <div className="absolute bottom-2 left-2.5 right-2 text-left">
+                <div className="absolute bottom-2.5 left-3 right-2.5 text-left">
                   <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-[#A3E229] block leading-tight">
                     +45 y +55
                   </span>
-                  <span className="text-[11px] sm:text-xs font-black text-white font-orbitron block leading-tight mt-0.5">
+                  <span className="text-xs sm:text-sm font-black text-white font-orbitron block leading-tight mt-0.5">
                     Veteranos LMSC
                   </span>
                 </div>
               </div>
 
               {/* Foto 3: Femenino (3ra a 7ma) */}
-              <div className="relative group rounded-2xl overflow-hidden border border-[#A3E229]/60 shadow-md bg-[#071f5c] h-[175px] sm:h-[205px]">
+              <div className="relative group rounded-2xl overflow-hidden border border-[#A3E229]/60 shadow-md bg-[#071f5c] h-[205px] sm:h-[245px] md:h-[265px]">
                 <img 
                   src="./assets/Femenino.jpg" 
                   alt="Categoría Femenino La Marina Sport Club" 
-                  className="w-full h-full object-cover object-center filter contrast-105 brightness-105 group-hover:scale-105 transition-transform duration-700"
+                  style={{ objectPosition: 'center 32%' }}
+                  className="w-full h-full object-cover filter contrast-105 brightness-105 group-hover:scale-105 transition-transform duration-700"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#071f5c] via-[#071f5c]/40 to-transparent"></div>
-                <div className="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-[#A3E229] text-[#150D8B] font-bold">
+                <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#071f5c] via-[#071f5c]/75 to-transparent"></div>
+                <div className="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full bg-[#A3E229] text-[#150D8B] font-bold shadow-sm">
                   <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider">Femenino</span>
                 </div>
-                <div className="absolute bottom-2 left-2.5 right-2 text-left">
+                <div className="absolute bottom-2.5 left-3 right-2.5 text-left">
                   <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-[#A3E229] block leading-tight">
                     3ra a 7ma
                   </span>
-                  <span className="text-[11px] sm:text-xs font-black text-white font-orbitron block leading-tight mt-0.5">
+                  <span className="text-xs sm:text-sm font-black text-white font-orbitron block leading-tight mt-0.5">
                     Cuadro Femenino
                   </span>
                 </div>
               </div>
 
               {/* Foto 4: Máster Femenino */}
-              <div className="relative group rounded-2xl overflow-hidden border border-[#A3E229]/60 shadow-md bg-[#071f5c] h-[175px] sm:h-[205px]">
+              <div className="relative group rounded-2xl overflow-hidden border border-[#A3E229]/60 shadow-md bg-[#071f5c] h-[205px] sm:h-[245px] md:h-[265px]">
                 <img 
                   src="./assets/Master_femenino.jpg" 
                   alt="Categoría Máster Femenino La Marina Sport Club" 
-                  className="w-full h-full object-cover object-center filter contrast-105 brightness-105 group-hover:scale-105 transition-transform duration-700"
+                  style={{ objectPosition: 'center 20%' }}
+                  className="w-full h-full object-cover filter contrast-105 brightness-105 group-hover:scale-105 transition-transform duration-700"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#071f5c] via-[#071f5c]/40 to-transparent"></div>
-                <div className="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-[#A3E229] text-[#150D8B] font-bold">
+                <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#071f5c] via-[#071f5c]/75 to-transparent"></div>
+                <div className="absolute top-2.5 right-2.5 px-2.5 py-0.5 rounded-full bg-[#A3E229] text-[#150D8B] font-bold shadow-sm">
                   <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider">Máster Fem</span>
                 </div>
-                <div className="absolute bottom-2 left-2.5 right-2 text-left">
+                <div className="absolute bottom-2.5 left-3 right-2.5 text-left">
                   <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-[#A3E229] block leading-tight">
                     Máster Femenino
                   </span>
-                  <span className="text-[11px] sm:text-xs font-black text-white font-orbitron block leading-tight mt-0.5">
+                  <span className="text-xs sm:text-sm font-black text-white font-orbitron block leading-tight mt-0.5">
                     Cuadro Especial
                   </span>
                 </div>

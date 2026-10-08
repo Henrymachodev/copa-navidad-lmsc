@@ -23,7 +23,7 @@ export default function Header({ currentView, setCurrentView }) {
               <img 
                 src="./assets/IMG_2966.PNG" 
                 alt="Logo La Marina Sport Club" 
-                className="h-32 sm:h-44 md:h-52 lg:h-60 w-auto object-contain filter drop-shadow-[0_0_40px_rgba(163,226,41,0.45)] transition-all duration-300 group-hover:drop-shadow-[0_0_60px_rgba(163,226,41,0.7)]"
+                className="h-20 sm:h-28 md:h-34 lg:h-40 w-auto object-contain filter drop-shadow-[0_0_35px_rgba(163,226,41,0.4)] transition-all duration-300 group-hover:drop-shadow-[0_0_50px_rgba(163,226,41,0.6)]"
               />
             </div>
             
@@ -51,7 +51,7 @@ export default function Header({ currentView, setCurrentView }) {
               <img 
                 src="./assets/LOGO-JUAN-XXIII-WHT.png" 
                 alt="Colegio Juan XXIII - Patrocinador Principal" 
-                className="h-14 sm:h-18 md:h-22 lg:h-26 w-auto object-contain filter drop-shadow-[0_8px_25px_rgba(0,0,0,0.5)]"
+                className="h-20 sm:h-24 md:h-30 lg:h-36 w-auto object-contain filter drop-shadow-[0_10px_30px_rgba(0,0,0,0.6)]"
               />
             </a>
           </div>

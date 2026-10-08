@@ -182,25 +182,7 @@ export const INITIAL_SPONSORS = [
     logo: '/assets/LOGO-JUAN-XXIII-WHT.png',
     link: 'https://www.instagram.com',
     isHero: true,
-    logoHeight: 85
-  },
-  {
-    id: 'sp_2',
-    name: 'La Marina Sport Club',
-    tier: 'Sede Oficial',
-    logo: '/assets/IMG_2966.PNG',
-    link: 'https://www.instagram.com',
-    isHero: false,
-    logoHeight: 85
-  },
-  {
-    id: 'sp_3',
-    name: 'Federación Venezolana de Pádel (FVP)',
-    tier: 'Torneo Estadal 500 pts',
-    logo: '/assets/IMG_2968.PNG',
-    link: 'https://app.fvp.com.ve/2danacional/',
-    isHero: false,
-    logoHeight: 85
+    logoHeight: 110
   }
 ];
 
@@ -563,7 +545,22 @@ export async function getSponsors() {
     localStorage.setItem(LOCAL_STORAGE_SPONSORS_KEY, JSON.stringify(INITIAL_SPONSORS));
     return INITIAL_SPONSORS;
   }
-  return JSON.parse(local);
+  try {
+    const parsed = JSON.parse(local);
+    // Filtramos sponsors de semillas anteriores (ej. sp_2, sp_3 o logos viejos)
+    const cleanList = parsed.filter(s => 
+      !s.logo?.includes('sponsor_el_parador') && 
+      s.id !== 'sp_2' && 
+      s.id !== 'sp_3'
+    );
+    if (cleanList.length === 0) {
+      localStorage.setItem(LOCAL_STORAGE_SPONSORS_KEY, JSON.stringify(INITIAL_SPONSORS));
+      return INITIAL_SPONSORS;
+    }
+    return cleanList;
+  } catch (err) {
+    return INITIAL_SPONSORS;
+  }
 }
 
 /**

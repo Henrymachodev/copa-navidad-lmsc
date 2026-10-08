@@ -8,12 +8,12 @@ export default function Footer() {
     <footer className="bg-[#082b7c] border-t border-blue-400/25 py-4 sm:py-5 px-4 sm:px-6 lg:px-8 text-center text-slate-300 text-xs">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
         
-        {/* Identidad con Logo Oficial de La Marina Agrandado */}
+        {/* Identidad con Logo Oficial de La Marina */}
         <div className="flex items-center gap-3">
           <img 
             src="./assets/IMG_2966.PNG" 
             alt="La Marina Sport Club" 
-            className="h-20 sm:h-24 md:h-28 w-auto object-contain drop-shadow-[0_0_30px_rgba(163,226,41,0.5)] transition-transform hover:scale-105"
+            className="h-14 sm:h-16 md:h-20 w-auto object-contain drop-shadow-[0_0_20px_rgba(163,226,41,0.4)] transition-transform hover:scale-105"
           />
         </div>
 
