@@ -23,7 +23,7 @@ export default function Header({ currentView, setCurrentView }) {
               <img 
                 src="./assets/IMG_2966.PNG" 
                 alt="Logo La Marina Sport Club" 
-                className="h-24 sm:h-32 md:h-38 lg:h-44 w-auto object-contain filter drop-shadow-[0_0_35px_rgba(163,226,41,0.35)] transition-all duration-300 group-hover:drop-shadow-[0_0_50px_rgba(163,226,41,0.55)]"
+                className="h-32 sm:h-44 md:h-52 lg:h-60 w-auto object-contain filter drop-shadow-[0_0_40px_rgba(163,226,41,0.45)] transition-all duration-300 group-hover:drop-shadow-[0_0_60px_rgba(163,226,41,0.7)]"
               />
             </div>
             
@@ -35,9 +35,9 @@ export default function Header({ currentView, setCurrentView }) {
             </div>
           </div>
 
-          {/* ESPACIO PARA AUSPICIADOR PRINCIPAL: "PRESENTADO POR" + LOGO 100% FLOTANTE SIN CONTENEDORES */}
-          <div className="mt-3 flex flex-col items-center justify-center">
-            <span className="text-[10px] sm:text-xs font-black uppercase tracking-[0.35em] text-blue-200/80 mb-1.5">
+          {/* ESPACIO PARA AUSPICIADOR PRINCIPAL: "PRESENTADO POR" + LOGO JUAN XXIII EN GRANDE 100% FLOTANTE SIN CONTENEDORES */}
+          <div className="mt-3 sm:mt-4 flex flex-col items-center justify-center">
+            <span className="text-[11px] sm:text-xs font-black uppercase tracking-[0.35em] text-blue-200/90 mb-2 font-orbitron">
               Presentado por
             </span>
             {/* Logo completamente libre, limpio y flotante directamente sobre el fondo */}
@@ -46,12 +46,12 @@ export default function Header({ currentView, setCurrentView }) {
               target="_blank"
               rel="noopener noreferrer"
               className="inline-block transition-transform duration-300 hover:scale-105"
-              title="El Parador del Puerto"
+              title="Colegio Juan XXIII"
             >
               <img 
-                src="./assets/sponsor_el_parador.png" 
-                alt="El Parador del Puerto - Patrocinador Principal" 
-                className="h-10 sm:h-12 md:h-14 w-auto object-contain filter drop-shadow-[0_6px_20px_rgba(0,0,0,0.45)]"
+                src="./assets/LOGO-JUAN-XXIII-WHT.png" 
+                alt="Colegio Juan XXIII - Patrocinador Principal" 
+                className="h-14 sm:h-18 md:h-22 lg:h-26 w-auto object-contain filter drop-shadow-[0_8px_25px_rgba(0,0,0,0.5)]"
               />
             </a>
           </div>
@@ -98,25 +98,11 @@ export default function Header({ currentView, setCurrentView }) {
             Inscríbete Aquí
           </a>
           <a 
-            href="#jugadores-confirmados" 
-            onClick={() => { if (currentView !== 'landing') setCurrentView('landing'); }}
-            className="text-sm font-semibold text-slate-300 hover:text-[#A3E229] transition-colors"
-          >
-            Parejas Confirmadas
-          </a>
-          <a 
-            href="#detalles" 
-            onClick={() => { if (currentView !== 'landing') setCurrentView('landing'); }}
-            className="text-sm font-semibold text-slate-300 hover:text-[#A3E229] transition-colors"
-          >
-            Categorías & Premios
-          </a>
-          <a 
             href="#patrocinadores" 
             onClick={() => { if (currentView !== 'landing') setCurrentView('landing'); }}
             className="text-sm font-semibold text-slate-300 hover:text-[#A3E229] transition-colors"
           >
-            Patrocinadores
+            Patrocinadores & Aliados
           </a>
         </nav>
 
@@ -144,26 +130,6 @@ export default function Header({ currentView, setCurrentView }) {
               Inscríbete Aquí
             </a>
             <a
-              href="#jugadores-confirmados"
-              onClick={() => {
-                if (currentView !== 'landing') setCurrentView('landing');
-                setMobileMenuOpen(false);
-              }}
-              className="block text-center py-2.5 text-sm font-semibold text-slate-200 hover:bg-navy-800 rounded-xl"
-            >
-              Parejas Confirmadas
-            </a>
-            <a
-              href="#detalles"
-              onClick={() => {
-                if (currentView !== 'landing') setCurrentView('landing');
-                setMobileMenuOpen(false);
-              }}
-              className="block text-center py-2.5 text-sm font-semibold text-slate-200 hover:bg-navy-800 rounded-xl"
-            >
-              Categorías & Premios
-            </a>
-            <a
               href="#patrocinadores"
               onClick={() => {
                 if (currentView !== 'landing') setCurrentView('landing');
@@ -171,7 +137,7 @@ export default function Header({ currentView, setCurrentView }) {
               }}
               className="block text-center py-2.5 text-sm font-semibold text-slate-200 hover:bg-navy-800 rounded-xl"
             >
-              Patrocinadores
+              Patrocinadores & Aliados
             </a>
           </div>
         )}

@@ -13,14 +13,14 @@ export default function Footer() {
           <img 
             src="./assets/IMG_2966.PNG" 
             alt="La Marina Sport Club" 
-            className="h-14 sm:h-16 md:h-20 w-auto object-contain drop-shadow-[0_0_25px_rgba(163,226,41,0.4)] transition-transform hover:scale-105"
+            className="h-20 sm:h-24 md:h-28 w-auto object-contain drop-shadow-[0_0_30px_rgba(163,226,41,0.5)] transition-transform hover:scale-105"
           />
         </div>
 
         {/* Copyright, Sede y Aval FVP */}
         <div className="flex flex-col items-center md:items-center text-center text-[11px] sm:text-xs text-blue-100/90 leading-tight">
           <span className="font-semibold text-white">© 2026 Copa Navidad LMSC • Torneo Estadal 500 pts para el ranking FVP</span>
-          <span className="text-blue-200/70 text-[10px] mt-0.5">Puerto La Cruz, estado Anzoátegui</span>
+          <span className="text-blue-200/80 text-[11px] mt-0.5 font-medium">La Marina Sport Club, Lechería</span>
         </div>
 
         {/* Crédito: Desarrollado por Henry Macho (WhatsApp) */}

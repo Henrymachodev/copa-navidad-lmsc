@@ -44,6 +44,10 @@ export const CATEGORIAS = [
   { id: '6ta-masc', label: '6ta Masculino', group: 'Masculino' },
   { id: '7ma-masc', label: '7ma Masculino', group: 'Masculino' },
 
+  // Máster Masculino: +45 y +55
+  { id: 'master-45-masc', label: 'Master +45 Masculino', group: 'Máster Masculino' },
+  { id: 'master-55-masc', label: 'Master +55 Masculino', group: 'Máster Masculino' },
+
   // Femenino: 3ra a 7ma
   { id: '3ra-fem', label: '3ra Femenino', group: 'Femenino' },
   { id: '4ta-fem', label: '4ta Femenino', group: 'Femenino' },
@@ -51,8 +55,8 @@ export const CATEGORIAS = [
   { id: '6ta-fem', label: '6ta Femenino', group: 'Femenino' },
   { id: '7ma-fem', label: '7ma Femenino', group: 'Femenino' },
 
-  // Master +45
-  { id: 'master-45', label: 'Master +45', group: 'Especial' },
+  // Máster Femenino
+  { id: 'master-fem', label: 'Master Femenino', group: 'Máster Femenino' },
 ];
 
 export const TALLAS_FRANELA = ['S', 'M', 'L', 'XL', 'XXL'];
@@ -749,8 +753,8 @@ export default function RegistrationForm({ onSuccess }) {
                   <Trophy className="w-5 h-5 text-[#150D8B]" />
                   Categoría Oficial de la Pareja <span className="text-rose-500">*</span>
                 </label>
-                <span className="text-xs font-bold text-slate-500">
-                  Límite máximo: <strong className="text-slate-800">{maxAllowedForCat} duplas</strong>
+                <span className="text-xs font-bold text-[#150D8B] bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
+                  Cupos Limitados
                 </span>
               </div>
 
@@ -766,37 +770,36 @@ export default function RegistrationForm({ onSuccess }) {
               >
                 <option value="">-- Selecciona la categoría de competencia --</option>
                 
-                <optgroup label="Categorías Masculino (2da a 7ma)" className="bg-navy-900 text-gold-400 font-semibold">
-                  {CATEGORIAS.filter(c => c.group === 'Masculino').map(cat => {
-                    const count = existingRegistrations.filter(r => r.categoria === cat.label && r.status !== 'retirado').length;
-                    return (
-                      <option key={cat.id} value={cat.label} className="text-white font-normal">
-                        {cat.label} ({count}/{maxAllowedForCat} inscritos)
-                      </option>
-                    );
-                  })}
+                <optgroup label="Masculino (2da a 7ma)" className="bg-[#0a389c] text-white font-semibold">
+                  {CATEGORIAS.filter(c => c.group === 'Masculino').map(cat => (
+                    <option key={cat.id} value={cat.label} className="text-white font-normal bg-[#071f5c]">
+                      {cat.label}
+                    </option>
+                  ))}
                 </optgroup>
 
-                <optgroup label="Categorías Femenino (3ra a 7ma)" className="bg-navy-900 text-gold-400 font-semibold">
-                  {CATEGORIAS.filter(c => c.group === 'Femenino').map(cat => {
-                    const count = existingRegistrations.filter(r => r.categoria === cat.label && r.status !== 'retirado').length;
-                    return (
-                      <option key={cat.id} value={cat.label} className="text-white font-normal">
-                        {cat.label} ({count}/{maxAllowedForCat} inscritos)
-                      </option>
-                    );
-                  })}
+                <optgroup label="Máster Masculino (+45 y +55)" className="bg-[#0a389c] text-[#A3E229] font-semibold">
+                  {CATEGORIAS.filter(c => c.group === 'Máster Masculino').map(cat => (
+                    <option key={cat.id} value={cat.label} className="text-white font-normal bg-[#071f5c]">
+                      {cat.label}
+                    </option>
+                  ))}
                 </optgroup>
 
-                <optgroup label="Categorías Especiales" className="bg-navy-900 text-gold-400 font-semibold">
-                  {CATEGORIAS.filter(c => c.group === 'Especial').map(cat => {
-                    const count = existingRegistrations.filter(r => r.categoria === cat.label && r.status !== 'retirado').length;
-                    return (
-                      <option key={cat.id} value={cat.label} className="text-white font-normal">
-                        {cat.label} ({count}/{maxAllowedForCat} inscritos)
-                      </option>
-                    );
-                  })}
+                <optgroup label="Femenino (3ra a 7ma)" className="bg-[#0a389c] text-white font-semibold">
+                  {CATEGORIAS.filter(c => c.group === 'Femenino').map(cat => (
+                    <option key={cat.id} value={cat.label} className="text-white font-normal bg-[#071f5c]">
+                      {cat.label}
+                    </option>
+                  ))}
+                </optgroup>
+
+                <optgroup label="Máster Femenino" className="bg-[#0a389c] text-[#A3E229] font-semibold">
+                  {CATEGORIAS.filter(c => c.group === 'Máster Femenino').map(cat => (
+                    <option key={cat.id} value={cat.label} className="text-white font-normal bg-[#071f5c]">
+                      {cat.label}
+                    </option>
+                  ))}
                 </optgroup>
               </select>
 
@@ -812,7 +815,7 @@ export default function RegistrationForm({ onSuccess }) {
                 <div className="mt-3 p-3 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-200 text-xs flex items-center gap-2">
                   <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
                   <span>
-                    Límite oficial completado ({selectedCategoryCount}/{maxAllowedForCat}). Al inscribirte tu pareja quedará registrada en <strong>Lista de Espera</strong>.
+                    Cupos regulares completados para esta categoría. Al inscribirte tu pareja quedará registrada en <strong>Lista de Espera</strong> oficial.
                   </span>
                 </div>
               )}

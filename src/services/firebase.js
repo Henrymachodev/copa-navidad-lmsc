@@ -106,19 +106,19 @@ export const DEFAULT_ADMIN_USERS = [
 
 // Configuración por defecto de la Landing y Textos
 export const DEFAULT_LANDING_CONFIG = {
-  heroCintillo: 'Cupos Limitados (24 parejas por categoría)',
+  heroCintillo: 'Cupos Limitados',
   heroTitulo: '¡Inscripciones abiertas!',
-  heroSubtitulo: 'Cierra el año compitiendo en el evento de pádel más importante del oriente del país. Válido por 1000 puntos para el ranking oficial de la Federación Venezolana de Pádel (FVP). Reúne a tu dupla y asegura tu cupo en la grilla oficial.',
-  heroFechas: 'del xx al xx de diciembre',
-  heroSede: 'Canchas de pádel profesionales en La Marina Sport Club (LMSC)',
+  heroSubtitulo: 'Cierra el año compitiendo en el evento de pádel más importante del oriente del país. Válido por 500 puntos para el ranking oficial de la Federación Venezolana de Pádel (FVP). Reúne a tu dupla y asegura tu cupo en la grilla oficial.',
+  heroFechas: 'del 7 al 12 de diciembre',
+  heroSede: 'La Marina Sport Club, Lechería',
   parejasSubtitulo: 'Listado oficial de duplas con inscripción y pago verificado por el comité organizador',
-  cuposLimitados: '24 parejas por categoría',
+  cuposLimitados: 'Cupos Limitados',
   montoInscripcion: '$150',
   
   // Detalles bancarios y de pago
   pagoMovilDetalle: 'Banco: Banesco (0134)\nTeléfono: 0414-8889900\nRIF: J-50000000-0\nTitular: La Marina Sport Club C.A.\nTasa oficial BCV del día',
   zelleDetalle: 'Correo Zelle: pagos@copanavidadlmsc.com\nTitular: LMSC Padel Operations LLC',
-  efectivoDetalle: 'Recepción y Administración de La Marina Sport Club (Puerto La Cruz, Anzoátegui).\nPago directo en efectivo (Divisas USD o Bolívares) en taquilla oficial con el comité organizador.\nHorario: Lunes a Domingo de 8:00 AM a 9:00 PM.',
+  efectivoDetalle: 'Recepción y Administración de La Marina Sport Club (Lechería, Anzoátegui).\nPago directo en efectivo (Divisas USD o Bolívares) en taquilla oficial con el comité organizador.\nHorario: Lunes a Domingo de 8:00 AM a 9:00 PM.',
   cuentaInternacionalDetalle: 'Banco: Banesco Panamá\nCuenta Corriente USD: 1029384756\nBeneficiario: LMSC Corp Panamá\nSWIFT / BIC: BAPAPAXX\nAcepta transferencias ACH y Wire internacionales.',
   banescoPanamaDetalle: 'Banco: Banesco Panamá\nCuenta Corriente USD: 1029384756\nBeneficiario: LMSC Corp Panamá\nSWIFT: BAPAPAXX',
   binancePayDetalle: 'Binance Pay ID: 849201948\nAlias: @CopaNavidadLMSC\nMoneda: USDT (Red BEP20 o Pay)',
@@ -128,7 +128,7 @@ export const DEFAULT_LANDING_CONFIG = {
   reglamentoPdfData: '',
   reglamentoNombre: 'Reglamento_Oficial_Copa_Navidad_2026.pdf',
   reglamentoTexto: `REGLAMENTO OFICIAL DE COMPETENCIA - COPA NAVIDAD LMSC 2026
-LA MARINA SPORT CLUB • TORNEO OFICIAL FVP1 (1000 PUNTOS RANKING NACIONAL)
+LA MARINA SPORT CLUB • TORNEO ESTADAL 500 PTS (RANKING FVP)
 
 1. MARCO TÉCNICO Y AVAL FEDERATIVO
 El torneo Copa Navidad LMSC 2026 se regirá bajo las reglas oficiales de juego de la Federación Internacional de Pádel (FIP), las disposiciones del circuito oficial de la Federación Venezolana de Pádel (FVP) y la reglamentación disciplinaria de La Marina Sport Club.
@@ -177,12 +177,12 @@ La inscripción en la Copa Navidad LMSC 2026 implica el conocimiento íntegro, e
 export const INITIAL_SPONSORS = [
   {
     id: 'sp_1',
-    name: 'El Parador del Puerto',
+    name: 'Colegio Juan XXIII',
     tier: 'Auspiciador Principal',
-    logo: '/assets/sponsor_el_parador.png',
+    logo: '/assets/LOGO-JUAN-XXIII-WHT.png',
     link: 'https://www.instagram.com',
     isHero: true,
-    logoHeight: 65
+    logoHeight: 85
   },
   {
     id: 'sp_2',
@@ -191,16 +191,16 @@ export const INITIAL_SPONSORS = [
     logo: '/assets/IMG_2966.PNG',
     link: 'https://www.instagram.com',
     isHero: false,
-    logoHeight: 75
+    logoHeight: 85
   },
   {
     id: 'sp_3',
     name: 'Federación Venezolana de Pádel (FVP)',
-    tier: 'Circuito Oficial FVP1',
+    tier: 'Torneo Estadal 500 pts',
     logo: '/assets/IMG_2968.PNG',
     link: 'https://app.fvp.com.ve/2danacional/',
     isHero: false,
-    logoHeight: 65
+    logoHeight: 85
   }
 ];
 

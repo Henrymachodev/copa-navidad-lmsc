@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import RegistrationForm from './components/RegistrationForm';
-import ConfirmedPlayersList from './components/ConfirmedPlayersList';
 import SponsorsSection from './components/SponsorsSection';
 import ConfirmationModal from './components/ConfirmationModal';
 import AdminDashboard from './components/AdminDashboard';
@@ -105,7 +104,6 @@ export default function App() {
           <>
             <Hero />
             <RegistrationForm onSuccess={(data) => setSuccessData(data)} />
-            <ConfirmedPlayersList />
             <SponsorsSection />
           </>
         ) : (

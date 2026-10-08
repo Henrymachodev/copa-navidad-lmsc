@@ -232,7 +232,7 @@ export default function AdminDashboard({ onLogout, currentUser }) {
       setRegistrations(prev => prev.map(r => r.id === id ? { ...r, status: newStatus } : r));
       setFeedback({ 
         type: 'success', 
-        message: `Estado actualizado a "${newStatus.toUpperCase()}". ${newStatus === 'confirmado' ? '¡Ahora es visible en Parejas Confirmadas!' : ''}` 
+        message: `Estado de la pareja actualizado a "${newStatus.toUpperCase()}".` 
       });
       setTimeout(() => setFeedback(null), 3500);
     } catch (err) {
@@ -548,19 +548,19 @@ export default function AdminDashboard({ onLogout, currentUser }) {
   };
 
   return (
-    <div className="min-h-screen bg-navy-900 text-slate-100 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-b from-[#0a389c] via-[#082b7c] to-[#071f5c] text-slate-100 py-8 px-4 sm:px-6 lg:px-8">
       
       {/* BARRA SUPERIOR ADMIN */}
-      <div className="max-w-7xl mx-auto mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-800">
+      <div className="max-w-7xl mx-auto mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-blue-400/25">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-xl bg-gold-500/20 text-gold-400 border border-gold-500/40 flex items-center justify-center font-bold">
+          <div className="w-12 h-12 rounded-2xl bg-[#A3E229]/20 text-[#A3E229] border border-[#A3E229]/40 flex items-center justify-center font-bold shadow-[0_0_20px_rgba(163,226,41,0.25)]">
             <Trophy className="w-6 h-6" />
           </div>
           <div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-white">
+            <h1 className="text-2xl sm:text-3xl font-orbitron font-black text-white tracking-wide uppercase">
               Panel de Administración Oficial
             </h1>
-            <p className="text-xs sm:text-sm text-slate-400">
+            <p className="text-xs sm:text-sm text-blue-200/80">
               Copa Navidad LMSC 2026 • Control de Inscripciones, Landing, Cupos y Patrocinadores
             </p>
           </div>
@@ -570,10 +570,10 @@ export default function AdminDashboard({ onLogout, currentUser }) {
           {currentUser && (
             <div className="hidden sm:flex flex-col items-end text-right pr-2">
               <span className="text-xs font-bold text-white flex items-center gap-1.5">
-                <UserCheck className="w-3.5 h-3.5 text-gold-400" />
+                <UserCheck className="w-3.5 h-3.5 text-[#A3E229]" />
                 {currentUser.nombre || 'Administrador'}
               </span>
-              <span className="text-[10px] text-gold-400 font-semibold uppercase tracking-wider">
+              <span className="text-[10px] text-[#A3E229] font-semibold uppercase tracking-wider font-orbitron">
                 {currentUser.rol || 'Super Admin'}
               </span>
             </div>
@@ -582,15 +582,15 @@ export default function AdminDashboard({ onLogout, currentUser }) {
           <button
             onClick={fetchData}
             disabled={loading}
-            className="px-3.5 py-2 rounded-xl bg-navy-800 hover:bg-navy-700 text-slate-200 border border-slate-700 text-xs font-semibold flex items-center gap-2 transition-colors"
+            className="px-3.5 py-2 rounded-xl bg-[#082363]/80 hover:bg-[#0b3b95] text-blue-100 border border-blue-400/30 text-xs font-semibold flex items-center gap-2 transition-all shadow-md"
           >
-            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-[#A3E229]' : 'text-[#A3E229]'}`} />
             <span>Actualizar</span>
           </button>
 
           <button
             onClick={onLogout}
-            className="px-3.5 py-2 rounded-xl bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/30 text-xs font-semibold flex items-center gap-2 transition-colors"
+            className="px-3.5 py-2 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 text-xs font-semibold flex items-center gap-2 transition-colors"
           >
             <LogOut className="w-4 h-4" />
             <span>Salir</span>
@@ -602,7 +602,7 @@ export default function AdminDashboard({ onLogout, currentUser }) {
       {feedback && (
         <div className={`max-w-7xl mx-auto mb-6 p-4 rounded-xl text-sm flex items-center gap-2 border ${
           feedback.type === 'error' 
-            ? 'bg-red-500/20 text-red-200 border-red-500/40' 
+            ? 'bg-rose-500/20 text-rose-200 border-rose-500/40' 
             : 'bg-emerald-500/20 text-emerald-200 border-emerald-500/40'
         }`}>
           {feedback.type === 'error' ? <AlertCircle className="w-5 h-5 shrink-0" /> : <CheckCircle className="w-5 h-5 shrink-0" />}
@@ -610,14 +610,14 @@ export default function AdminDashboard({ onLogout, currentUser }) {
         </div>
       )}
 
-      {/* PESTAÑAS DE ADMINISTRACIÓN */}
-      <div className="max-w-7xl mx-auto mb-6 flex flex-wrap items-center gap-2 border-b border-slate-800 pb-3">
+      {/* PESTAÑAS DE ADMINISTRACIÓN ESTILO ATLÉTICO DE ALTO RENDIMIENTO */}
+      <div className="max-w-7xl mx-auto mb-6 flex flex-wrap items-center gap-2.5 border-b border-blue-400/25 pb-3">
         <button
           onClick={() => setActiveTab('inscripciones')}
-          className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all ${
+          className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all ${
             activeTab === 'inscripciones'
-              ? 'bg-gold-500 text-navy-900 shadow-glow-gold'
-              : 'bg-navy-800 text-slate-300 hover:text-white border border-slate-700/60'
+              ? 'bg-[#A3E229] text-[#150D8B] font-orbitron font-black shadow-[0_0_20px_rgba(163,226,41,0.5)]'
+              : 'bg-[#082363]/80 text-blue-200 hover:text-white border border-blue-400/30 hover:bg-[#0b3b95]'
           }`}
         >
           <Users className="w-4 h-4" />
@@ -626,10 +626,10 @@ export default function AdminDashboard({ onLogout, currentUser }) {
 
         <button
           onClick={() => setActiveTab('landing')}
-          className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all ${
+          className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all ${
             activeTab === 'landing'
-              ? 'bg-gold-500 text-navy-900 shadow-glow-gold'
-              : 'bg-navy-800 text-slate-300 hover:text-white border border-slate-700/60'
+              ? 'bg-[#A3E229] text-[#150D8B] font-orbitron font-black shadow-[0_0_20px_rgba(163,226,41,0.5)]'
+              : 'bg-[#082363]/80 text-blue-200 hover:text-white border border-blue-400/30 hover:bg-[#0b3b95]'
           }`}
         >
           <Sliders className="w-4 h-4" />
@@ -638,10 +638,10 @@ export default function AdminDashboard({ onLogout, currentUser }) {
 
         <button
           onClick={() => setActiveTab('cupos')}
-          className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all ${
+          className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all ${
             activeTab === 'cupos'
-              ? 'bg-gold-500 text-navy-900 shadow-glow-gold'
-              : 'bg-navy-800 text-slate-300 hover:text-white border border-slate-700/60'
+              ? 'bg-[#A3E229] text-[#150D8B] font-orbitron font-black shadow-[0_0_20px_rgba(163,226,41,0.5)]'
+              : 'bg-[#082363]/80 text-blue-200 hover:text-white border border-blue-400/30 hover:bg-[#0b3b95]'
           }`}
         >
           <Settings className="w-4 h-4" />
@@ -650,10 +650,10 @@ export default function AdminDashboard({ onLogout, currentUser }) {
 
         <button
           onClick={() => setActiveTab('patrocinadores')}
-          className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all ${
+          className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all ${
             activeTab === 'patrocinadores'
-              ? 'bg-gold-500 text-navy-900 shadow-glow-gold'
-              : 'bg-navy-800 text-slate-300 hover:text-white border border-slate-700/60'
+              ? 'bg-[#A3E229] text-[#150D8B] font-orbitron font-black shadow-[0_0_20px_rgba(163,226,41,0.5)]'
+              : 'bg-[#082363]/80 text-blue-200 hover:text-white border border-blue-400/30 hover:bg-[#0b3b95]'
           }`}
         >
           <Handshake className="w-4 h-4" />
@@ -662,10 +662,10 @@ export default function AdminDashboard({ onLogout, currentUser }) {
 
         <button
           onClick={() => setActiveTab('roles')}
-          className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all ${
+          className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all ${
             activeTab === 'roles'
-              ? 'bg-gold-500 text-navy-900 shadow-glow-gold'
-              : 'bg-navy-800 text-slate-300 hover:text-white border border-slate-700/60'
+              ? 'bg-[#A3E229] text-[#150D8B] font-orbitron font-black shadow-[0_0_20px_rgba(163,226,41,0.5)]'
+              : 'bg-[#082363]/80 text-blue-200 hover:text-white border border-blue-400/30 hover:bg-[#0b3b95]'
           }`}
         >
           <UserCheck className="w-4 h-4" />
@@ -714,7 +714,7 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                     type="text"
                     value={landingForm.heroCintillo || ''}
                     onChange={(e) => setLandingForm({ ...landingForm, heroCintillo: e.target.value })}
-                    placeholder="Cupos Limitados (24 parejas por categoría)"
+                    placeholder="Cupos Limitados"
                     className="w-full px-3 py-2.5 rounded-xl bg-navy-900 text-white border border-slate-700 text-sm"
                   />
                 </div>
@@ -947,9 +947,9 @@ export default function AdminDashboard({ onLogout, currentUser }) {
               <button
                 type="submit"
                 disabled={savingLanding}
-                className="px-8 py-3 rounded-2xl bg-gold-500 hover:bg-gold-400 text-navy-900 font-bold text-sm flex items-center gap-2 shadow-glow-gold transition-all"
+                className="px-8 py-3.5 rounded-2xl bg-[#A3E229] hover:bg-[#b6f23d] text-[#150D8B] font-orbitron font-black text-sm flex items-center gap-2 shadow-[0_0_25px_rgba(163,226,41,0.45)] transition-all uppercase tracking-wider"
               >
-                <Save className="w-5 h-5" />
+                <Save className="w-5 h-5 text-[#150D8B]" />
                 <span>{savingLanding ? 'Guardando en Firestore...' : 'Guardar y Publicar Cambios'}</span>
               </button>
             </div>
@@ -1078,9 +1078,9 @@ export default function AdminDashboard({ onLogout, currentUser }) {
 
               <button
                 onClick={() => setSponsorModal({ id: '', name: '', tier: 'Auspiciador Oficial', logo: '', link: 'https://' })}
-                className="px-4 py-2.5 rounded-xl bg-gold-500 hover:bg-gold-400 text-navy-900 text-xs font-bold flex items-center gap-2 shadow-glow-gold"
+                className="px-4 py-2.5 rounded-xl bg-[#A3E229] hover:bg-[#b6f23d] text-[#150D8B] text-xs font-orbitron font-black flex items-center gap-2 shadow-[0_0_20px_rgba(163,226,41,0.4)] transition-all uppercase"
               >
-                <Plus className="w-4 h-4" />
+                <Plus className="w-4 h-4 text-[#150D8B]" />
                 <span>Agregar Patrocinador</span>
               </button>
             </div>
@@ -1090,7 +1090,7 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                 <div key={sp.id} className="bg-navy-800/80 p-5 rounded-2xl border border-slate-700/80 flex flex-col justify-between">
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-gold-500/20 text-gold-300">
+                      <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#A3E229]/20 text-[#A3E229] border border-[#A3E229]/30">
                         {sp.tier}
                       </span>
                       {sp.link && (
@@ -1180,9 +1180,9 @@ export default function AdminDashboard({ onLogout, currentUser }) {
 
               <button
                 onClick={() => setUserModal({ id: '', nombre: '', username: '', email: '', rol: 'Comité Organizador', pin: '', activo: true })}
-                className="px-4 py-2.5 rounded-xl bg-gold-500 hover:bg-gold-400 text-navy-900 text-xs font-bold flex items-center gap-2 shadow-glow-gold transition-all"
+                className="px-4 py-2.5 rounded-xl bg-[#A3E229] hover:bg-[#b6f23d] text-[#150D8B] text-xs font-orbitron font-black flex items-center gap-2 shadow-[0_0_20px_rgba(163,226,41,0.4)] transition-all uppercase"
               >
-                <Plus className="w-4 h-4" />
+                <Plus className="w-4 h-4 text-[#150D8B]" />
                 <span>Nuevo Usuario Admin</span>
               </button>
             </div>
@@ -1973,7 +1973,7 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                 <label className="block font-semibold text-slate-300 mb-1">URL del Logo (o ruta en /assets)</label>
                 <input
                   type="text"
-                  placeholder="Ej: /assets/sponsor_el_parador.png o https://..."
+                  placeholder="Ej: /assets/LOGO-JUAN-XXIII-WHT.png o https://..."
                   value={sponsorModal.logo}
                   onChange={(e) => setSponsorModal({ ...sponsorModal, logo: e.target.value })}
                   className="w-full px-3 py-2.5 rounded-xl bg-navy-900 text-white border border-slate-700 text-sm"
