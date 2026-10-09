@@ -104,6 +104,48 @@ export const DEFAULT_ADMIN_USERS = [
   }
 ];
 
+// Fotos predeterminadas del Banner Hero Principal
+export const DEFAULT_HERO_FOTOS = [
+  {
+    id: 'foto_1',
+    badge: 'Masculino',
+    categoria: '2da a 7ma',
+    imagen: './assets/Masculino.jpg',
+    objectPosition: 'center 20%'
+  },
+  {
+    id: 'foto_2',
+    badge: 'Máster Masc',
+    categoria: '+45 y +55',
+    imagen: './assets/Master_masculino.jpg',
+    objectPosition: 'center 46%'
+  },
+  {
+    id: 'foto_3',
+    badge: 'Femenino',
+    categoria: '3ra a 7ma',
+    imagen: './assets/Femenino.jpg',
+    objectPosition: 'center 32%'
+  },
+  {
+    id: 'foto_4',
+    badge: 'Máster Fem',
+    categoria: 'Máster Femenino',
+    imagen: './assets/Master_femenino.jpg',
+    objectPosition: 'center 20%'
+  }
+];
+
+// Beneficios incluidos en la inversión oficial
+export const DEFAULT_BENEFICIOS_INVERSION = [
+  '2 juegos garantizados en cuadro',
+  'Premios en metálico & trofeos',
+  'Franela oficial del torneo',
+  'Hidratación en pista',
+  'Pelotas oficiales nuevas por partido',
+  'Arbitraje federado FVP (500 pts)'
+];
+
 // Configuración por defecto de la Landing y Textos
 export const DEFAULT_LANDING_CONFIG = {
   heroCintillo: 'Cupos Limitados',
@@ -111,12 +153,15 @@ export const DEFAULT_LANDING_CONFIG = {
   heroSubtitulo: 'Cierra el año con el mejor nivel competitivo en una experiencia diseñada para que el atleta sea el absoluto protagonista. Prepárate para vivir la máxima emoción del pádel en un torneo oficial de 500 puntos para el ranking FVP. ¡Reúne a tu dupla, asegura tu cupo en el cuadro de juego y sé parte de la gran fiesta de cierre de temporada en casa!',
   heroFechas: '7 al 12 Dic',
   heroSede: 'La Marina SC, Lechería',
-  heroInversion: '$150 por pareja',
+  heroInversion: '$170 por pareja',
+  heroInversionDesglose: '$85 por jugador',
   heroJuegosGarantizados: '2 juegos garantizados',
   heroPremios: 'Premios en Metálico & Trofeos Oficiales',
+  beneficiosInversion: DEFAULT_BENEFICIOS_INVERSION,
+  heroFotos: DEFAULT_HERO_FOTOS,
   parejasSubtitulo: 'Listado oficial de duplas con inscripción y pago verificado por el comité organizador',
   cuposLimitados: 'Cupos Limitados',
-  montoInscripcion: '$150',
+  montoInscripcion: '$170',
   
   // Detalles bancarios y de pago
   pagoMovilDetalle: 'Banco: Banesco (0134)\nTeléfono: 0414-8889900\nRIF: J-50000000-0\nTitular: La Marina Sport Club C.A.\nTasa oficial BCV del día',
@@ -167,7 +212,7 @@ El torneo Copa Navidad LMSC 2026 se regirá bajo las reglas oficiales de juego d
 - Prohibición durante la competencia: Una vez que una dupla dispute su primer punto del torneo, no se autorizará ningún tipo de sustitución. La imposibilidad de continuar de un integrante derivará en el abandono reglamentario del partido y la pérdida de los puntos en disputa.
 
 7. POLÍTICA DE PAGOS, CANCELACIONES Y REEMBOLSOS
-- Cobertura de la inscripción: La inversión de $150 por pareja cubre el derecho a competir, arbitraje oficial, hidratación en pista, pelotas oficiales de torneo y kit de bienvenida oficial.
+- Cobertura de la inscripción: La inversión de $170 por pareja cubre el derecho a competir, arbitraje oficial, hidratación en pista, pelotas oficiales de torneo y kit de bienvenida oficial.
 - Política de no reembolso: Una vez formalizada la inscripción y confirmada la plaza mediante la recepción del comprobante de pago, la organización NO realizará devoluciones ni reembolsos monetarios en efectivo.
 - Cancelaciones anticipadas: En caso de que una pareja deba retirarse por causa mayor comprobada con un mínimo de 72 horas de antelación al sorteo de cuadros, podrá solicitar el traspaso de su cupo a otra dupla elegible o conservar el crédito para el siguiente evento oficial del club.
 - Clima y fuerza mayor: La eventual reprogramación de horarios o jornadas a causa de lluvias o factores climáticos imprevistos no dará lugar a reclamaciones económicas ni solicitudes de reintegro.
@@ -192,6 +237,51 @@ export const INITIAL_SPONSORS = [
 // ==================== GESTIÓN DE CONFIGURACIÓN DE LANDING & REGLAMENTO ====================
 
 /**
+ * Valida y migra configuraciones previas para asegurar consistencia
+ */
+export function sanitizeLandingConfig(cfg) {
+  const merged = { ...DEFAULT_LANDING_CONFIG, ...cfg };
+
+  if (merged.montoInscripcion === '$150') {
+    merged.montoInscripcion = '$170';
+  }
+  if (merged.heroInversion === '$150 por pareja' || merged.heroInversion === '$150 / pareja' || merged.heroInversion === '$150 / dupla') {
+    merged.heroInversion = '$170 por pareja';
+  }
+  if (!merged.heroInversionDesglose || merged.heroInversionDesglose === '$75 por jugador') {
+    merged.heroInversionDesglose = '$85 por jugador';
+  }
+  if (!merged.heroJuegosGarantizados) {
+    merged.heroJuegosGarantizados = '2 juegos garantizados';
+  }
+  if (!merged.heroPremios) {
+    merged.heroPremios = 'Premios en Metálico & Trofeos Oficiales';
+  }
+
+  // Beneficios de la inversión
+  if (!Array.isArray(merged.beneficiosInversion) || merged.beneficiosInversion.length === 0) {
+    merged.beneficiosInversion = [...DEFAULT_BENEFICIOS_INVERSION];
+  } else {
+    merged.beneficiosInversion = merged.beneficiosInversion.map(b => {
+      if (b.includes('Franela técnica oficial para la dupla')) return 'Franela oficial del torneo';
+      if (b.includes('Hidratación continua en pista')) return 'Hidratación en pista';
+      return b;
+    });
+  }
+
+  // Fotos del Hero
+  if (!Array.isArray(merged.heroFotos) || merged.heroFotos.length === 0) {
+    merged.heroFotos = [...DEFAULT_HERO_FOTOS];
+  }
+
+  if (!merged.heroSubtitulo || merged.heroSubtitulo.includes('Cierra el año compitiendo en el evento de pádel más importante del oriente')) {
+    merged.heroSubtitulo = DEFAULT_LANDING_CONFIG.heroSubtitulo;
+  }
+
+  return merged;
+}
+
+/**
  * Obtiene la configuración de textos y reglamento de la Landing
  */
 export async function getLandingConfig() {
@@ -200,7 +290,7 @@ export async function getLandingConfig() {
       const docRef = doc(db, CONFIG_COLLECTION, LANDING_CONFIG_DOC);
       const snap = await getDoc(docRef);
       if (snap.exists()) {
-        return { ...DEFAULT_LANDING_CONFIG, ...snap.data() };
+        return sanitizeLandingConfig(snap.data());
       }
     } catch (e) {
       console.error('Error al obtener configuración de Landing de Firestore:', e);
@@ -211,10 +301,7 @@ export async function getLandingConfig() {
   if (local) {
     try {
       const parsed = JSON.parse(local);
-      if (!parsed.heroSubtitulo || parsed.heroSubtitulo.includes('Cierra el año compitiendo en el evento de pádel más importante del oriente')) {
-        parsed.heroSubtitulo = DEFAULT_LANDING_CONFIG.heroSubtitulo;
-      }
-      return { ...DEFAULT_LANDING_CONFIG, ...parsed };
+      return sanitizeLandingConfig(parsed);
     } catch (err) {
       console.error('Error parseando configuración local:', err);
     }
@@ -251,7 +338,7 @@ export function subscribeToLandingConfig(callback) {
     const docRef = doc(db, CONFIG_COLLECTION, LANDING_CONFIG_DOC);
     return onSnapshot(docRef, (docSnap) => {
       if (docSnap.exists()) {
-        callback({ ...DEFAULT_LANDING_CONFIG, ...docSnap.data() });
+        callback(sanitizeLandingConfig(docSnap.data()));
       } else {
         callback(DEFAULT_LANDING_CONFIG);
       }
@@ -264,7 +351,7 @@ export function subscribeToLandingConfig(callback) {
       const local = localStorage.getItem(LOCAL_STORAGE_LANDING_CONFIG_KEY);
       if (local) {
         try {
-          callback({ ...DEFAULT_LANDING_CONFIG, ...JSON.parse(local) });
+          callback(sanitizeLandingConfig(JSON.parse(local)));
           return;
         } catch (e) {}
       }
@@ -273,7 +360,7 @@ export function subscribeToLandingConfig(callback) {
 
     emit();
     const handleCustom = (ev) => {
-      if (ev.detail) callback(ev.detail);
+      if (ev.detail) callback(sanitizeLandingConfig(ev.detail));
       else emit();
     };
 
@@ -351,7 +438,7 @@ export async function saveRegistration(registrationData) {
   const finalData = {
     ...registrationData,
     status: initialStatus,
-    monto: registrationData.monto || '$150',
+    monto: registrationData.monto || '$170',
     createdAtISO: timestamp
   };
 

@@ -36,7 +36,10 @@ import {
   Compass,
   UserCheck,
   ShieldCheck,
-  KeyRound
+  KeyRound,
+  RotateCcw,
+  Sparkles,
+  Image as ImageIcon
 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { 
@@ -54,6 +57,8 @@ import {
   PLAYER_STATUSES,
   DEFAULT_MAX_PAIRS_PER_CATEGORY,
   DEFAULT_LANDING_CONFIG,
+  DEFAULT_HERO_FOTOS,
+  DEFAULT_BENEFICIOS_INVERSION,
   subscribeToRegistrations,
   ADMIN_ROLES,
   getAdminUsers,
@@ -298,6 +303,75 @@ export default function AdminDashboard({ onLogout, currentUser }) {
       reglamentoPdfData: '',
       reglamentoNombre: ''
     }));
+  };
+
+  // Manejo de Fotos del Hero Principal
+  const handleHeroPhotoChange = (index, field, value) => {
+    const currentFotos = landingForm.heroFotos && landingForm.heroFotos.length === 4 
+      ? [...landingForm.heroFotos] 
+      : [...DEFAULT_HERO_FOTOS];
+    currentFotos[index] = { ...currentFotos[index], [field]: value };
+    setLandingForm(prev => ({ ...prev, heroFotos: currentFotos }));
+  };
+
+  const handleHeroPhotoUpload = (index, e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const MAX_SIZE = 1048576; // 1 MB
+    if (file.size > MAX_SIZE) {
+      alert(`La imagen supera 1 MB (${(file.size / (1024 * 1024)).toFixed(2)} MB). Por favor comprímela antes de subir.`);
+      e.target.value = '';
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      handleHeroPhotoChange(index, 'imagen', ev.target.result);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRestoreHeroPhoto = (index) => {
+    const defaultFoto = DEFAULT_HERO_FOTOS[index];
+    if (defaultFoto) {
+      const currentFotos = landingForm.heroFotos && landingForm.heroFotos.length === 4 
+        ? [...landingForm.heroFotos] 
+        : [...DEFAULT_HERO_FOTOS];
+      currentFotos[index] = { ...defaultFoto };
+      setLandingForm(prev => ({ ...prev, heroFotos: currentFotos }));
+    }
+  };
+
+  // Manejo de Beneficios de la Inversión
+  const handleBenefitChange = (index, value) => {
+    const current = landingForm.beneficiosInversion && landingForm.beneficiosInversion.length > 0
+      ? [...landingForm.beneficiosInversion]
+      : [...DEFAULT_BENEFICIOS_INVERSION];
+    current[index] = value;
+    setLandingForm(prev => ({ ...prev, beneficiosInversion: current }));
+  };
+
+  const handleAddBenefit = () => {
+    const current = landingForm.beneficiosInversion && landingForm.beneficiosInversion.length > 0
+      ? [...landingForm.beneficiosInversion]
+      : [...DEFAULT_BENEFICIOS_INVERSION];
+    current.push('Nuevo beneficio de inscripción');
+    setLandingForm(prev => ({ ...prev, beneficiosInversion: current }));
+  };
+
+  const handleRemoveBenefit = (index) => {
+    const current = landingForm.beneficiosInversion && landingForm.beneficiosInversion.length > 0
+      ? [...landingForm.beneficiosInversion]
+      : [...DEFAULT_BENEFICIOS_INVERSION];
+    if (current.length <= 1) {
+      alert('Debe haber al menos un beneficio en la lista.');
+      return;
+    }
+    current.splice(index, 1);
+    setLandingForm(prev => ({ ...prev, beneficiosInversion: current }));
+  };
+
+  const handleRestoreBenefits = () => {
+    setLandingForm(prev => ({ ...prev, beneficiosInversion: [...DEFAULT_BENEFICIOS_INVERSION] }));
   };
 
   // Eliminar registro
@@ -758,21 +832,6 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                   />
                 </div>
 
-                <div className="md:col-span-2">
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">
-                    Inversión Oficial (Cuadro Banner)
-                  </label>
-                  <input
-                    type="text"
-                    value={landingForm.heroInversion || ''}
-                    onChange={(e) => setLandingForm({ ...landingForm, heroInversion: e.target.value })}
-                    placeholder="$150 / dupla"
-                    className="w-full px-3 py-2.5 rounded-xl bg-navy-900 text-white border border-slate-700 text-sm"
-                  />
-                  <span className="text-[11px] text-blue-300/70 mt-1 block">
-                    Edita el texto del tercer bloque del cuadro del banner principal (ej: $150 / dupla o $150 por pareja).
-                  </span>
-                </div>
               </div>
 
               <div>
@@ -802,10 +861,265 @@ export default function AdminDashboard({ onLogout, currentUser }) {
               </div>
             </div>
 
-            {/* SECCIÓN B: DETALLES DE CADA MÉTODO DE PAGO */}
+            {/* SECCIÓN 2: FOTOS DEL BANNER HERO PRINCIPAL */}
+            <div className="space-y-4 pt-4 border-t border-slate-800">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                  <h3 className="text-sm font-bold text-gold-400 uppercase tracking-wider flex items-center gap-2">
+                    <ImageIcon className="w-4 h-4 text-emerald-400" />
+                    2. Fotos del Banner Hero Principal (4 Categorías)
+                  </h3>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    Personaliza las 4 fotografías, etiquetas y alineación visual que se exhiben en el banner superior.
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {(landingForm.heroFotos && landingForm.heroFotos.length === 4 
+                  ? landingForm.heroFotos 
+                  : DEFAULT_HERO_FOTOS
+                ).map((foto, fIdx) => (
+                  <div key={foto.id || fIdx} className="bg-navy-900/90 p-4 rounded-2xl border border-slate-700/80 space-y-3">
+                    <div className="flex items-start gap-3">
+                      {/* Preview en miniatura */}
+                      <div className="relative w-24 h-32 rounded-xl overflow-hidden border border-blue-400/40 bg-[#071f5c] shrink-0 shadow-md">
+                        <img 
+                          src={foto.imagen} 
+                          alt={foto.categoria || `Foto ${fIdx + 1}`} 
+                          style={{ objectPosition: foto.objectPosition || 'center 20%' }}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[#071f5c] to-transparent"></div>
+                        <span className="absolute top-1 left-1 px-1.5 py-0.5 rounded text-[8px] font-black bg-[#A3E229] text-[#150D8B] truncate max-w-[85px]">
+                          {foto.badge || `Foto ${fIdx + 1}`}
+                        </span>
+                        <span className="absolute bottom-1 left-1 right-1 text-[8px] font-bold text-white truncate">
+                          {foto.categoria}
+                        </span>
+                      </div>
+
+                      {/* Campos de texto */}
+                      <div className="flex-1 space-y-2">
+                        <div className="grid grid-cols-2 gap-2">
+                          <div>
+                            <label className="block text-[10px] font-bold text-slate-300 uppercase">
+                              Etiqueta / Badge
+                            </label>
+                            <input
+                              type="text"
+                              value={foto.badge || ''}
+                              onChange={(e) => handleHeroPhotoChange(fIdx, 'badge', e.target.value)}
+                              placeholder="Ej: Masculino"
+                              className="w-full px-2.5 py-1.5 rounded-lg bg-navy-800 text-white border border-slate-600 text-xs"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[10px] font-bold text-slate-300 uppercase">
+                              Categoría / Subtexto
+                            </label>
+                            <input
+                              type="text"
+                              value={foto.categoria || ''}
+                              onChange={(e) => handleHeroPhotoChange(fIdx, 'categoria', e.target.value)}
+                              placeholder="Ej: 2da a 7ma"
+                              className="w-full px-2.5 py-1.5 rounded-lg bg-navy-800 text-white border border-slate-600 text-xs"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-[10px] font-bold text-slate-300 uppercase">
+                            Alineación Vertical (object-position)
+                          </label>
+                          <select
+                            value={foto.objectPosition || 'center 20%'}
+                            onChange={(e) => handleHeroPhotoChange(fIdx, 'objectPosition', e.target.value)}
+                            className="w-full px-2.5 py-1.5 rounded-lg bg-navy-800 text-white border border-slate-600 text-xs"
+                          >
+                            <option value="center 10%">Arriba (center 10%)</option>
+                            <option value="center 20%">Arriba Medio (center 20%)</option>
+                            <option value="center 32%">Centro Superior (center 32%)</option>
+                            <option value="center 46%">Centro Exacto (center 46%)</option>
+                            <option value="center center">Centro (center center)</option>
+                            <option value="center 70%">Inferior (center 70%)</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-[10px] font-bold text-slate-300 uppercase">
+                            URL / Ruta de Imagen
+                          </label>
+                          <input
+                            type="text"
+                            value={foto.imagen && foto.imagen.startsWith('data:') ? '(Imagen personalizada subida en base64)' : (foto.imagen || '')}
+                            onChange={(e) => handleHeroPhotoChange(fIdx, 'imagen', e.target.value)}
+                            placeholder="./assets/... o https://..."
+                            className="w-full px-2.5 py-1.5 rounded-lg bg-navy-800 text-white border border-slate-600 text-xs truncate"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Botones de acción para cada foto */}
+                    <div className="flex items-center justify-between pt-2 border-t border-slate-800">
+                      <label className="px-3 py-1.5 rounded-lg bg-emerald-600/80 hover:bg-emerald-600 text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-colors shadow-sm">
+                        <UploadCloud className="w-3.5 h-3.5" />
+                        <span>Subir Imagen (&lt; 1 MB)</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => handleHeroPhotoUpload(fIdx, e)}
+                          className="hidden"
+                        />
+                      </label>
+
+                      <button
+                        type="button"
+                        onClick={() => handleRestoreHeroPhoto(fIdx)}
+                        className="px-3 py-1.5 rounded-lg bg-navy-800 hover:bg-navy-700 text-slate-300 hover:text-white text-xs flex items-center gap-1 border border-slate-700 transition-colors"
+                        title="Restaurar valores de fábrica para esta foto"
+                      >
+                        <RotateCcw className="w-3 h-3" />
+                        <span>Restaurar</span>
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* SECCIÓN 3: INVERSIÓN Y BENEFICIOS INCLUIDOS */}
+            <div className="space-y-4 pt-4 border-t border-slate-800">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                  <h3 className="text-sm font-bold text-gold-400 uppercase tracking-wider flex items-center gap-2">
+                    <DollarSign className="w-4 h-4 text-[#A3E229]" />
+                    3. Inversión Oficial y Beneficios de Inscripción
+                  </h3>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    Modifica el monto de inversión ($170), desglose ($85 por jugador), garantía de juegos y las viñetas oficiales.
+                  </p>
+                </div>
+                
+                <button
+                  type="button"
+                  onClick={handleRestoreBenefits}
+                  className="px-3 py-1.5 rounded-lg bg-navy-800 hover:bg-navy-700 text-xs font-bold text-slate-300 border border-slate-700 flex items-center gap-1.5 self-start sm:self-auto"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  <span>Restaurar Viñetas Oficiales</span>
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    Inversión Total por Pareja
+                  </label>
+                  <input
+                    type="text"
+                    value={landingForm.heroInversion || ''}
+                    onChange={(e) => setLandingForm({ ...landingForm, heroInversion: e.target.value, montoInscripcion: e.target.value.split(' ')[0] || e.target.value })}
+                    placeholder="$170 por pareja"
+                    className="w-full px-3 py-2 rounded-xl bg-navy-900 text-white border border-slate-700 text-sm font-mono font-bold"
+                  />
+                  <span className="text-[10px] text-slate-500 mt-1 block">Ej: $170 por pareja</span>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    Desglose por Jugador
+                  </label>
+                  <input
+                    type="text"
+                    value={landingForm.heroInversionDesglose || ''}
+                    onChange={(e) => setLandingForm({ ...landingForm, heroInversionDesglose: e.target.value })}
+                    placeholder="$85 por jugador"
+                    className="w-full px-3 py-2 rounded-xl bg-navy-900 text-white border border-slate-700 text-sm font-mono font-bold"
+                  />
+                  <span className="text-[10px] text-slate-500 mt-1 block">Ej: $85 por jugador</span>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    Garantía de Juegos
+                  </label>
+                  <input
+                    type="text"
+                    value={landingForm.heroJuegosGarantizados || ''}
+                    onChange={(e) => setLandingForm({ ...landingForm, heroJuegosGarantizados: e.target.value })}
+                    placeholder="2 juegos garantizados"
+                    className="w-full px-3 py-2 rounded-xl bg-navy-900 text-white border border-slate-700 text-sm"
+                  />
+                  <span className="text-[10px] text-slate-500 mt-1 block">Hero y Formulario</span>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    Badge de Premios
+                  </label>
+                  <input
+                    type="text"
+                    value={landingForm.heroPremios || ''}
+                    onChange={(e) => setLandingForm({ ...landingForm, heroPremios: e.target.value })}
+                    placeholder="Premios en Metálico & Trofeos Oficiales"
+                    className="w-full px-3 py-2 rounded-xl bg-navy-900 text-white border border-slate-700 text-sm"
+                  />
+                  <span className="text-[10px] text-slate-500 mt-1 block">Cintillo distintivo</span>
+                </div>
+              </div>
+
+              {/* Lista editable de Beneficios / Viñetas */}
+              <div className="bg-navy-900/80 p-4 rounded-2xl border border-slate-700 space-y-3">
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-bold text-white uppercase tracking-wider">
+                    Viñetas: ¿Qué incluye la inscripción oficial?
+                  </label>
+                  <button
+                    type="button"
+                    onClick={handleAddBenefit}
+                    className="px-2.5 py-1 rounded-lg bg-[#A3E229] hover:bg-[#b6f23d] text-[#150D8B] text-xs font-bold flex items-center gap-1 shadow-sm"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>Agregar Viñeta</span>
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                  {(landingForm.beneficiosInversion && landingForm.beneficiosInversion.length > 0
+                    ? landingForm.beneficiosInversion
+                    : DEFAULT_BENEFICIOS_INVERSION
+                  ).map((beneficio, bIdx) => (
+                    <div key={bIdx} className="flex items-center gap-2 bg-navy-800 p-2.5 rounded-xl border border-slate-700">
+                      <span className="w-5 h-5 rounded-full bg-navy-900 text-gold-400 flex items-center justify-center text-[10px] font-black shrink-0">
+                        {bIdx + 1}
+                      </span>
+                      <input
+                        type="text"
+                        value={beneficio}
+                        onChange={(e) => handleBenefitChange(bIdx, e.target.value)}
+                        placeholder="Descripción del beneficio..."
+                        className="flex-1 bg-transparent text-white text-xs focus:outline-none"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveBenefit(bIdx)}
+                        className="p-1 rounded text-slate-400 hover:text-red-400 transition-colors"
+                        title="Eliminar este beneficio"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* SECCIÓN 4: DETALLES DE CADA MÉTODO DE PAGO */}
             <div className="space-y-4 pt-4 border-t border-slate-800">
               <h3 className="text-sm font-bold text-gold-400 uppercase tracking-wider">
-                2. Cuentas y Datos de los Métodos de Pago
+                4. Cuentas y Datos de los Métodos de Pago
               </h3>
               <p className="text-xs text-slate-400">
                 Esta información se despliega de forma dinámica a los jugadores al seleccionar su forma de pago.
@@ -862,11 +1176,11 @@ export default function AdminDashboard({ onLogout, currentUser }) {
               </div>
             </div>
 
-            {/* SECCIÓN C: GESTIÓN DE REGLAMENTO OFICIAL (PDF < 1MB & ENLACE & TEXTO) */}
+            {/* SECCIÓN 5: GESTIÓN DE REGLAMENTO OFICIAL (PDF < 1MB & ENLACE & TEXTO) */}
             <div className="space-y-4 pt-4 border-t border-slate-800">
               <h3 className="text-sm font-bold text-gold-400 uppercase tracking-wider flex items-center gap-2">
                 <FileCheck2 className="w-4 h-4 text-emerald-400" />
-                3. Reglamento Oficial del Club y Torneo
+                5. Reglamento Oficial del Club y Torneo
               </h3>
               <p className="text-xs text-slate-400">
                 Puedes adjuntar el archivo PDF oficial (&lt; 1 MB), ingresar un enlace web externo y/o editar el texto del reglamento.

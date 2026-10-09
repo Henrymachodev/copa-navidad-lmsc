@@ -82,12 +82,12 @@ export default function PaymentInfoSection() {
               </span>
               <div className="flex items-baseline justify-center gap-1 mt-1">
                 <span className="text-3xl sm:text-4xl font-black text-white font-mono">
-                  {config.montoInscripcion || '$150'}
+                  {config.montoInscripcion || '$170'}
                 </span>
                 <span className="text-xs text-gold-400 font-bold">USD</span>
               </div>
               <span className="text-[11px] text-emerald-400 block mt-1 font-medium">
-                ($75 por jugador)
+                ({config.heroInversionDesglose || '$85 por jugador'})
               </span>
             </div>
           </div>

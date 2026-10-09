@@ -156,15 +156,15 @@ export default function ConfirmationModal({ data, onClose }) {
               </span>
             </div>
             <span className="text-xs text-slate-600 leading-tight block mt-0.5">
-              Incluye 2 partidos garantizados, arbitraje oficial FVP, hidratación continua, franela técnica oficial y premios en metálico.
+              Incluye 2 partidos garantizados, arbitraje oficial FVP, hidratación en pista, franela oficial del torneo y premios en metálico.
             </span>
           </div>
           <div className="px-5 py-2.5 rounded-2xl bg-[#150D8B] border border-[#150D8B] text-center shadow-md shrink-0">
             <span className="font-orbitron text-2xl font-black text-[#A3E229] block leading-none">
-              $150 USD
+              $170 USD
             </span>
             <span className="block text-[10px] text-blue-200 font-bold uppercase tracking-wide mt-1">
-              ($75 por jugador)
+              ($85 por jugador)
             </span>
           </div>
         </div>
@@ -296,7 +296,7 @@ export default function ConfirmationModal({ data, onClose }) {
                 </div>
 
                 <p className="text-[11px] text-slate-500 pt-1">
-                  * El monto en Bolívares se calcula multiplicando $150 USD por la tasa oficial BCV del día de la transferencia.
+                  * El monto en Bolívares se calcula multiplicando $170 USD por la tasa oficial BCV del día de la transferencia.
                 </p>
               </div>
             )}

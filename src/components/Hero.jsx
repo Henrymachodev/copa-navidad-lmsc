@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Sparkles, ExternalLink, ArrowRight, Trophy } from 'lucide-react';
-import { subscribeToLandingConfig, DEFAULT_LANDING_CONFIG } from '../services/firebase';
+import { subscribeToLandingConfig, DEFAULT_LANDING_CONFIG, DEFAULT_HERO_FOTOS } from '../services/firebase';
 
 export default function Hero() {
   const [config, setConfig] = useState(DEFAULT_LANDING_CONFIG);
@@ -97,10 +97,10 @@ export default function Hero() {
                     Inversión
                   </span>
                   <span className="text-xs sm:text-sm font-black text-white font-orbitron block mt-1 leading-tight">
-                    $150 / pareja
+                    {config.heroInversion || '$170 / pareja'}
                   </span>
                   <span className="text-[10px] sm:text-[11px] font-bold text-[#A3E229] block mt-0.5 leading-tight">
-                    (2 juegos garantizados)
+                    ({config.heroJuegosGarantizados || '2 juegos garantizados'})
                   </span>
                 </div>
 
@@ -150,83 +150,39 @@ export default function Hero() {
 
             {/* Showcase Visual Cuádruple: 4 Cápsulas Atléticas Optimizadas */}
             <div className="relative w-full max-w-lg grid grid-cols-2 gap-3 sm:gap-3.5 p-2.5 sm:p-3.5 rounded-[2.5rem] bg-[#0a389c]/50 border border-blue-400/30 backdrop-blur-xl shadow-2xl">
-              
-              {/* Foto 1: Masculino (2da a 7ma) */}
-              <div className="relative group rounded-2xl overflow-hidden border border-blue-400/40 shadow-md bg-[#071f5c] h-[205px] sm:h-[245px] md:h-[265px]">
-                <img 
-                  src="./assets/Masculino.jpg" 
-                  alt="Categoría Masculino La Marina Sport Club" 
-                  style={{ objectPosition: 'center 20%' }}
-                  className="w-full h-full object-cover filter contrast-105 brightness-105 group-hover:scale-105 transition-transform duration-700"
-                />
-                <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#071f5c] via-[#071f5c]/75 to-transparent"></div>
-                <div className="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full bg-[#0a389c]/90 border border-blue-400/40 backdrop-blur-md shadow-sm">
-                  <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-blue-200">Masculino</span>
-                </div>
-                <div className="absolute bottom-2.5 left-3 right-2.5 text-left">
-                  <span className="text-xs sm:text-sm font-black font-orbitron uppercase tracking-wider text-[#A3E229] block leading-tight drop-shadow-md">
-                    2da a 7ma
-                  </span>
-                </div>
-              </div>
+              {(config.heroFotos && config.heroFotos.length === 4 ? config.heroFotos : DEFAULT_HERO_FOTOS).map((foto, idx) => {
+                const isEven = idx % 2 === 0;
+                const badgePos = isEven ? 'left-2.5' : 'right-2.5';
+                const badgeStyle = idx >= 2 
+                  ? 'bg-[#A3E229] text-[#150D8B] font-bold shadow-sm' 
+                  : idx === 1 
+                    ? 'bg-[#082363]/90 border border-[#A3E229]/50 text-[#A3E229] backdrop-blur-md shadow-sm'
+                    : 'bg-[#0a389c]/90 border border-blue-400/40 text-blue-200 backdrop-blur-md shadow-sm';
+                const borderStyle = idx >= 2 ? 'border-[#A3E229]/60' : 'border-blue-400/40';
 
-              {/* Foto 2: Máster Masculino (+45 y +55) */}
-              <div className="relative group rounded-2xl overflow-hidden border border-blue-400/40 shadow-md bg-[#071f5c] h-[205px] sm:h-[245px] md:h-[265px]">
-                <img 
-                  src="./assets/Master_masculino.jpg" 
-                  alt="Categoría Máster Masculino La Marina Sport Club" 
-                  style={{ objectPosition: 'center 46%' }}
-                  className="w-full h-full object-cover filter contrast-105 brightness-105 group-hover:scale-105 transition-transform duration-700"
-                />
-                <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#071f5c] via-[#071f5c]/75 to-transparent"></div>
-                <div className="absolute top-2.5 right-2.5 px-2.5 py-0.5 rounded-full bg-[#082363]/90 border border-[#A3E229]/50 backdrop-blur-md shadow-sm">
-                  <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-[#A3E229]">Máster Masc</span>
-                </div>
-                <div className="absolute bottom-2.5 left-3 right-2.5 text-left">
-                  <span className="text-xs sm:text-sm font-black font-orbitron uppercase tracking-wider text-[#A3E229] block leading-tight drop-shadow-md">
-                    +45 y +55
-                  </span>
-                </div>
-              </div>
-
-              {/* Foto 3: Femenino (3ra a 7ma) */}
-              <div className="relative group rounded-2xl overflow-hidden border border-[#A3E229]/60 shadow-md bg-[#071f5c] h-[205px] sm:h-[245px] md:h-[265px]">
-                <img 
-                  src="./assets/Femenino.jpg" 
-                  alt="Categoría Femenino La Marina Sport Club" 
-                  style={{ objectPosition: 'center 32%' }}
-                  className="w-full h-full object-cover filter contrast-105 brightness-105 group-hover:scale-105 transition-transform duration-700"
-                />
-                <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#071f5c] via-[#071f5c]/75 to-transparent"></div>
-                <div className="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full bg-[#A3E229] text-[#150D8B] font-bold shadow-sm">
-                  <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider">Femenino</span>
-                </div>
-                <div className="absolute bottom-2.5 left-3 right-2.5 text-left">
-                  <span className="text-xs sm:text-sm font-black font-orbitron uppercase tracking-wider text-[#A3E229] block leading-tight drop-shadow-md">
-                    3ra a 7ma
-                  </span>
-                </div>
-              </div>
-
-              {/* Foto 4: Máster Femenino */}
-              <div className="relative group rounded-2xl overflow-hidden border border-[#A3E229]/60 shadow-md bg-[#071f5c] h-[205px] sm:h-[245px] md:h-[265px]">
-                <img 
-                  src="./assets/Master_femenino.jpg" 
-                  alt="Categoría Máster Femenino La Marina Sport Club" 
-                  style={{ objectPosition: 'center 20%' }}
-                  className="w-full h-full object-cover filter contrast-105 brightness-105 group-hover:scale-105 transition-transform duration-700"
-                />
-                <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#071f5c] via-[#071f5c]/75 to-transparent"></div>
-                <div className="absolute top-2.5 right-2.5 px-2.5 py-0.5 rounded-full bg-[#A3E229] text-[#150D8B] font-bold shadow-sm">
-                  <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider">Máster Fem</span>
-                </div>
-                <div className="absolute bottom-2.5 left-3 right-2.5 text-left">
-                  <span className="text-xs sm:text-sm font-black font-orbitron uppercase tracking-wider text-[#A3E229] block leading-tight drop-shadow-md">
-                    Máster Femenino
-                  </span>
-                </div>
-              </div>
-
+                return (
+                  <div 
+                    key={foto.id || idx} 
+                    className={`relative group rounded-2xl overflow-hidden border ${borderStyle} shadow-md bg-[#071f5c] h-[205px] sm:h-[245px] md:h-[265px]`}
+                  >
+                    <img 
+                      src={foto.imagen} 
+                      alt={`Categoría ${foto.badge || ''} ${foto.categoria || ''} La Marina Sport Club`} 
+                      style={{ objectPosition: foto.objectPosition || 'center 20%' }}
+                      className="w-full h-full object-cover filter contrast-105 brightness-105 group-hover:scale-105 transition-transform duration-700"
+                    />
+                    <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#071f5c] via-[#071f5c]/75 to-transparent"></div>
+                    <div className={`absolute top-2.5 ${badgePos} px-2.5 py-0.5 rounded-full ${badgeStyle}`}>
+                      <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider">{foto.badge}</span>
+                    </div>
+                    <div className="absolute bottom-2.5 left-3 right-2.5 text-left">
+                      <span className="text-xs sm:text-sm font-black font-orbitron uppercase tracking-wider text-[#A3E229] block leading-tight drop-shadow-md">
+                        {foto.categoria}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
 
           </div>

@@ -31,7 +31,8 @@ import {
   getCategoryLimits, 
   DEFAULT_MAX_PAIRS_PER_CATEGORY,
   subscribeToLandingConfig,
-  DEFAULT_LANDING_CONFIG
+  DEFAULT_LANDING_CONFIG,
+  DEFAULT_BENEFICIOS_INVERSION
 } from '../services/firebase';
 import { sendConfirmationEmails } from '../services/emailService';
 
@@ -86,7 +87,7 @@ export default function RegistrationForm({ onSuccess }) {
   const [formData, setFormData] = useState({
     categoria: '',
     metodoPago: '',
-    monto: '$150',
+    monto: '$170',
     referenciaPago: '',
     comprobantePagoUrl: '',
     comprobanteNombre: '',
@@ -121,6 +122,9 @@ export default function RegistrationForm({ onSuccess }) {
 
     const unsubConfig = subscribeToLandingConfig((cfg) => {
       setLandingConfig(cfg);
+      if (cfg?.montoInscripcion) {
+        setFormData(prev => ({ ...prev, monto: cfg.montoInscripcion }));
+      }
     });
 
     return () => {
@@ -318,7 +322,7 @@ export default function RegistrationForm({ onSuccess }) {
       setFormData({
         categoria: '',
         metodoPago: '',
-        monto: '$150',
+        monto: landingConfig?.montoInscripcion || '$170',
         referenciaPago: '',
         comprobantePagoUrl: '',
         comprobanteNombre: '',
@@ -755,10 +759,10 @@ export default function RegistrationForm({ onSuccess }) {
                   </div>
                   <div>
                     <h3 className="text-base sm:text-lg font-orbitron font-black text-[#150D8B] tracking-wide uppercase">
-                      Inversión: $150 por Pareja
+                      Inversión: {landingConfig.heroInversion || '$170 por Pareja'}
                     </h3>
                     <p className="text-xs text-slate-600 font-semibold mt-0.5">
-                      $75 por jugador • <strong className="text-emerald-700 font-black font-orbitron">2 juegos garantizados</strong>
+                      {landingConfig.heroInversionDesglose || '$85 por jugador'} • <strong className="text-emerald-700 font-black font-orbitron">{landingConfig.heroJuegosGarantizados || '2 juegos garantizados'}</strong>
                     </p>
                   </div>
                 </div>
@@ -775,30 +779,26 @@ export default function RegistrationForm({ onSuccess }) {
                   ¿Qué incluye tu inscripción oficial?
                 </span>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 text-xs text-slate-700">
-                  <div className="flex items-center gap-2 p-2.5 rounded-xl bg-blue-50/70 border border-blue-200/60">
-                    <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span className="font-semibold"><strong>2 juegos garantizados</strong> en cuadro</span>
-                  </div>
-                  <div className="flex items-center gap-2 p-2.5 rounded-xl bg-blue-50/70 border border-blue-200/60">
-                    <Trophy className="w-4 h-4 text-amber-500 shrink-0" />
-                    <span className="font-semibold"><strong>Premios en metálico</strong> & trofeos</span>
-                  </div>
-                  <div className="flex items-center gap-2 p-2.5 rounded-xl bg-blue-50/70 border border-blue-200/60">
-                    <Award className="w-4 h-4 text-[#150D8B] shrink-0" />
-                    <span className="font-semibold"><strong>Franela técnica oficial</strong> para la dupla</span>
-                  </div>
-                  <div className="flex items-center gap-2 p-2.5 rounded-xl bg-blue-50/70 border border-blue-200/60">
-                    <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span className="font-semibold"><strong>Hidratación continua</strong> en pista</span>
-                  </div>
-                  <div className="flex items-center gap-2 p-2.5 rounded-xl bg-blue-50/70 border border-blue-200/60">
-                    <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span className="font-semibold"><strong>Pelotas oficiales</strong> nuevas por partido</span>
-                  </div>
-                  <div className="flex items-center gap-2 p-2.5 rounded-xl bg-blue-50/70 border border-blue-200/60">
-                    <ShieldCheck className="w-4 h-4 text-[#150D8B] shrink-0" />
-                    <span className="font-semibold"><strong>Arbitraje federado FVP</strong> (500 pts)</span>
-                  </div>
+                  {(landingConfig.beneficiosInversion || DEFAULT_BENEFICIOS_INVERSION).map((beneficio, bIdx) => {
+                    const isTrophy = beneficio.toLowerCase().includes('premio') || beneficio.toLowerCase().includes('trofeo');
+                    const isAward = beneficio.toLowerCase().includes('franela');
+                    const isShield = beneficio.toLowerCase().includes('arbitraje') || beneficio.toLowerCase().includes('fvp');
+
+                    return (
+                      <div key={bIdx} className="flex items-center gap-2 p-2.5 rounded-xl bg-blue-50/70 border border-blue-200/60">
+                        {isTrophy ? (
+                          <Trophy className="w-4 h-4 text-amber-500 shrink-0" />
+                        ) : isAward ? (
+                          <Award className="w-4 h-4 text-[#150D8B] shrink-0" />
+                        ) : isShield ? (
+                          <ShieldCheck className="w-4 h-4 text-[#150D8B] shrink-0" />
+                        ) : (
+                          <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+                        )}
+                        <span className="font-semibold">{beneficio}</span>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>

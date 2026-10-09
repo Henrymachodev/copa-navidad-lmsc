@@ -31,7 +31,7 @@ export async function sendConfirmationEmails(registrationData) {
     torneo: 'Copa Navidad LMSC 2026',
     sede: 'La Marina Sport Club, Lechería',
     categoria: registrationData.categoria || 'Sin categoría',
-    monto: registrationData.monto || '$150',
+    monto: registrationData.monto || '$170',
     metodo_pago: registrationData.metodoPago || 'No especificado',
     referencia_pago: registrationData.referenciaPago || 'Sin referencia',
     fecha_registro: new Date().toLocaleDateString('es-VE'),
