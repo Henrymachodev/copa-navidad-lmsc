@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Sparkles, ExternalLink, ArrowRight } from 'lucide-react';
+import { Sparkles, ExternalLink, ArrowRight, Trophy } from 'lucide-react';
 import { subscribeToLandingConfig, DEFAULT_LANDING_CONFIG } from '../services/firebase';
 
 export default function Hero() {
@@ -53,37 +53,67 @@ export default function Hero() {
               </div>
             </div>
 
-            {/* Subtítulo oficial con mención a 500 puntos para el ranking FVP */}
+            {/* Subtítulo oficial del torneo */}
             <p className="max-w-2xl mx-auto lg:mx-0 text-sm sm:text-base md:text-lg text-blue-100/90 leading-relaxed font-normal mb-5 drop-shadow-sm">
               {config.heroSubtitulo || (
-                <>
-                  Cierra el año en el torneo de pádel más importante del oriente del país. 
-                  Válido por <strong className="text-white font-black underline decoration-[#A3E229] decoration-2 underline-offset-4">500 puntos</strong> para el ranking oficial de la Federación Venezolana de Pádel (FVP).
-                </>
+                'Cierra el año con el mejor nivel competitivo en una experiencia diseñada para que el atleta sea el absoluto protagonista. Prepárate para vivir la máxima emoción del pádel en un torneo oficial de 500 puntos para el ranking FVP. ¡Reúne a tu dupla, asegura tu cupo en el cuadro de juego y sé parte de la gran fiesta de cierre de temporada en casa!'
               )}
             </p>
 
-            {/* Datos clave del torneo (Barra Compacta Elegante: Fecha / Sede / Inversión) */}
-            <div className="grid grid-cols-3 gap-2 sm:gap-4 p-3 sm:p-3.5 rounded-2xl bg-[#0a389c]/70 border border-blue-400/25 backdrop-blur-md mb-6 max-w-xl mx-auto lg:mx-0 shadow-lg">
+            {/* Datos clave del torneo: Fecha / Sede (Lechería claro) / Inversión (2 juegos garantizados) / Premios en Metálico */}
+            <div className="p-3.5 sm:p-4 rounded-2xl bg-[#0a389c]/80 border border-blue-400/30 backdrop-blur-md mb-6 max-w-xl mx-auto lg:mx-0 shadow-xl">
               
-              <div className="text-center lg:text-left border-r border-blue-400/20 pr-2">
-                <span className="text-[10px] font-bold text-blue-200/80 uppercase tracking-wider block">Fecha</span>
-                <span className="text-xs sm:text-sm font-black text-white font-orbitron block mt-0.5 truncate">
-                  {config.heroFechas || '7 al 12 Dic'}
-                </span>
+              <div className="grid grid-cols-3 gap-2 sm:gap-4 items-start text-center lg:text-left">
+                
+                {/* FECHA */}
+                <div className="border-r border-blue-400/25 pr-1.5 sm:pr-3">
+                  <span className="text-[10px] font-extrabold text-blue-200/90 uppercase tracking-wider block font-orbitron">
+                    Fecha
+                  </span>
+                  <span className="text-xs sm:text-sm font-black text-white font-orbitron block mt-1 leading-tight">
+                    7 al 12 Dic
+                  </span>
+                  <span className="text-[10px] text-blue-200/80 font-medium block mt-0.5">
+                    Diciembre 2026
+                  </span>
+                </div>
+
+                {/* SEDE (Lechería claro y visible en móvil y desktop sin truncamiento) */}
+                <div className="border-r border-blue-400/25 pr-1.5 sm:pr-3">
+                  <span className="text-[10px] font-extrabold text-blue-200/90 uppercase tracking-wider block font-orbitron">
+                    Sede
+                  </span>
+                  <span className="text-xs sm:text-sm font-black text-[#A3E229] font-orbitron block mt-1 leading-tight">
+                    La Marina SC
+                  </span>
+                  <span className="text-[11px] sm:text-xs font-black text-white font-orbitron block mt-0.5 leading-tight">
+                    Lechería
+                  </span>
+                </div>
+
+                {/* INVERSIÓN (2 juegos garantizados) */}
+                <div className="pl-1 sm:pl-2">
+                  <span className="text-[10px] font-extrabold text-blue-200/90 uppercase tracking-wider block font-orbitron">
+                    Inversión
+                  </span>
+                  <span className="text-xs sm:text-sm font-black text-white font-orbitron block mt-1 leading-tight">
+                    $150 / pareja
+                  </span>
+                  <span className="text-[10px] sm:text-[11px] font-bold text-[#A3E229] block mt-0.5 leading-tight">
+                    (2 juegos garantizados)
+                  </span>
+                </div>
+
               </div>
 
-              <div className="text-center lg:text-left border-r border-blue-400/20 pr-2">
-                <span className="text-[10px] font-bold text-blue-200/80 uppercase tracking-wider block">Sede</span>
-                <span className="text-xs sm:text-sm font-black text-[#A3E229] font-orbitron block mt-0.5 truncate" title={config.heroSede || 'La Marina Sport Club, Lechería'}>
-                  {config.heroSede || 'La Marina SC, Lechería'}
-                </span>
-              </div>
-
-              <div className="text-center lg:text-left pl-1">
-                <span className="text-[10px] font-bold text-blue-200/80 uppercase tracking-wider block">Inversión</span>
-                <span className="text-xs sm:text-sm font-black text-white font-orbitron block mt-0.5 truncate">
-                  {config.heroInversion || '$150 / dupla'}
+              {/* CINTILLO / BADGE: PREMIOS EN METÁLICO & TROFEOS OFICIALES */}
+              <div className="mt-3 pt-2.5 border-t border-blue-400/20 flex flex-wrap items-center justify-center lg:justify-between gap-2">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#A3E229]/20 border border-[#A3E229]/60 text-white text-[11px] sm:text-xs font-black font-orbitron tracking-wide shadow-sm">
+                  <Trophy className="w-3.5 h-3.5 text-[#A3E229] shrink-0" />
+                  <span>PREMIOS EN METÁLICO & TROFEOS</span>
+                </div>
+                <span className="text-[10px] sm:text-[11px] text-blue-200/90 font-bold hidden sm:inline font-orbitron">
+                  Torneo Estadal 500 pts FVP
                 </span>
               </div>
 

@@ -108,10 +108,12 @@ export const DEFAULT_ADMIN_USERS = [
 export const DEFAULT_LANDING_CONFIG = {
   heroCintillo: 'Cupos Limitados',
   heroTitulo: '¡Inscripciones abiertas!',
-  heroSubtitulo: 'Cierra el año compitiendo en el evento de pádel más importante del oriente del país. Válido por 500 puntos para el ranking oficial de la Federación Venezolana de Pádel (FVP). Reúne a tu dupla y asegura tu cupo en la grilla oficial.',
-  heroFechas: 'del 7 al 12 de diciembre',
-  heroSede: 'La Marina Sport Club, Lechería',
+  heroSubtitulo: 'Cierra el año con el mejor nivel competitivo en una experiencia diseñada para que el atleta sea el absoluto protagonista. Prepárate para vivir la máxima emoción del pádel en un torneo oficial de 500 puntos para el ranking FVP. ¡Reúne a tu dupla, asegura tu cupo en el cuadro de juego y sé parte de la gran fiesta de cierre de temporada en casa!',
+  heroFechas: '7 al 12 Dic',
+  heroSede: 'La Marina SC, Lechería',
   heroInversion: '$150 por pareja',
+  heroJuegosGarantizados: '2 juegos garantizados',
+  heroPremios: 'Premios en Metálico & Trofeos Oficiales',
   parejasSubtitulo: 'Listado oficial de duplas con inscripción y pago verificado por el comité organizador',
   cuposLimitados: 'Cupos Limitados',
   montoInscripcion: '$150',
@@ -208,7 +210,11 @@ export async function getLandingConfig() {
   const local = localStorage.getItem(LOCAL_STORAGE_LANDING_CONFIG_KEY);
   if (local) {
     try {
-      return { ...DEFAULT_LANDING_CONFIG, ...JSON.parse(local) };
+      const parsed = JSON.parse(local);
+      if (!parsed.heroSubtitulo || parsed.heroSubtitulo.includes('Cierra el año compitiendo en el evento de pádel más importante del oriente')) {
+        parsed.heroSubtitulo = DEFAULT_LANDING_CONFIG.heroSubtitulo;
+      }
+      return { ...DEFAULT_LANDING_CONFIG, ...parsed };
     } catch (err) {
       console.error('Error parseando configuración local:', err);
     }

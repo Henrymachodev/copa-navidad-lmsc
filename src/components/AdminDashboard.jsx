@@ -783,7 +783,7 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                   rows="3"
                   value={landingForm.heroSubtitulo || ''}
                   onChange={(e) => setLandingForm({ ...landingForm, heroSubtitulo: e.target.value })}
-                  placeholder="Cierra el año compitiendo en el evento de pádel..."
+                  placeholder="Cierra el año con el mejor nivel competitivo en una experiencia diseñada para que el atleta sea el absoluto protagonista..."
                   className="w-full px-3 py-2 rounded-xl bg-navy-900 text-white border border-slate-700 text-xs sm:text-sm resize-none"
                 ></textarea>
               </div>

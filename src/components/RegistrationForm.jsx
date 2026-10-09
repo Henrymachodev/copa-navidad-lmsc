@@ -746,6 +746,63 @@ export default function RegistrationForm({ onSuccess }) {
 
           <form onSubmit={handleSubmit} noValidate className="space-y-6">
 
+            {/* CARD DESTACADA: INVERSIÓN OFICIAL Y BENEFICIOS INCLUIDOS */}
+            <div className="form-card bg-white p-5 sm:p-6 rounded-3xl border border-blue-200/80 shadow-xl text-slate-800">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3.5 border-b border-slate-200">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-[#150D8B] text-[#A3E229] border border-[#150D8B] flex items-center justify-center font-orbitron font-black text-base shadow-md shrink-0">
+                    $
+                  </div>
+                  <div>
+                    <h3 className="text-base sm:text-lg font-orbitron font-black text-[#150D8B] tracking-wide uppercase">
+                      Inversión: $150 por Pareja
+                    </h3>
+                    <p className="text-xs text-slate-600 font-semibold mt-0.5">
+                      $75 por jugador • <strong className="text-emerald-700 font-black font-orbitron">2 juegos garantizados</strong>
+                    </p>
+                  </div>
+                </div>
+
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#150D8B] text-[#A3E229] text-xs font-orbitron font-black border border-[#150D8B] shadow-sm self-start sm:self-auto">
+                  <Trophy className="w-3.5 h-3.5 text-[#A3E229]" />
+                  <span>PREMIOS EN METÁLICO</span>
+                </div>
+              </div>
+
+              {/* Viñetas que recuerdan qué incluye la inversión */}
+              <div className="pt-3">
+                <span className="text-[10px] font-black uppercase tracking-wider text-[#150D8B] block font-orbitron mb-2">
+                  ¿Qué incluye tu inscripción oficial?
+                </span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 text-xs text-slate-700">
+                  <div className="flex items-center gap-2 p-2.5 rounded-xl bg-blue-50/70 border border-blue-200/60">
+                    <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span className="font-semibold"><strong>2 juegos garantizados</strong> en cuadro</span>
+                  </div>
+                  <div className="flex items-center gap-2 p-2.5 rounded-xl bg-blue-50/70 border border-blue-200/60">
+                    <Trophy className="w-4 h-4 text-amber-500 shrink-0" />
+                    <span className="font-semibold"><strong>Premios en metálico</strong> & trofeos</span>
+                  </div>
+                  <div className="flex items-center gap-2 p-2.5 rounded-xl bg-blue-50/70 border border-blue-200/60">
+                    <Award className="w-4 h-4 text-[#150D8B] shrink-0" />
+                    <span className="font-semibold"><strong>Franela técnica oficial</strong> para la dupla</span>
+                  </div>
+                  <div className="flex items-center gap-2 p-2.5 rounded-xl bg-blue-50/70 border border-blue-200/60">
+                    <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span className="font-semibold"><strong>Hidratación continua</strong> en pista</span>
+                  </div>
+                  <div className="flex items-center gap-2 p-2.5 rounded-xl bg-blue-50/70 border border-blue-200/60">
+                    <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span className="font-semibold"><strong>Pelotas oficiales</strong> nuevas por partido</span>
+                  </div>
+                  <div className="flex items-center gap-2 p-2.5 rounded-xl bg-blue-50/70 border border-blue-200/60">
+                    <ShieldCheck className="w-4 h-4 text-[#150D8B] shrink-0" />
+                    <span className="font-semibold"><strong>Arbitraje federado FVP</strong> (500 pts)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* SECCIÓN 1: CATEGORÍA DE PAREJA CON TARJETA BLANCA DE ALTO CONTRASTE */}
             <div className="form-card bg-white p-5 sm:p-6 rounded-3xl border border-blue-200/60 shadow-xl text-slate-800">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">

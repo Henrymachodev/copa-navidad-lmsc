@@ -144,11 +144,19 @@ export default function ConfirmationModal({ data, onClose }) {
         {/* Banner de Inversión Oficial */}
         <div className="bg-gradient-to-r from-blue-50 to-indigo-50/70 p-4 rounded-2xl border border-blue-200/80 mb-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left shadow-sm">
           <div>
-            <span className="text-[10px] uppercase font-black text-[#150D8B] tracking-wider block font-orbitron">
-              INVERSIÓN POR PAREJA
-            </span>
+            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-1">
+              <span className="text-[10px] uppercase font-black text-[#150D8B] tracking-wider block font-orbitron">
+                INVERSIÓN POR PAREJA
+              </span>
+              <span className="px-2 py-0.5 rounded-full bg-[#150D8B] text-[#A3E229] text-[9px] font-black font-orbitron uppercase">
+                2 Juegos Garantizados
+              </span>
+              <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[9px] font-black font-orbitron uppercase">
+                🏆 Premios en Metálico
+              </span>
+            </div>
             <span className="text-xs text-slate-600 leading-tight block mt-0.5">
-              Derecho a competir, arbitraje oficial, hidratación continua y welcome pack oficial.
+              Incluye 2 partidos garantizados, arbitraje oficial FVP, hidratación continua, franela técnica oficial y premios en metálico.
             </span>
           </div>
           <div className="px-5 py-2.5 rounded-2xl bg-[#150D8B] border border-[#150D8B] text-center shadow-md shrink-0">
