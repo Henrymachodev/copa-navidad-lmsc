@@ -58,6 +58,7 @@ import {
   DEFAULT_MAX_PAIRS_PER_CATEGORY,
   DEFAULT_LANDING_CONFIG,
   DEFAULT_HERO_FOTOS,
+  DEFAULT_HERO_MONTAGE_FOTOS,
   DEFAULT_BENEFICIOS_INVERSION,
   subscribeToRegistrations,
   ADMIN_ROLES,
@@ -339,6 +340,39 @@ export default function AdminDashboard({ onLogout, currentUser }) {
       currentFotos[index] = { ...defaultFoto };
       setLandingForm(prev => ({ ...prev, heroFotos: currentFotos }));
     }
+  };
+
+  // Manejo de Fotos del Montaje Deportivo Flyer
+  const handleMontagePhotoUpload = (key, e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const MAX_SIZE = 1048576; // 1 MB
+    if (file.size > MAX_SIZE) {
+      alert(`La imagen supera 1 MB (${(file.size / (1024 * 1024)).toFixed(2)} MB). Por favor comprímela antes de subir.`);
+      e.target.value = '';
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      setLandingForm(prev => ({
+        ...prev,
+        heroMontageFotos: {
+          ...(prev.heroMontageFotos || DEFAULT_HERO_MONTAGE_FOTOS),
+          [key]: ev.target.result
+        }
+      }));
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRestoreMontagePhoto = (key) => {
+    setLandingForm(prev => ({
+      ...prev,
+      heroMontageFotos: {
+        ...(prev.heroMontageFotos || DEFAULT_HERO_MONTAGE_FOTOS),
+        [key]: DEFAULT_HERO_MONTAGE_FOTOS[key]
+      }
+    }));
   };
 
   // Manejo de Beneficios de la Inversión
@@ -867,15 +901,136 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                 <div>
                   <h3 className="text-sm font-bold text-gold-400 uppercase tracking-wider flex items-center gap-2">
                     <ImageIcon className="w-4 h-4 text-emerald-400" />
-                    2. Fotos del Banner Hero Principal (4 Categorías)
+                    2. Fotos del Banner Hero Principal (Flyer Deportivo o Cuadrícula)
                   </h3>
                   <p className="text-xs text-slate-400 mt-0.5">
-                    Personaliza las 4 fotografías, etiquetas y alineación visual que se exhiben en el banner superior.
+                    Selecciona el estilo de presentación en el Hero y personaliza las fotografías oficiales del torneo.
                   </p>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* SELECTOR DE ESTILO VISUAL: MONTAJE FLYER VS CUADRÍCULA CLÁSICA */}
+              <div className="p-4 rounded-2xl bg-gradient-to-r from-blue-900/40 via-navy-900/60 to-blue-950/40 border border-blue-400/40 shadow-inner">
+                <label className="block text-xs font-bold text-white uppercase tracking-wider mb-2">
+                  Estilo de Exhibición en el Banner Hero:
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  
+                  {/* Opción 1: Montaje Deportivo Superpuesto (Flyer) */}
+                  <label className={`flex items-start gap-3 p-3.5 rounded-xl border cursor-pointer transition-all ${
+                    (landingForm.heroVisualMode || 'montage') === 'montage'
+                      ? 'bg-[#A3E229]/15 border-[#A3E229] shadow-[0_0_20px_rgba(163,226,41,0.2)]'
+                      : 'bg-navy-900/70 border-slate-700/80 hover:border-slate-500'
+                  }`}>
+                    <input 
+                      type="radio"
+                      name="heroVisualMode"
+                      value="montage"
+                      checked={(landingForm.heroVisualMode || 'montage') === 'montage'}
+                      onChange={() => setLandingForm(prev => ({ ...prev, heroVisualMode: 'montage' }))}
+                      className="mt-1 text-[#A3E229] focus:ring-[#A3E229]"
+                    />
+                    <div>
+                      <span className="text-xs sm:text-sm font-black font-orbitron text-white block">
+                        Montaje Deportivo Superpuesto (Estilo Flyer)
+                      </span>
+                      <span className="text-[11px] text-blue-200/90 block mt-0.5">
+                        Composición ganadora con las 4 fotos integradas con iluminación de estadio y efectos atléticos.
+                      </span>
+                    </div>
+                  </label>
+
+                  {/* Opción 2: Cuadrícula Clásica (4 Tarjetas) */}
+                  <label className={`flex items-start gap-3 p-3.5 rounded-xl border cursor-pointer transition-all ${
+                    landingForm.heroVisualMode === 'grid'
+                      ? 'bg-[#A3E229]/15 border-[#A3E229] shadow-[0_0_20px_rgba(163,226,41,0.2)]'
+                      : 'bg-navy-900/70 border-slate-700/80 hover:border-slate-500'
+                  }`}>
+                    <input 
+                      type="radio"
+                      name="heroVisualMode"
+                      value="grid"
+                      checked={landingForm.heroVisualMode === 'grid'}
+                      onChange={() => setLandingForm(prev => ({ ...prev, heroVisualMode: 'grid' }))}
+                      className="mt-1 text-[#A3E229] focus:ring-[#A3E229]"
+                    />
+                    <div>
+                      <span className="text-xs sm:text-sm font-black font-orbitron text-white block">
+                        Cuadrícula Clásica (4 Tarjetas con Categorías)
+                      </span>
+                      <span className="text-[11px] text-blue-200/90 block mt-0.5">
+                        Versión anterior con 4 fotos individuales en recuadros separados.
+                      </span>
+                    </div>
+                  </label>
+
+                </div>
+              </div>
+
+              {/* VISTA Y CONTROLES SEGÚN EL MODO SELECCIONADO */}
+              {(landingForm.heroVisualMode || 'montage') === 'montage' ? (
+                /* CONTROLES PARA EL MONTAJE FLYER */
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-300 uppercase">
+                      Fotografías del Montaje Superpuesto (4 Atletas Oficiales)
+                    </span>
+                    <span className="text-[11px] text-[#A3E229] font-bold">
+                      Fotos oficiales adjuntas cargadas
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                    {[
+                      { key: 'smash', title: '1. Smash Bullpadel', desc: 'Acción Aérea Superior' },
+                      { key: 'defense', title: '2. Defensa en Pista', desc: 'Postura y Tensión' },
+                      { key: 'volley', title: '3. Volea Zusset', desc: 'Intensidad & Foco' },
+                      { key: 'celebration', title: '4. Festejo de Dupla', desc: 'Victoria & Abrazo' },
+                    ].map((item) => {
+                      const currentImg = landingForm.heroMontageFotos?.[item.key] || DEFAULT_HERO_MONTAGE_FOTOS[item.key];
+                      return (
+                        <div key={item.key} className="bg-navy-900/90 p-3 rounded-2xl border border-slate-700/80 space-y-2">
+                          <div className="relative h-36 rounded-xl overflow-hidden border border-blue-400/40 bg-[#071f5c]">
+                            <img 
+                              src={currentImg} 
+                              alt={item.title} 
+                              className="w-full h-full object-cover filter contrast-105"
+                            />
+                            <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[#071f5c] to-transparent"></div>
+                            <span className="absolute bottom-1 left-2 text-[10px] font-black font-orbitron text-[#A3E229]">
+                              {item.title}
+                            </span>
+                          </div>
+                          <p className="text-[10px] text-slate-400 truncate">{item.desc}</p>
+                          <div className="flex items-center justify-between gap-1 pt-1 border-t border-slate-800">
+                            <label className="px-2 py-1 rounded-md bg-emerald-600/80 hover:bg-emerald-600 text-white text-[10px] font-bold flex items-center gap-1 cursor-pointer transition-colors shadow-sm">
+                              <UploadCloud className="w-3 h-3" />
+                              <span>Subir</span>
+                              <input
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => handleMontagePhotoUpload(item.key, e)}
+                                className="hidden"
+                              />
+                            </label>
+                            <button
+                              type="button"
+                              onClick={() => handleRestoreMontagePhoto(item.key)}
+                              className="px-2 py-1 rounded-md bg-navy-800 hover:bg-navy-700 text-slate-300 text-[10px] flex items-center gap-1 border border-slate-700"
+                              title="Restaurar foto original"
+                            >
+                              <RotateCcw className="w-2.5 h-2.5" />
+                              <span>Original</span>
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ) : (
+                /* CONTROLES PARA LA CUADRÍCULA CLÁSICA (4 TARJETAS) */
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {(landingForm.heroFotos && landingForm.heroFotos.length === 4 
                   ? landingForm.heroFotos 
                   : DEFAULT_HERO_FOTOS
@@ -987,7 +1142,8 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                   </div>
                 ))}
               </div>
-            </div>
+            )}
+          </div>
 
             {/* SECCIÓN 3: INVERSIÓN Y BENEFICIOS INCLUIDOS */}
             <div className="space-y-4 pt-4 border-t border-slate-800">

@@ -136,6 +136,14 @@ export const DEFAULT_HERO_FOTOS = [
   }
 ];
 
+// Fotos predeterminadas del Montaje Deportivo Superpuesto (Flyer de Campeonato)
+export const DEFAULT_HERO_MONTAGE_FOTOS = {
+  smash: './assets/hero_player_smash.jpg',
+  volley: './assets/hero_player_volley.jpg',
+  defense: './assets/hero_player_defense.jpg',
+  celebration: './assets/hero_player_celebration.jpg'
+};
+
 // Beneficios incluidos en la inversión oficial
 export const DEFAULT_BENEFICIOS_INVERSION = [
   '2 juegos garantizados en cuadro',
@@ -148,6 +156,7 @@ export const DEFAULT_BENEFICIOS_INVERSION = [
 
 // Configuración por defecto de la Landing y Textos
 export const DEFAULT_LANDING_CONFIG = {
+  heroVisualMode: 'montage', // 'montage' (Montaje Deportivo Superpuesto) | 'grid' (Cuadrícula Clásica 4 Fotos)
   heroCintillo: 'Cupos Limitados',
   heroTitulo: '¡Inscripciones abiertas!',
   heroSubtitulo: 'Cierra el año con el mejor nivel competitivo en una experiencia diseñada para que el atleta sea el absoluto protagonista. Prepárate para vivir la máxima emoción del pádel en un torneo oficial de 500 puntos para el ranking FVP. ¡Reúne a tu dupla, asegura tu cupo en el cuadro de juego y sé parte de la gran fiesta de cierre de temporada en casa!',
@@ -159,6 +168,7 @@ export const DEFAULT_LANDING_CONFIG = {
   heroPremios: 'Premios en Metálico & Trofeos Oficiales',
   beneficiosInversion: DEFAULT_BENEFICIOS_INVERSION,
   heroFotos: DEFAULT_HERO_FOTOS,
+  heroMontageFotos: DEFAULT_HERO_MONTAGE_FOTOS,
   parejasSubtitulo: 'Listado oficial de duplas con inscripción y pago verificado por el comité organizador',
   cuposLimitados: 'Cupos Limitados',
   montoInscripcion: '$170',
