@@ -916,26 +916,26 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   
-                  {/* Opción 1: Montaje Deportivo Superpuesto (Flyer) */}
+                  {/* Opción 1: Atletas Oficiales Sin Fondo (Integrados al Banner) */}
                   <label className={`flex items-start gap-3 p-3.5 rounded-xl border cursor-pointer transition-all ${
-                    (landingForm.heroVisualMode || 'montage') === 'montage'
+                    (landingForm.heroVisualMode || 'banner') !== 'grid'
                       ? 'bg-[#A3E229]/15 border-[#A3E229] shadow-[0_0_20px_rgba(163,226,41,0.2)]'
                       : 'bg-navy-900/70 border-slate-700/80 hover:border-slate-500'
                   }`}>
                     <input 
                       type="radio"
                       name="heroVisualMode"
-                      value="montage"
-                      checked={(landingForm.heroVisualMode || 'montage') === 'montage'}
-                      onChange={() => setLandingForm(prev => ({ ...prev, heroVisualMode: 'montage' }))}
+                      value="banner"
+                      checked={(landingForm.heroVisualMode || 'banner') !== 'grid'}
+                      onChange={() => setLandingForm(prev => ({ ...prev, heroVisualMode: 'banner' }))}
                       className="mt-1 text-[#A3E229] focus:ring-[#A3E229]"
                     />
                     <div>
                       <span className="text-xs sm:text-sm font-black font-orbitron text-white block">
-                        Montaje Deportivo Superpuesto (Estilo Flyer)
+                        Atletas Oficiales Sin Fondo (Integrados al Banner)
                       </span>
                       <span className="text-[11px] text-blue-200/90 block mt-0.5">
-                        Composición ganadora con las 4 fotos integradas con iluminación de estadio y efectos atléticos.
+                        Imágenes transparentes sin marcos ni cuadros, integradas directamente sobre la cancha del hero.
                       </span>
                     </div>
                   </label>
@@ -968,47 +968,70 @@ export default function AdminDashboard({ onLogout, currentUser }) {
               </div>
 
               {/* VISTA Y CONTROLES SEGÚN EL MODO SELECCIONADO */}
-              {(landingForm.heroVisualMode || 'montage') === 'montage' ? (
-                /* CONTROLES PARA EL PÓSTER DE CAMPEONATO OFICIAL */
+              {(landingForm.heroVisualMode || 'banner') !== 'grid' ? (
+                /* CONTROLES PARA ATLETAS SIN FONDO */
                 <div className="bg-navy-900/90 p-4 rounded-2xl border border-slate-700/80 space-y-4">
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                     <div>
                       <h4 className="text-xs sm:text-sm font-bold text-white uppercase tracking-wider flex items-center gap-1.5 font-orbitron">
                         <Sparkles className="w-4 h-4 text-[#A3E229]" />
-                        Póster Oficial del Banner Hero Principal
+                        Composición Oficial de Atletas (Sin Fondo)
                       </h4>
                       <p className="text-[11px] text-slate-400 mt-0.5">
-                        Montaje con estilo ganador e impacto atlético (jugadores recortados, luces neón, estelas y fondo de cancha).
+                        Imágenes PNG transparentes preparadas a partir de las fotos oficiales de la carpeta materiales.
                       </p>
                     </div>
                     <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-[#A3E229]/20 text-[#A3E229] border border-[#A3E229]/50">
-                      Estilo Oficial Cargado
+                      Sin Cuadros ni Marcos
                     </span>
                   </div>
 
+                  {/* SELECTOR RÁPIDO ENTRE BANNER 2 Y BANNER 1 */}
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-xs font-bold text-slate-300">Variante rápida:</span>
+                    <button
+                      type="button"
+                      onClick={() => setLandingForm(prev => ({ ...prev, heroBannerImage: './assets/banner2.png' }))}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                        (landingForm.heroBannerImage || './assets/banner2.png').includes('banner2')
+                          ? 'bg-[#A3E229] text-[#150D8B] shadow-md'
+                          : 'bg-navy-800 text-slate-300 hover:text-white border border-slate-700'
+                      }`}
+                    >
+                      Banner 2 (Compacto 5 Atletas)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setLandingForm(prev => ({ ...prev, heroBannerImage: './assets/banner1.png' }))}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                        (landingForm.heroBannerImage || '').includes('banner1')
+                          ? 'bg-[#A3E229] text-[#150D8B] shadow-md'
+                          : 'bg-navy-800 text-slate-300 hover:text-white border border-slate-700'
+                      }`}
+                    >
+                      Banner 1 (Panorámico)
+                    </button>
+                  </div>
+
                   <div className="flex flex-col md:flex-row items-center gap-4 p-3 rounded-xl bg-[#071f5c]/60 border border-blue-400/30">
-                    <div className="relative w-36 h-48 sm:w-44 sm:h-60 rounded-xl overflow-hidden border-2 border-[#A3E229]/60 shadow-[0_0_20px_rgba(163,226,41,0.25)] shrink-0 bg-[#040e2d]">
+                    <div className="relative w-48 h-32 sm:w-56 sm:h-36 rounded-xl overflow-hidden border border-blue-400/40 shadow-inner shrink-0 bg-gradient-to-b from-[#0a389c] to-[#071f5c] flex items-center justify-center p-2">
                       <img 
-                        src={landingForm.heroPosterImage || './assets/hero_poster_championship.jpg'} 
-                        alt="Póster Copa Navidad LMSC" 
-                        className="w-full h-full object-cover filter contrast-105"
+                        src={landingForm.heroBannerImage || './assets/banner2.png'} 
+                        alt="Atletas Copa Navidad LMSC" 
+                        className="w-full h-full object-contain filter drop-shadow-md"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                      <span className="absolute bottom-1.5 left-2 right-2 text-[9px] font-bold text-[#A3E229] truncate text-center block">
-                        Copa Navidad 2026
-                      </span>
                     </div>
 
                     <div className="flex-1 space-y-3 text-left w-full">
                       <div className="space-y-1">
                         <label className="block text-xs font-bold text-slate-300 uppercase">
-                          Ruta o Enlace de la Imagen del Póster
+                          Ruta o Enlace de la Imagen PNG Sin Fondo
                         </label>
                         <input
                           type="text"
-                          value={landingForm.heroPosterImage && landingForm.heroPosterImage.startsWith('data:') ? '(Imagen personalizada subida en base64)' : (landingForm.heroPosterImage || './assets/hero_poster_championship.jpg')}
-                          onChange={(e) => setLandingForm(prev => ({ ...prev, heroPosterImage: e.target.value }))}
-                          placeholder="./assets/... o https://..."
+                          value={landingForm.heroBannerImage && landingForm.heroBannerImage.startsWith('data:') ? '(Imagen personalizada subida en base64)' : (landingForm.heroBannerImage || './assets/banner2.png')}
+                          onChange={(e) => setLandingForm(prev => ({ ...prev, heroBannerImage: e.target.value }))}
+                          placeholder="./assets/banner2.png o https://..."
                           className="w-full px-3 py-2 rounded-xl bg-navy-800 text-white border border-slate-600 text-xs truncate"
                         />
                       </div>
@@ -1016,10 +1039,10 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                       <div className="flex flex-wrap items-center gap-2 pt-1">
                         <label className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center gap-2 cursor-pointer transition-colors shadow-md">
                           <UploadCloud className="w-4 h-4" />
-                          <span>Subir Nuevo Póster (&lt; 1 MB)</span>
+                          <span>Subir Imagen PNG (&lt; 1 MB)</span>
                           <input
                             type="file"
-                            accept="image/*"
+                            accept="image/png,image/webp"
                             onChange={(e) => {
                               const file = e.target.files?.[0];
                               if (!file) return;
@@ -1030,7 +1053,7 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                               }
                               const reader = new FileReader();
                               reader.onload = (ev) => {
-                                setLandingForm(prev => ({ ...prev, heroPosterImage: ev.target.result }));
+                                setLandingForm(prev => ({ ...prev, heroBannerImage: ev.target.result }));
                               };
                               reader.readAsDataURL(file);
                             }}
@@ -1040,11 +1063,11 @@ export default function AdminDashboard({ onLogout, currentUser }) {
 
                         <button
                           type="button"
-                          onClick={() => setLandingForm(prev => ({ ...prev, heroPosterImage: './assets/hero_poster_championship.jpg' }))}
+                          onClick={() => setLandingForm(prev => ({ ...prev, heroBannerImage: './assets/banner2.png' }))}
                           className="px-3.5 py-2 rounded-xl bg-navy-800 hover:bg-navy-700 text-slate-300 hover:text-white text-xs font-bold flex items-center gap-1.5 border border-slate-700 transition-colors"
                         >
                           <RotateCcw className="w-3.5 h-3.5" />
-                          <span>Restaurar Póster Oficial</span>
+                          <span>Restaurar Banner 2 Oficial</span>
                         </button>
                       </div>
                     </div>

@@ -35,7 +35,7 @@ export default function Hero() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
           
           {/* COLUMNA IZQUIERDA: Copa Navidad 2026 y Botón Inscríbete Aquí */}
-          <div className="lg:col-span-7 text-center lg:text-left">
+          <div className="lg:col-span-6 text-center lg:text-left">
             
             {/* Cinta superior: Cupos Limitados */}
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#A3E229]/15 border border-[#A3E229]/60 text-[#A3E229] text-xs font-extrabold tracking-wider uppercase mb-3 shadow-[0_0_20px_rgba(163,226,41,0.25)] backdrop-blur-md">
@@ -143,8 +143,8 @@ export default function Hero() {
 
           </div>
 
-          {/* COLUMNA DERECHA: Presentación Ganadora de Jugadores (Montaje Flyer vs Cuadrícula 4 Fotos) */}
-          <div className="lg:col-span-5 relative flex items-center justify-center mt-4 lg:mt-0">
+          {/* COLUMNA DERECHA: Atletas Oficiales de La Marina (SIN CUADROS, SIN FONDOS, INTEGRADOS AL BANNER) */}
+          <div className="lg:col-span-6 relative flex items-center justify-center mt-6 lg:mt-0">
             {config.heroVisualMode === 'grid' ? (
               /* MODO CUADRÍCULA CLÁSICA (4 Tarjetas de Fotos por Categoría) */
               <>
@@ -189,8 +189,18 @@ export default function Hero() {
                 </div>
               </>
             ) : (
-              /* MODO MONTAJE DEPORTIVO SUPERPUESTO (Estilo Flyer de Campeonato) */
-              <HeroMontage posterImage={config.heroPosterImage} />
+              /* MODO ATLETAS OFICIALES INTEGRADOS AL BANNER (SIN CUADROS, SIN FONDOS) */
+              <div className="relative w-full flex items-center justify-center">
+                {/* Resplandor difuso atmosférico suave de cancha detrás de los atletas */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-[#2a39d1]/30 via-[#A3E229]/20 to-transparent rounded-full blur-3xl pointer-events-none transform scale-110"></div>
+                
+                {/* Imagen de los atletas sin fondo, parte del banner */}
+                <img 
+                  src={config.heroBannerImage || './assets/banner2.png'} 
+                  alt="Atletas Copa Navidad La Marina Sport Club" 
+                  className="relative z-10 w-full max-w-[560px] lg:max-w-[640px] xl:max-w-[700px] h-auto object-contain filter drop-shadow-[0_20px_45px_rgba(0,0,0,0.65)] hover:scale-[1.02] transition-transform duration-500 pointer-events-none select-none"
+                />
+              </div>
             )}
           </div>
 

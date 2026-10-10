@@ -156,7 +156,7 @@ export const DEFAULT_BENEFICIOS_INVERSION = [
 
 // Configuración por defecto de la Landing y Textos
 export const DEFAULT_LANDING_CONFIG = {
-  heroVisualMode: 'montage', // 'montage' (Montaje Deportivo Superpuesto) | 'grid' (Cuadrícula Clásica 4 Fotos)
+  heroVisualMode: 'banner', // 'banner' (Atletas Oficiales Sin Fondo) | 'grid' (Cuadrícula Clásica 4 Fotos)
   heroCintillo: 'Cupos Limitados',
   heroTitulo: '¡Inscripciones abiertas!',
   heroSubtitulo: 'Cierra el año con el mejor nivel competitivo en una experiencia diseñada para que el atleta sea el absoluto protagonista. Prepárate para vivir la máxima emoción del pádel en un torneo oficial de 500 puntos para el ranking FVP. ¡Reúne a tu dupla, asegura tu cupo en el cuadro de juego y sé parte de la gran fiesta de cierre de temporada en casa!',
@@ -170,6 +170,7 @@ export const DEFAULT_LANDING_CONFIG = {
   heroFotos: DEFAULT_HERO_FOTOS,
   heroMontageFotos: DEFAULT_HERO_MONTAGE_FOTOS,
   heroPosterImage: './assets/hero_poster_championship.jpg',
+  heroBannerImage: './assets/banner2.png',
   parejasSubtitulo: 'Listado oficial de duplas con inscripción y pago verificado por el comité organizador',
   cuposLimitados: 'Cupos Limitados',
   montoInscripcion: '$170',
