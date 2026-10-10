@@ -169,6 +169,7 @@ export const DEFAULT_LANDING_CONFIG = {
   beneficiosInversion: DEFAULT_BENEFICIOS_INVERSION,
   heroFotos: DEFAULT_HERO_FOTOS,
   heroMontageFotos: DEFAULT_HERO_MONTAGE_FOTOS,
+  heroPosterImage: './assets/hero_poster_championship.jpg',
   parejasSubtitulo: 'Listado oficial de duplas con inscripción y pago verificado por el comité organizador',
   cuposLimitados: 'Cupos Limitados',
   montoInscripcion: '$170',

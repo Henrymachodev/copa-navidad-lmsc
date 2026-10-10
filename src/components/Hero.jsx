@@ -190,7 +190,7 @@ export default function Hero() {
               </>
             ) : (
               /* MODO MONTAJE DEPORTIVO SUPERPUESTO (Estilo Flyer de Campeonato) */
-              <HeroMontage montageFotos={config.heroMontageFotos} />
+              <HeroMontage posterImage={config.heroPosterImage} />
             )}
           </div>
 

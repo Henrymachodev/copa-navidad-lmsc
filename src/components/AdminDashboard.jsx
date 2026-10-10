@@ -969,63 +969,85 @@ export default function AdminDashboard({ onLogout, currentUser }) {
 
               {/* VISTA Y CONTROLES SEGÚN EL MODO SELECCIONADO */}
               {(landingForm.heroVisualMode || 'montage') === 'montage' ? (
-                /* CONTROLES PARA EL MONTAJE FLYER */
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-slate-300 uppercase">
-                      Fotografías del Montaje Superpuesto (4 Atletas Oficiales)
-                    </span>
-                    <span className="text-[11px] text-[#A3E229] font-bold">
-                      Fotos oficiales adjuntas cargadas
+                /* CONTROLES PARA EL PÓSTER DE CAMPEONATO OFICIAL */
+                <div className="bg-navy-900/90 p-4 rounded-2xl border border-slate-700/80 space-y-4">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                    <div>
+                      <h4 className="text-xs sm:text-sm font-bold text-white uppercase tracking-wider flex items-center gap-1.5 font-orbitron">
+                        <Sparkles className="w-4 h-4 text-[#A3E229]" />
+                        Póster Oficial del Banner Hero Principal
+                      </h4>
+                      <p className="text-[11px] text-slate-400 mt-0.5">
+                        Montaje con estilo ganador e impacto atlético (jugadores recortados, luces neón, estelas y fondo de cancha).
+                      </p>
+                    </div>
+                    <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-[#A3E229]/20 text-[#A3E229] border border-[#A3E229]/50">
+                      Estilo Oficial Cargado
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                    {[
-                      { key: 'smash', title: '1. Smash Bullpadel', desc: 'Acción Aérea Superior' },
-                      { key: 'defense', title: '2. Defensa en Pista', desc: 'Postura y Tensión' },
-                      { key: 'volley', title: '3. Volea Zusset', desc: 'Intensidad & Foco' },
-                      { key: 'celebration', title: '4. Festejo de Dupla', desc: 'Victoria & Abrazo' },
-                    ].map((item) => {
-                      const currentImg = landingForm.heroMontageFotos?.[item.key] || DEFAULT_HERO_MONTAGE_FOTOS[item.key];
-                      return (
-                        <div key={item.key} className="bg-navy-900/90 p-3 rounded-2xl border border-slate-700/80 space-y-2">
-                          <div className="relative h-36 rounded-xl overflow-hidden border border-blue-400/40 bg-[#071f5c]">
-                            <img 
-                              src={currentImg} 
-                              alt={item.title} 
-                              className="w-full h-full object-cover filter contrast-105"
-                            />
-                            <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[#071f5c] to-transparent"></div>
-                            <span className="absolute bottom-1 left-2 text-[10px] font-black font-orbitron text-[#A3E229]">
-                              {item.title}
-                            </span>
-                          </div>
-                          <p className="text-[10px] text-slate-400 truncate">{item.desc}</p>
-                          <div className="flex items-center justify-between gap-1 pt-1 border-t border-slate-800">
-                            <label className="px-2 py-1 rounded-md bg-emerald-600/80 hover:bg-emerald-600 text-white text-[10px] font-bold flex items-center gap-1 cursor-pointer transition-colors shadow-sm">
-                              <UploadCloud className="w-3 h-3" />
-                              <span>Subir</span>
-                              <input
-                                type="file"
-                                accept="image/*"
-                                onChange={(e) => handleMontagePhotoUpload(item.key, e)}
-                                className="hidden"
-                              />
-                            </label>
-                            <button
-                              type="button"
-                              onClick={() => handleRestoreMontagePhoto(item.key)}
-                              className="px-2 py-1 rounded-md bg-navy-800 hover:bg-navy-700 text-slate-300 text-[10px] flex items-center gap-1 border border-slate-700"
-                              title="Restaurar foto original"
-                            >
-                              <RotateCcw className="w-2.5 h-2.5" />
-                              <span>Original</span>
-                            </button>
-                          </div>
-                        </div>
-                      );
-                    })}
+                  <div className="flex flex-col md:flex-row items-center gap-4 p-3 rounded-xl bg-[#071f5c]/60 border border-blue-400/30">
+                    <div className="relative w-36 h-48 sm:w-44 sm:h-60 rounded-xl overflow-hidden border-2 border-[#A3E229]/60 shadow-[0_0_20px_rgba(163,226,41,0.25)] shrink-0 bg-[#040e2d]">
+                      <img 
+                        src={landingForm.heroPosterImage || './assets/hero_poster_championship.jpg'} 
+                        alt="Póster Copa Navidad LMSC" 
+                        className="w-full h-full object-cover filter contrast-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                      <span className="absolute bottom-1.5 left-2 right-2 text-[9px] font-bold text-[#A3E229] truncate text-center block">
+                        Copa Navidad 2026
+                      </span>
+                    </div>
+
+                    <div className="flex-1 space-y-3 text-left w-full">
+                      <div className="space-y-1">
+                        <label className="block text-xs font-bold text-slate-300 uppercase">
+                          Ruta o Enlace de la Imagen del Póster
+                        </label>
+                        <input
+                          type="text"
+                          value={landingForm.heroPosterImage && landingForm.heroPosterImage.startsWith('data:') ? '(Imagen personalizada subida en base64)' : (landingForm.heroPosterImage || './assets/hero_poster_championship.jpg')}
+                          onChange={(e) => setLandingForm(prev => ({ ...prev, heroPosterImage: e.target.value }))}
+                          placeholder="./assets/... o https://..."
+                          className="w-full px-3 py-2 rounded-xl bg-navy-800 text-white border border-slate-600 text-xs truncate"
+                        />
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-2 pt-1">
+                        <label className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center gap-2 cursor-pointer transition-colors shadow-md">
+                          <UploadCloud className="w-4 h-4" />
+                          <span>Subir Nuevo Póster (&lt; 1 MB)</span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (!file) return;
+                              if (file.size > 1048576) {
+                                alert(`La imagen supera 1 MB (${(file.size / (1024 * 1024)).toFixed(2)} MB). Por favor comprímela antes de subir.`);
+                                e.target.value = '';
+                                return;
+                              }
+                              const reader = new FileReader();
+                              reader.onload = (ev) => {
+                                setLandingForm(prev => ({ ...prev, heroPosterImage: ev.target.result }));
+                              };
+                              reader.readAsDataURL(file);
+                            }}
+                            className="hidden"
+                          />
+                        </label>
+
+                        <button
+                          type="button"
+                          onClick={() => setLandingForm(prev => ({ ...prev, heroPosterImage: './assets/hero_poster_championship.jpg' }))}
+                          className="px-3.5 py-2 rounded-xl bg-navy-800 hover:bg-navy-700 text-slate-300 hover:text-white text-xs font-bold flex items-center gap-1.5 border border-slate-700 transition-colors"
+                        >
+                          <RotateCcw className="w-3.5 h-3.5" />
+                          <span>Restaurar Póster Oficial</span>
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               ) : (
