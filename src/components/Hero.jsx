@@ -144,7 +144,7 @@ export default function Hero() {
           </div>
 
           {/* COLUMNA DERECHA: Atletas Oficiales de La Marina (SIN CUADROS, SIN FONDOS, INTEGRADOS AL BANNER) */}
-          <div className="lg:col-span-6 relative flex items-center justify-center mt-6 lg:mt-0">
+          <div className="lg:col-span-6 relative flex items-center justify-center mt-8 sm:mt-6 lg:mt-0 py-4 sm:py-2 lg:py-8">
             {config.heroVisualMode === 'grid' ? (
               /* MODO CUADRÍCULA CLÁSICA (4 Tarjetas de Fotos por Categoría) */
               <>
@@ -190,15 +190,15 @@ export default function Hero() {
               </>
             ) : (
               /* MODO ATLETAS OFICIALES INTEGRADOS AL BANNER (SIN CUADROS, SIN FONDOS) */
-              <div className="relative w-full flex items-center justify-center">
+              <div className="relative w-full flex items-center justify-center py-2 sm:py-0">
                 {/* Resplandor difuso atmosférico suave de cancha detrás de los atletas */}
-                <div className="absolute inset-0 bg-gradient-to-tr from-[#2a39d1]/30 via-[#A3E229]/20 to-transparent rounded-full blur-3xl pointer-events-none transform scale-110"></div>
+                <div className="absolute inset-0 bg-gradient-to-tr from-[#2a39d1]/35 via-[#A3E229]/25 to-transparent rounded-full blur-3xl pointer-events-none transform scale-125"></div>
                 
-                {/* Imagen de los atletas sin fondo, parte del banner */}
+                {/* Imagen de los atletas sin fondo, parte del banner (+25% en desktop y +20% en móvil) */}
                 <img 
                   src={config.heroBannerImage || './assets/banner2.png'} 
                   alt="Atletas Copa Navidad La Marina Sport Club" 
-                  className="relative z-10 w-full max-w-[560px] lg:max-w-[640px] xl:max-w-[700px] h-auto object-contain filter drop-shadow-[0_20px_45px_rgba(0,0,0,0.65)] hover:scale-[1.02] transition-transform duration-500 pointer-events-none select-none"
+                  className="relative z-10 w-full max-w-[560px] sm:max-w-[640px] lg:max-w-[800px] xl:max-w-[880px] h-auto object-contain filter drop-shadow-[0_20px_45px_rgba(0,0,0,0.65)] transform scale-[1.20] sm:scale-100 lg:scale-[1.25] origin-center transition-transform duration-500 pointer-events-none select-none my-2 sm:my-0 lg:my-0"
                 />
               </div>
             )}
