@@ -991,14 +991,14 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                     <span className="text-xs font-bold text-slate-300">Variante rápida:</span>
                     <button
                       type="button"
-                      onClick={() => setLandingForm(prev => ({ ...prev, heroBannerImage: './assets/banner2.png' }))}
+                      onClick={() => setLandingForm(prev => ({ ...prev, heroBannerImage: './assets/hero_banner_oficial.png' }))}
                       className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                        (landingForm.heroBannerImage || './assets/banner2.png').includes('banner2')
+                        (landingForm.heroBannerImage || './assets/hero_banner_oficial.png').includes('hero_banner_oficial') || (landingForm.heroBannerImage || '').includes('banner2')
                           ? 'bg-[#A3E229] text-[#150D8B] shadow-md'
                           : 'bg-navy-800 text-slate-300 hover:text-white border border-slate-700'
                       }`}
                     >
-                      Banner 2 (Compacto 5 Atletas)
+                      Imagen Oficial (Atletas LMSC)
                     </button>
                     <button
                       type="button"
@@ -1016,7 +1016,7 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                   <div className="flex flex-col md:flex-row items-center gap-4 p-3 rounded-xl bg-[#071f5c]/60 border border-blue-400/30">
                     <div className="relative w-48 h-32 sm:w-56 sm:h-36 rounded-xl overflow-hidden border border-blue-400/40 shadow-inner shrink-0 bg-gradient-to-b from-[#0a389c] to-[#071f5c] flex items-center justify-center p-2">
                       <img 
-                        src={landingForm.heroBannerImage || './assets/banner2.png'} 
+                        src={landingForm.heroBannerImage || './assets/hero_banner_oficial.png'} 
                         alt="Atletas Copa Navidad LMSC" 
                         className="w-full h-full object-contain filter drop-shadow-md"
                       />
@@ -1029,9 +1029,9 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                         </label>
                         <input
                           type="text"
-                          value={landingForm.heroBannerImage && landingForm.heroBannerImage.startsWith('data:') ? '(Imagen personalizada subida en base64)' : (landingForm.heroBannerImage || './assets/banner2.png')}
+                          value={landingForm.heroBannerImage && landingForm.heroBannerImage.startsWith('data:') ? '(Imagen personalizada subida en base64)' : (landingForm.heroBannerImage || './assets/hero_banner_oficial.png')}
                           onChange={(e) => setLandingForm(prev => ({ ...prev, heroBannerImage: e.target.value }))}
-                          placeholder="./assets/banner2.png o https://..."
+                          placeholder="./assets/hero_banner_oficial.png o https://..."
                           className="w-full px-3 py-2 rounded-xl bg-navy-800 text-white border border-slate-600 text-xs truncate"
                         />
                       </div>
@@ -1063,11 +1063,11 @@ export default function AdminDashboard({ onLogout, currentUser }) {
 
                         <button
                           type="button"
-                          onClick={() => setLandingForm(prev => ({ ...prev, heroBannerImage: './assets/banner2.png' }))}
+                          onClick={() => setLandingForm(prev => ({ ...prev, heroBannerImage: './assets/hero_banner_oficial.png' }))}
                           className="px-3.5 py-2 rounded-xl bg-navy-800 hover:bg-navy-700 text-slate-300 hover:text-white text-xs font-bold flex items-center gap-1.5 border border-slate-700 transition-colors"
                         >
                           <RotateCcw className="w-3.5 h-3.5" />
-                          <span>Restaurar Banner 2 Oficial</span>
+                          <span>Restaurar Oficial</span>
                         </button>
                       </div>
                     </div>

@@ -35,7 +35,7 @@ export default function Hero() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
           
           {/* COLUMNA IZQUIERDA: Copa Navidad 2026 y Botón Inscríbete Aquí */}
-          <div className="lg:col-span-6 text-center lg:text-left">
+          <div className="lg:col-span-5 text-center lg:text-left">
             
             {/* Cinta superior: Cupos Limitados */}
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#A3E229]/15 border border-[#A3E229]/60 text-[#A3E229] text-xs font-extrabold tracking-wider uppercase mb-3 shadow-[0_0_20px_rgba(163,226,41,0.25)] backdrop-blur-md">
@@ -46,10 +46,10 @@ export default function Hero() {
 
             {/* Título Principal: COPA NAVIDAD 2026 (con la O normal y tipografía oficial del Brandbook Orbitron) */}
             <div className="font-orbitron font-black tracking-tight uppercase leading-[0.95] mb-4 select-none">
-              <div className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl text-white drop-shadow-[0_4px_30px_rgba(0,0,0,0.8)]">
+              <div className="text-4xl sm:text-6xl md:text-7xl lg:text-7xl xl:text-8xl text-white drop-shadow-[0_4px_30px_rgba(0,0,0,0.8)]">
                 COPA NAVIDAD
               </div>
-              <div className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl text-[#A3E229] drop-shadow-[0_0_35px_rgba(163,226,41,0.6)] mt-1 font-black">
+              <div className="text-4xl sm:text-6xl md:text-7xl lg:text-7xl xl:text-8xl text-[#A3E229] drop-shadow-[0_0_35px_rgba(163,226,41,0.6)] mt-1 font-black">
                 2026
               </div>
             </div>
@@ -144,7 +144,7 @@ export default function Hero() {
           </div>
 
           {/* COLUMNA DERECHA: Atletas Oficiales de La Marina (SIN CUADROS, SIN FONDOS, INTEGRADOS AL BANNER) */}
-          <div className="lg:col-span-6 relative flex items-center justify-center mt-8 sm:mt-6 lg:mt-0 py-4 sm:py-2 lg:py-8">
+          <div className="lg:col-span-7 xl:col-span-7 relative flex items-center justify-center mt-6 sm:mt-8 lg:mt-0 py-3 sm:py-4 lg:py-6 overflow-visible">
             {config.heroVisualMode === 'grid' ? (
               /* MODO CUADRÍCULA CLÁSICA (4 Tarjetas de Fotos por Categoría) */
               <>
@@ -190,15 +190,15 @@ export default function Hero() {
               </>
             ) : (
               /* MODO ATLETAS OFICIALES INTEGRADOS AL BANNER (SIN CUADROS, SIN FONDOS) */
-              <div className="relative w-full flex items-center justify-center py-2 sm:py-0">
-                {/* Resplandor difuso atmosférico suave de cancha detrás de los atletas */}
-                <div className="absolute inset-0 bg-gradient-to-tr from-[#2a39d1]/35 via-[#A3E229]/25 to-transparent rounded-full blur-3xl pointer-events-none transform scale-125"></div>
+              <div className="relative w-full flex items-center justify-center py-1 sm:py-2">
+                {/* Resplandor difuso atmosférico suave de cancha detrás de los atletas con halo verde lima neón y azul */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-[#2a39d1]/45 via-[#A3E229]/35 to-[#0a389c]/25 rounded-full blur-2xl sm:blur-3xl pointer-events-none transform scale-110 sm:scale-125"></div>
                 
-                {/* Imagen de los atletas sin fondo, parte del banner (+25% en desktop y +20% en móvil) */}
+                {/* Imagen oficial de los atletas optimizada al máximo en Mobile, Tablet y Desktop */}
                 <img 
-                  src={config.heroBannerImage || './assets/banner2.png'} 
+                  src={config.heroBannerImage || './assets/hero_banner_oficial.png'} 
                   alt="Atletas Copa Navidad La Marina Sport Club" 
-                  className="relative z-10 w-full max-w-[560px] sm:max-w-[640px] lg:max-w-[800px] xl:max-w-[880px] h-auto object-contain filter drop-shadow-[0_20px_45px_rgba(0,0,0,0.65)] transform scale-[1.20] sm:scale-100 lg:scale-[1.25] origin-center transition-transform duration-500 pointer-events-none select-none my-2 sm:my-0 lg:my-0"
+                  className="relative z-10 w-[116%] -mx-[8%] sm:mx-0 sm:w-full max-w-[540px] sm:max-w-[680px] md:max-w-[780px] lg:max-w-none lg:w-[128%] xl:w-[135%] h-auto object-contain filter drop-shadow-[0_25px_50px_rgba(0,0,0,0.7)] hover:scale-[1.02] transition-transform duration-500 pointer-events-none select-none my-2 sm:my-0"
                 />
               </div>
             )}
