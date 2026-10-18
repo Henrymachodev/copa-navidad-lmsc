@@ -32,37 +32,27 @@ export default function Hero() {
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Grid de 2 Columnas: Textos a la izquierda y Visual de Jugadores a la derecha */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center py-2 sm:py-4">
           
-          {/* COLUMNA IZQUIERDA: Copa Navidad 2026 y Botón Inscríbete Aquí */}
-          <div className="lg:col-span-5 text-center lg:text-left">
+          {/* COLUMNA IZQUIERDA: Textos informativos y Botón Inscríbete Aquí */}
+          <div className="lg:col-span-5 text-center lg:text-left flex flex-col justify-center">
             
             {/* Cinta superior: Cupos Limitados */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#A3E229]/15 border border-[#A3E229]/60 text-[#A3E229] text-xs font-extrabold tracking-wider uppercase mb-3 shadow-[0_0_20px_rgba(163,226,41,0.25)] backdrop-blur-md">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#A3E229]/15 border border-[#A3E229]/60 text-[#A3E229] text-xs font-extrabold tracking-wider uppercase mb-4 shadow-[0_0_20px_rgba(163,226,41,0.25)] backdrop-blur-md self-center lg:self-start">
               <span className="w-2 h-2 rounded-full bg-[#A3E229] animate-pulse"></span>
               <Sparkles className="w-3.5 h-3.5 text-[#A3E229] shrink-0" />
               <span>{config.heroCintillo || 'Cupos Limitados'}</span>
             </div>
 
-            {/* Título Principal: COPA NAVIDAD 2026 (con la O normal y tipografía oficial del Brandbook Orbitron) */}
-            <div className="font-orbitron font-black tracking-tight uppercase leading-[0.95] mb-4 select-none">
-              <div className="text-4xl sm:text-6xl md:text-7xl lg:text-7xl xl:text-8xl text-white drop-shadow-[0_4px_30px_rgba(0,0,0,0.8)]">
-                COPA NAVIDAD
-              </div>
-              <div className="text-4xl sm:text-6xl md:text-7xl lg:text-7xl xl:text-8xl text-[#A3E229] drop-shadow-[0_0_35px_rgba(163,226,41,0.6)] mt-1 font-black">
-                2026
-              </div>
-            </div>
-
-            {/* Subtítulo oficial del torneo */}
-            <p className="max-w-2xl mx-auto lg:mx-0 text-sm sm:text-base md:text-lg text-blue-100/90 leading-relaxed font-normal mb-5 drop-shadow-sm">
+            {/* Subtítulo / Descripción oficial del torneo optimizada en tamaño y legibilidad */}
+            <p className="max-w-2xl mx-auto lg:mx-0 text-base sm:text-lg md:text-xl text-blue-100/95 leading-relaxed font-normal mb-6 drop-shadow-sm">
               {config.heroSubtitulo || (
                 'Cierra el año con el mejor nivel competitivo en una experiencia diseñada para que el atleta sea el absoluto protagonista. Prepárate para vivir la máxima emoción del pádel en un torneo oficial de 500 puntos para el ranking FVP. ¡Reúne a tu dupla, asegura tu cupo en el cuadro de juego y sé parte de la gran fiesta de cierre de temporada en casa!'
               )}
             </p>
 
             {/* Datos clave del torneo: Fecha / Sede (Lechería claro) / Inversión (2 juegos garantizados) / Premios en Metálico */}
-            <div className="p-3.5 sm:p-4 rounded-2xl bg-[#0a389c]/80 border border-blue-400/30 backdrop-blur-md mb-6 max-w-xl mx-auto lg:mx-0 shadow-xl">
+            <div className="p-4 sm:p-5 rounded-2xl bg-[#0a389c]/85 border border-blue-400/35 backdrop-blur-md mb-6 max-w-xl mx-auto lg:mx-0 shadow-xl">
               
               <div className="grid grid-cols-3 gap-2 sm:gap-4 items-start text-center lg:text-left">
                 
