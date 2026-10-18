@@ -759,10 +759,10 @@ export default function RegistrationForm({ onSuccess }) {
                   </div>
                   <div>
                     <h3 className="text-base sm:text-lg font-orbitron font-black text-[#150D8B] tracking-wide uppercase">
-                      Inversión: {landingConfig.heroInversion || '$170 por Pareja'}
+                      Inversión: {landingConfig.heroInversion || '$140 por Dupla'}
                     </h3>
                     <p className="text-xs text-slate-600 font-semibold mt-0.5">
-                      {landingConfig.heroInversionDesglose || '$85 por jugador'} • <strong className="text-emerald-700 font-black font-orbitron">{landingConfig.heroJuegosGarantizados || '2 juegos garantizados'}</strong>
+                      {landingConfig.heroInversionDesglose || '$70 por jugador'} • <strong className="text-emerald-700 font-black font-orbitron">{landingConfig.heroJuegosGarantizados || '2 juegos garantizados'}</strong>
                     </p>
                   </div>
                 </div>

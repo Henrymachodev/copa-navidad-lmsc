@@ -160,10 +160,10 @@ export const DEFAULT_LANDING_CONFIG = {
   heroCintillo: 'Cupos Limitados',
   heroTitulo: '¡Inscripciones abiertas!',
   heroSubtitulo: 'Cierra el año con el mejor nivel competitivo en una experiencia diseñada para que el atleta sea el absoluto protagonista. Prepárate para vivir la máxima emoción del pádel en un torneo oficial de 500 puntos para el ranking FVP. ¡Reúne a tu dupla, asegura tu cupo en el cuadro de juego y sé parte de la gran fiesta de cierre de temporada en casa!',
-  heroFechas: '7 al 12 Dic',
+  heroFechas: 'del 14 al 19 de diciembre',
   heroSede: 'La Marina SC, Lechería',
-  heroInversion: '$170 por pareja',
-  heroInversionDesglose: '$85 por jugador',
+  heroInversion: '$140 por dupla',
+  heroInversionDesglose: '$70 por jugador',
   heroJuegosGarantizados: '2 juegos garantizados',
   heroPremios: 'Premios en Metálico & Trofeos Oficiales',
   beneficiosInversion: DEFAULT_BENEFICIOS_INVERSION,
@@ -173,7 +173,7 @@ export const DEFAULT_LANDING_CONFIG = {
   heroBannerImage: './assets/hero_banner_oficial.png',
   parejasSubtitulo: 'Listado oficial de duplas con inscripción y pago verificado por el comité organizador',
   cuposLimitados: 'Cupos Limitados',
-  montoInscripcion: '$170',
+  montoInscripcion: '$140',
   
   // Detalles bancarios y de pago
   pagoMovilDetalle: 'Banco: Banesco (0134)\nTeléfono: 0414-8889900\nRIF: J-50000000-0\nTitular: La Marina Sport Club C.A.\nTasa oficial BCV del día',
@@ -224,7 +224,7 @@ El torneo Copa Navidad LMSC 2026 se regirá bajo las reglas oficiales de juego d
 - Prohibición durante la competencia: Una vez que una dupla dispute su primer punto del torneo, no se autorizará ningún tipo de sustitución. La imposibilidad de continuar de un integrante derivará en el abandono reglamentario del partido y la pérdida de los puntos en disputa.
 
 7. POLÍTICA DE PAGOS, CANCELACIONES Y REEMBOLSOS
-- Cobertura de la inscripción: La inversión de $170 por pareja cubre el derecho a competir, arbitraje oficial, hidratación en pista, pelotas oficiales de torneo y kit de bienvenida oficial.
+- Cobertura de la inscripción: La inversión de $140 por dupla ($70 por jugador) cubre el derecho a competir, arbitraje oficial, hidratación en pista, pelotas oficiales de torneo y kit de bienvenida oficial.
 - Política de no reembolso: Una vez formalizada la inscripción y confirmada la plaza mediante la recepción del comprobante de pago, la organización NO realizará devoluciones ni reembolsos monetarios en efectivo.
 - Cancelaciones anticipadas: En caso de que una pareja deba retirarse por causa mayor comprobada con un mínimo de 72 horas de antelación al sorteo de cuadros, podrá solicitar el traspaso de su cupo a otra dupla elegible o conservar el crédito para el siguiente evento oficial del club.
 - Clima y fuerza mayor: La eventual reprogramación de horarios o jornadas a causa de lluvias o factores climáticos imprevistos no dará lugar a reclamaciones económicas ni solicitudes de reintegro.
@@ -254,14 +254,17 @@ export const INITIAL_SPONSORS = [
 export function sanitizeLandingConfig(cfg) {
   const merged = { ...DEFAULT_LANDING_CONFIG, ...cfg };
 
-  if (merged.montoInscripcion === '$150') {
-    merged.montoInscripcion = '$170';
+  if (merged.montoInscripcion === '$150' || merged.montoInscripcion === '$170') {
+    merged.montoInscripcion = '$140';
   }
-  if (merged.heroInversion === '$150 por pareja' || merged.heroInversion === '$150 / pareja' || merged.heroInversion === '$150 / dupla') {
-    merged.heroInversion = '$170 por pareja';
+  if (merged.heroInversion === '$150 por pareja' || merged.heroInversion === '$150 / pareja' || merged.heroInversion === '$150 / dupla' || merged.heroInversion === '$170 por pareja' || merged.heroInversion === '$170 / pareja' || merged.heroInversion === '$170 / dupla') {
+    merged.heroInversion = '$140 por dupla';
   }
-  if (!merged.heroInversionDesglose || merged.heroInversionDesglose === '$75 por jugador') {
-    merged.heroInversionDesglose = '$85 por jugador';
+  if (!merged.heroInversionDesglose || merged.heroInversionDesglose === '$75 por jugador' || merged.heroInversionDesglose === '$85 por jugador') {
+    merged.heroInversionDesglose = '$70 por jugador';
+  }
+  if (merged.heroFechas === '7 al 12 Dic' || merged.heroFechas === 'del xx al xx de diciembre') {
+    merged.heroFechas = 'del 14 al 19 de diciembre';
   }
   if (!merged.heroJuegosGarantizados) {
     merged.heroJuegosGarantizados = '2 juegos garantizados';

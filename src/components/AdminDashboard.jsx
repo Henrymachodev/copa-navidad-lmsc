@@ -848,7 +848,7 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                     type="text"
                     value={landingForm.heroFechas || ''}
                     onChange={(e) => setLandingForm({ ...landingForm, heroFechas: e.target.value })}
-                    placeholder="7 al 12 Dic"
+                    placeholder="del 14 al 19 de diciembre"
                     className="w-full px-3 py-2.5 rounded-xl bg-navy-900 text-white border border-slate-700 text-sm"
                   />
                 </div>
@@ -1199,7 +1199,7 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                     3. Inversión Oficial y Beneficios de Inscripción
                   </h3>
                   <p className="text-xs text-slate-400 mt-0.5">
-                    Modifica el monto de inversión ($170), desglose ($85 por jugador), garantía de juegos y las viñetas oficiales.
+                    Modifica el monto de inversión ($140), desglose ($70 por jugador), garantía de juegos y las viñetas oficiales.
                   </p>
                 </div>
                 
@@ -1216,16 +1216,16 @@ export default function AdminDashboard({ onLogout, currentUser }) {
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-slate-300 mb-1">
-                    Inversión Total por Pareja
+                    Inversión Total por Dupla
                   </label>
                   <input
                     type="text"
                     value={landingForm.heroInversion || ''}
                     onChange={(e) => setLandingForm({ ...landingForm, heroInversion: e.target.value, montoInscripcion: e.target.value.split(' ')[0] || e.target.value })}
-                    placeholder="$170 por pareja"
+                    placeholder="$140 por dupla"
                     className="w-full px-3 py-2 rounded-xl bg-navy-900 text-white border border-slate-700 text-sm font-mono font-bold"
                   />
-                  <span className="text-[10px] text-slate-500 mt-1 block">Ej: $170 por pareja</span>
+                  <span className="text-[10px] text-slate-500 mt-1 block">Ej: $140 por dupla</span>
                 </div>
 
                 <div>
@@ -1236,10 +1236,10 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                     type="text"
                     value={landingForm.heroInversionDesglose || ''}
                     onChange={(e) => setLandingForm({ ...landingForm, heroInversionDesglose: e.target.value })}
-                    placeholder="$85 por jugador"
+                    placeholder="$70 por jugador"
                     className="w-full px-3 py-2 rounded-xl bg-navy-900 text-white border border-slate-700 text-sm font-mono font-bold"
                   />
-                  <span className="text-[10px] text-slate-500 mt-1 block">Ej: $85 por jugador</span>
+                  <span className="text-[10px] text-slate-500 mt-1 block">Ej: $70 por jugador</span>
                 </div>
 
                 <div>

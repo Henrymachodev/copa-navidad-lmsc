@@ -68,7 +68,7 @@ export default function PaymentInfoSection() {
                 VALOR OFICIAL DE PARTICIPACIÓN
               </span>
               <h2 className="text-2xl sm:text-3xl font-black text-white">
-                Inversión por Pareja
+                Inversión por Dupla
               </h2>
               <p className="text-slate-300 text-xs sm:text-sm mt-1">
                 Incluye derecho a competir, arbitraje oficial, hidratación y kit de bienvenida.
@@ -78,16 +78,16 @@ export default function PaymentInfoSection() {
             {/* Precio destacado */}
             <div className="bg-navy-800/90 border border-gold-500/50 rounded-2xl p-4 sm:p-5 text-center min-w-[200px] shadow-glow-gold">
               <span className="text-xs uppercase tracking-wider text-slate-400 font-bold block">
-                Total Pareja
+                Total Dupla
               </span>
               <div className="flex items-baseline justify-center gap-1 mt-1">
                 <span className="text-3xl sm:text-4xl font-black text-white font-mono">
-                  {config.montoInscripcion || '$170'}
+                  {config.montoInscripcion || '$140'}
                 </span>
                 <span className="text-xs text-gold-400 font-bold">USD</span>
               </div>
               <span className="text-[11px] text-emerald-400 block mt-1 font-medium">
-                ({config.heroInversionDesglose || '$85 por jugador'})
+                ({config.heroInversionDesglose || '$70 por jugador'})
               </span>
             </div>
           </div>

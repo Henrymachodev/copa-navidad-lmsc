@@ -146,7 +146,7 @@ export default function ConfirmationModal({ data, onClose }) {
           <div>
             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-1">
               <span className="text-[10px] uppercase font-black text-[#150D8B] tracking-wider block font-orbitron">
-                INVERSIÓN POR PAREJA
+                INVERSIÓN POR DUPLA
               </span>
               <span className="px-2 py-0.5 rounded-full bg-[#150D8B] text-[#A3E229] text-[9px] font-black font-orbitron uppercase">
                 2 Juegos Garantizados
@@ -161,10 +161,10 @@ export default function ConfirmationModal({ data, onClose }) {
           </div>
           <div className="px-5 py-2.5 rounded-2xl bg-[#150D8B] border border-[#150D8B] text-center shadow-md shrink-0">
             <span className="font-orbitron text-2xl font-black text-[#A3E229] block leading-none">
-              $170 USD
+              $140 USD
             </span>
             <span className="block text-[10px] text-blue-200 font-bold uppercase tracking-wide mt-1">
-              ($85 por jugador)
+              ($70 por jugador)
             </span>
           </div>
         </div>

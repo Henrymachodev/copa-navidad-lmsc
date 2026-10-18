@@ -72,7 +72,7 @@ export default function Hero() {
                     Fecha
                   </span>
                   <span className="text-xs sm:text-sm font-black text-white font-orbitron block mt-1 leading-tight">
-                    7 al 12 Dic
+                    {config.heroFechas || 'del 14 al 19 de diciembre'}
                   </span>
                   <span className="text-[10px] text-blue-200/80 font-medium block mt-0.5">
                     Diciembre 2026
@@ -98,10 +98,10 @@ export default function Hero() {
                     Inversión
                   </span>
                   <span className="text-xs sm:text-sm font-black text-white font-orbitron block mt-1 leading-tight">
-                    {config.heroInversion || '$170 / pareja'}
+                    {config.heroInversion || '$140 por dupla'}
                   </span>
                   <span className="text-[10px] sm:text-[11px] font-bold text-[#A3E229] block mt-0.5 leading-tight">
-                    ({config.heroJuegosGarantizados || '2 juegos garantizados'})
+                    {config.heroInversionDesglose || '$70 por jugador'} • ({config.heroJuegosGarantizados || '2 juegos'})
                   </span>
                 </div>
 
