@@ -23,8 +23,8 @@ export const getActiveSupabaseConfig = () => {
   }
 
   return {
-    supabaseUrl: import.meta.env.VITE_SUPABASE_URL || '',
-    supabaseAnonKey: import.meta.env.VITE_SUPABASE_ANON_KEY || ''
+    supabaseUrl: import.meta.env.VITE_SUPABASE_URL || 'https://xcjvbgclnyfslcjlqvur.supabase.co',
+    supabaseAnonKey: import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjanZiZ2Nsbnlmc2xjamxxdnVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI0NDIwOTksImV4cCI6MjEwODAxODA5OX0.qzBcQABPt1KJzN0tx0h7UUBTFA-O_VIp7josc8Er5ps'
   };
 };
 
