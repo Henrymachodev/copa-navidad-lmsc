@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Handshake } from 'lucide-react';
-import { getSponsors, INITIAL_SPONSORS } from '../services/firebase';
+import { getSponsors, INITIAL_SPONSORS } from '../services/supabase';
 
 export default function SponsorsSection() {
   const [sponsorsList, setSponsorsList] = useState(INITIAL_SPONSORS);

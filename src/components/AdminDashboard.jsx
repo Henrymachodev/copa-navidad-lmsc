@@ -72,12 +72,12 @@ import {
   getAdminUsers,
   saveAdminUser,
   deleteAdminUser,
-  isFirebaseConfigured,
-  getActiveFirebaseConfig,
-  saveCustomFirebaseConfig,
-  clearCustomFirebaseConfig,
-  getFirebaseProjectId
-} from '../services/firebase';
+  isSupabaseConfigured,
+  getActiveSupabaseConfig,
+  saveCustomSupabaseConfig,
+  clearCustomSupabaseConfig,
+  getSupabaseProjectRef
+} from '../services/supabase';
 import { CATEGORIAS } from './RegistrationForm';
 
 export default function AdminDashboard({ onLogout, currentUser }) {
@@ -144,9 +144,9 @@ export default function AdminDashboard({ onLogout, currentUser }) {
   };
   const [newDuplaForm, setNewDuplaForm] = useState(initialNewDupla);
 
-  // Modal para configuración de Base de Datos en la Nube
+  // Modal para configuración de Base de Datos en la Nube (Supabase)
   const [cloudDbModalOpen, setCloudDbModalOpen] = useState(false);
-  const [cloudDbForm, setCloudDbForm] = useState(() => getActiveFirebaseConfig());
+  const [cloudDbForm, setCloudDbForm] = useState(() => getActiveSupabaseConfig());
 
   // Cupos por categoría
   const [limits, setLimits] = useState({ defaultMax: DEFAULT_MAX_PAIRS_PER_CATEGORY });
@@ -593,24 +593,24 @@ export default function AdminDashboard({ onLogout, currentUser }) {
     }
   };
 
-  // Guardar configuración de Firebase Cloud
+  // Guardar configuración de Supabase Cloud
   const handleSaveCloudConfig = (e) => {
     e.preventDefault();
-    if (!cloudDbForm.apiKey?.trim() || !cloudDbForm.projectId?.trim()) {
-      alert('Por favor ingresa al menos la API Key y el Project ID de Firebase.');
+    if (!cloudDbForm.supabaseUrl?.trim() || !cloudDbForm.supabaseAnonKey?.trim()) {
+      alert('Por favor ingresa la URL del proyecto Supabase y la clave pública (anon key).');
       return;
     }
-    saveCustomFirebaseConfig(cloudDbForm);
+    saveCustomSupabaseConfig(cloudDbForm);
     setCloudDbModalOpen(false);
-    setFeedback({ type: 'success', message: '¡Configuración de Firebase guardada! Recargando para conectar en la nube...' });
+    setFeedback({ type: 'success', message: '¡Configuración de Supabase guardada! Conectando con la base de datos en la nube...' });
     setTimeout(() => {
       window.location.reload();
     }, 1200);
   };
 
   const handleClearCloudConfig = () => {
-    if (window.confirm('¿Deseas restablecer la configuración de base de datos a los valores predeterminados?')) {
-      clearCustomFirebaseConfig();
+    if (window.confirm('¿Deseas restablecer la configuración de Supabase a los valores locales?')) {
+      clearCustomSupabaseConfig();
       window.location.reload();
     }
   };
@@ -915,28 +915,29 @@ export default function AdminDashboard({ onLogout, currentUser }) {
             </div>
           )}
 
-          {/* Indicador y Selector de Base de Datos en la Nube */}
+          {/* Indicador y Selector de Base de Datos en la Nube (Supabase) */}
           <button
             type="button"
             onClick={() => setCloudDbModalOpen(true)}
             className={`px-3 py-1.5 rounded-xl border text-xs font-bold flex items-center gap-2 transition-all shadow-md ${
-              isFirebaseConfigured()
+              isSupabaseConfigured()
                 ? 'bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border-emerald-500/40'
                 : 'bg-amber-500/25 hover:bg-amber-500/35 text-amber-300 border-amber-500/50 animate-pulse'
             }`}
-            title="Ver o configurar conexión a la base de datos en la nube (Firestore)"
+            title="Ver o configurar conexión a la base de datos en la nube (Supabase)"
           >
-            {isFirebaseConfigured() ? (
+            {isSupabaseConfigured() ? (
               <>
+                <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></div>
                 <Cloud className="w-4 h-4 text-emerald-400" />
-                <span className="hidden sm:inline">BD Nube: <strong className="text-white font-mono">{getFirebaseProjectId() || 'Firestore'}</strong></span>
-                <span className="sm:hidden">Nube ✓</span>
+                <span className="hidden sm:inline">BD Nube: <strong className="text-white font-mono">Supabase ({getSupabaseProjectRef()})</strong></span>
+                <span className="sm:hidden">Supabase ✓</span>
               </>
             ) : (
               <>
                 <CloudOff className="w-4 h-4 text-amber-400" />
-                <span className="hidden sm:inline">BD: <strong>Local (Conectar Nube)</strong></span>
-                <span className="sm:hidden">Conectar Nube</span>
+                <span className="hidden sm:inline">BD: <strong>Local (Conectar Supabase)</strong></span>
+                <span className="sm:hidden">Conectar Supabase</span>
               </>
             )}
           </button>
@@ -3980,117 +3981,79 @@ export default function AdminDashboard({ onLogout, currentUser }) {
 
             {/* Estado Actual */}
             <div className={`p-4 rounded-2xl border mb-5 flex items-start gap-3 ${
-              isFirebaseConfigured()
+              isSupabaseConfigured()
                 ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-200'
                 : 'bg-amber-500/15 border-amber-500/30 text-amber-200'
             }`}>
-              {isFirebaseConfigured() ? (
+              {isSupabaseConfigured() ? (
                 <Cloud className="w-6 h-6 text-emerald-400 shrink-0 mt-0.5" />
               ) : (
                 <CloudOff className="w-6 h-6 text-amber-400 shrink-0 mt-0.5" />
               )}
               <div className="text-xs">
                 <div className="font-bold text-sm text-white mb-0.5 flex items-center gap-2">
-                  <span>Estado: {isFirebaseConfigured() ? 'Conectado a la Nube (Multi-dispositivo)' : 'Almacenamiento Local (Este navegador)'}</span>
+                  <span>Estado: {isSupabaseConfigured() ? 'Conectado a Supabase en la Nube (Multi-dispositivo)' : 'Almacenamiento Local (Este navegador)'}</span>
                 </div>
                 <p className="text-slate-300 leading-relaxed">
-                  {isFirebaseConfigured() ? (
+                  {isSupabaseConfigured() ? (
                     <>
-                      La base de datos está conectada a Firestore en el proyecto: <strong className="text-emerald-300 font-mono">{getFirebaseProjectId()}</strong>. Todas las inscripciones, ediciones y cambios de estatus se guardan en la nube y son visibles al instante desde cualquier teléfono o computadora.
+                      La base de datos está conectada a <strong>Supabase</strong> en el proyecto: <strong className="text-emerald-300 font-mono">{getSupabaseProjectRef()}</strong>. Todas las inscripciones, ediciones de duplas y confirmaciones se guardan en tiempo real en la nube y son visibles al instante desde cualquier teléfono o computadora.
                     </>
                   ) : (
                     <>
-                      Actualmente el sistema está usando la memoria local de este navegador (LocalStorage). Para que las inscripciones y ediciones se sincronicen <strong>en tiempo real en cualquier dispositivo</strong>, ingresa las credenciales de tu proyecto de Firebase a continuación.
+                      Actualmente el sistema está usando almacenamiento local. Para que las inscripciones y ediciones se sincronicen <strong>en tiempo real en cualquier dispositivo</strong> con tu proyecto de Supabase vinculado a GitHub, ingresa la URL y la Anon Key a continuación.
                     </>
                   )}
                 </p>
               </div>
             </div>
 
-            <form onSubmit={handleSaveCloudConfig} className="space-y-3.5 text-xs">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-semibold text-slate-300 mb-1">API Key de Firebase *</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="AIzaSy..."
-                    value={cloudDbForm.apiKey || ''}
-                    onChange={(e) => setCloudDbForm({ ...cloudDbForm, apiKey: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700 font-mono text-xs focus:border-blue-400"
-                  />
-                </div>
-                <div>
-                  <label className="block font-semibold text-slate-300 mb-1">Project ID *</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="copa-navidad-lmsc"
-                    value={cloudDbForm.projectId || ''}
-                    onChange={(e) => setCloudDbForm({ ...cloudDbForm, projectId: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700 font-mono text-xs focus:border-blue-400"
-                  />
-                </div>
+            <form onSubmit={handleSaveCloudConfig} className="space-y-4 text-xs">
+              <div>
+                <label className="block font-semibold text-slate-300 mb-1.5 flex items-center justify-between">
+                  <span>URL del Proyecto Supabase (Project URL) *</span>
+                  <span className="text-[10px] text-slate-400 font-mono">Ej: https://xyzcompany.supabase.co</span>
+                </label>
+                <input
+                  type="url"
+                  required
+                  placeholder="https://xxxxxxxxxxxxxxxxxxxx.supabase.co"
+                  value={cloudDbForm.supabaseUrl || ''}
+                  onChange={(e) => setCloudDbForm({ ...cloudDbForm, supabaseUrl: e.target.value })}
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-navy-950 text-white border border-slate-700 font-mono text-xs focus:border-emerald-400"
+                />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-semibold text-slate-300 mb-1">Auth Domain</label>
-                  <input
-                    type="text"
-                    placeholder="proyecto.firebaseapp.com"
-                    value={cloudDbForm.authDomain || ''}
-                    onChange={(e) => setCloudDbForm({ ...cloudDbForm, authDomain: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700 font-mono text-xs"
-                  />
-                </div>
-                <div>
-                  <label className="block font-semibold text-slate-300 mb-1">Storage Bucket</label>
-                  <input
-                    type="text"
-                    placeholder="proyecto.appspot.com"
-                    value={cloudDbForm.storageBucket || ''}
-                    onChange={(e) => setCloudDbForm({ ...cloudDbForm, storageBucket: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700 font-mono text-xs"
-                  />
-                </div>
+              <div>
+                <label className="block font-semibold text-slate-300 mb-1.5 flex items-center justify-between">
+                  <span>Clave Pública Anónima (Anon Public Key) *</span>
+                  <span className="text-[10px] text-slate-400 font-mono">eyJhbGciOi...</span>
+                </label>
+                <input
+                  type="password"
+                  required
+                  placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                  value={cloudDbForm.supabaseAnonKey || ''}
+                  onChange={(e) => setCloudDbForm({ ...cloudDbForm, supabaseAnonKey: e.target.value })}
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-navy-950 text-white border border-slate-700 font-mono text-xs focus:border-emerald-400"
+                />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-semibold text-slate-300 mb-1">Messaging Sender ID</label>
-                  <input
-                    type="text"
-                    placeholder="1029384756"
-                    value={cloudDbForm.messagingSenderId || ''}
-                    onChange={(e) => setCloudDbForm({ ...cloudDbForm, messagingSenderId: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700 font-mono text-xs"
-                  />
-                </div>
-                <div>
-                  <label className="block font-semibold text-slate-300 mb-1">App ID</label>
-                  <input
-                    type="text"
-                    placeholder="1:1029384756:web:abcd1234"
-                    value={cloudDbForm.appId || ''}
-                    onChange={(e) => setCloudDbForm({ ...cloudDbForm, appId: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700 font-mono text-xs"
-                  />
-                </div>
-              </div>
-
-              <div className="bg-navy-950/70 p-3 rounded-xl border border-slate-800 text-[11px] text-slate-400 space-y-1">
-                <span className="font-semibold text-slate-200 block">¿Cómo obtener tus credenciales de Firebase en 1 minuto?</span>
-                <p>1. Ve a <a href="https://console.firebase.google.com/" target="_blank" rel="noreferrer" className="text-blue-400 underline font-semibold">Firebase Console</a> y crea un proyecto gratuito.</p>
-                <p>2. En el menú izquierdo ve a <strong>Firestore Database</strong> y haz clic en "Crear base de datos" (Modo producción o prueba).</p>
-                <p>3. En <strong>Configuración del Proyecto &gt; General &gt; Tus apps</strong>, añade una app Web y copia el objeto `firebaseConfig`.</p>
+              <div className="bg-navy-950/80 p-3.5 rounded-2xl border border-slate-800 text-[11px] text-slate-300 space-y-2">
+                <span className="font-bold text-[#A3E229] block text-xs">🚀 Pasos para vincular tu Supabase en 1 minuto:</span>
+                <p>
+                  1. En tu panel de <strong>Supabase</strong>, ve a <strong>Project Settings &gt; API</strong> y copia la <strong>Project URL</strong> y la <strong>anon / public key</strong>.
+                </p>
+                <p>
+                  2. En el menú de Supabase ve a <strong>SQL Editor</strong>, abre el archivo <strong className="text-white font-mono">supabase_schema.sql</strong> (creado en la raíz de este proyecto) y haz clic en <strong>RUN</strong> para crear automáticamente las tablas, índices y permisos de lectura/escritura pública en tiempo real.
+                </p>
               </div>
 
               <div className="pt-4 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-slate-700/80">
                 <button
                   type="button"
                   onClick={handleClearCloudConfig}
-                  className="w-full sm:w-auto px-4 py-2 rounded-xl bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/30 text-xs font-semibold"
+                  className="w-full sm:w-auto px-4 py-2 rounded-xl bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/30 text-xs font-semibold transition-colors"
                 >
                   Restablecer a Local
                 </button>
@@ -4098,16 +4061,16 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                   <button
                     type="button"
                     onClick={() => setCloudDbModalOpen(false)}
-                    className="px-4 py-2 rounded-xl bg-navy-700 text-slate-300 font-semibold"
+                    className="px-4 py-2 rounded-xl bg-navy-700 text-slate-300 font-semibold hover:bg-navy-600 transition-colors"
                   >
                     Cerrar
                   </button>
                   <button
                     type="submit"
-                    className="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-navy-950 font-bold flex items-center gap-1.5 shadow-lg shadow-emerald-500/20"
+                    className="px-5 py-2 rounded-xl bg-[#3ECF8E] hover:bg-[#34b27b] text-navy-950 font-bold flex items-center gap-1.5 shadow-lg shadow-emerald-500/20 transition-colors"
                   >
                     <Cloud className="w-4 h-4" />
-                    <span>Guardar y Conectar Nube</span>
+                    <span>Guardar y Conectar Supabase</span>
                   </button>
                 </div>
               </div>

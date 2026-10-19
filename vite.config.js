@@ -16,7 +16,7 @@ export default defineConfig({
         manualChunks: {
           vendor: ['react', 'react-dom'],
           xlsx: ['xlsx'],
-          firebase: ['firebase/app', 'firebase/firestore']
+          supabase: ['@supabase/supabase-js']
         }
       }
     }

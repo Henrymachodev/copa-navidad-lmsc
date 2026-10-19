@@ -33,7 +33,7 @@ import {
   subscribeToLandingConfig,
   DEFAULT_LANDING_CONFIG,
   DEFAULT_BENEFICIOS_INVERSION
-} from '../services/firebase';
+} from '../services/supabase';
 import { sendConfirmationEmails } from '../services/emailService';
 
 export const CATEGORIAS = [

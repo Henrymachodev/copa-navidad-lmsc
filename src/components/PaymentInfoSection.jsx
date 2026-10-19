@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { DollarSign, Smartphone, CreditCard, Landmark, Coins, ShieldCheck, ChevronDown, ChevronUp } from 'lucide-react';
-import { subscribeToLandingConfig, DEFAULT_LANDING_CONFIG } from '../services/firebase';
+import { subscribeToLandingConfig, DEFAULT_LANDING_CONFIG } from '../services/supabase';
 
 export default function PaymentInfoSection() {
   const [config, setConfig] = useState(DEFAULT_LANDING_CONFIG);

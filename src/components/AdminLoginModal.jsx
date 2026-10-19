@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Lock, X, AlertCircle, KeyRound, User, ShieldCheck } from 'lucide-react';
-import { verifyAdminLogin } from '../services/firebase';
+import { verifyAdminLogin } from '../services/supabase';
 
 export default function AdminLoginModal({ isOpen, onClose, onLoginSuccess }) {
   const [identifier, setIdentifier] = useState('');

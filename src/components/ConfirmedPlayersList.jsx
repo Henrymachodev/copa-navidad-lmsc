@@ -6,7 +6,7 @@ import {
   DEFAULT_MAX_PAIRS_PER_CATEGORY,
   subscribeToLandingConfig,
   DEFAULT_LANDING_CONFIG
-} from '../services/firebase';
+} from '../services/supabase';
 import { CATEGORIAS } from './RegistrationForm';
 
 export default function ConfirmedPlayersList() {

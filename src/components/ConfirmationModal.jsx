@@ -17,7 +17,7 @@ import {
   MessageCircle,
   Trophy
 } from 'lucide-react';
-import { updateRegistrationPayment } from '../services/firebase';
+import { updateRegistrationPayment } from '../services/supabase';
 
 export default function ConfirmationModal({ data, onClose }) {
   if (!data) return null;

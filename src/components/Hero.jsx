@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Sparkles, ExternalLink, ArrowRight, Trophy } from 'lucide-react';
-import { subscribeToLandingConfig, DEFAULT_LANDING_CONFIG, DEFAULT_HERO_FOTOS } from '../services/firebase';
+import { subscribeToLandingConfig, DEFAULT_LANDING_CONFIG, DEFAULT_HERO_FOTOS } from '../services/supabase';
 import HeroMontage from './HeroMontage';
 
 export default function Hero() {
