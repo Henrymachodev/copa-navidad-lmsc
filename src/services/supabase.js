@@ -523,22 +523,31 @@ export function subscribeToRegistrations(callback) {
   getRegistrations().then(data => callback(data)).catch(() => {});
 
   const client = getSupabaseClient();
-  if (client) {
-    const channel = client
-      .channel('public:registrations')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'registrations' },
-        async () => {
-          const fresh = await getRegistrations();
-          callback(fresh);
-        }
-      )
-      .subscribe();
+  let channel = null;
 
-    return () => {
-      client.removeChannel(channel);
-    };
+  if (client) {
+    try {
+      const channelId = `realtime_reg_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+      channel = client
+        .channel(channelId)
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'registrations' },
+          async () => {
+            try {
+              const fresh = await getRegistrations();
+              callback(fresh);
+            } catch (err) {
+              console.warn('Error refrescando registros en tiempo real:', err);
+            }
+          }
+        )
+        .subscribe((status, err) => {
+          if (err) console.warn('Supabase realtime error (registrations):', err);
+        });
+    } catch (e) {
+      console.warn('No se pudo inicializar canal realtime para registros:', e);
+    }
   }
 
   // Suscripción local vía eventos storage
@@ -546,8 +555,16 @@ export function subscribeToRegistrations(callback) {
     getRegistrations().then(data => callback(data)).catch(() => {});
   };
   window.addEventListener('storage', handleStorage);
+
   return () => {
     window.removeEventListener('storage', handleStorage);
+    if (client && channel) {
+      try {
+        client.removeChannel(channel);
+      } catch (e) {
+        // ignore cleanup error
+      }
+    }
   };
 }
 
@@ -610,30 +627,47 @@ export function subscribeToLandingConfig(callback) {
   getLandingConfig().then(cfg => callback(cfg)).catch(() => {});
 
   const client = getSupabaseClient();
-  if (client) {
-    const channel = client
-      .channel('public:tournament_config:landing')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'tournament_config', filter: 'key=eq.landing_textos' },
-        async () => {
-          const fresh = await getLandingConfig();
-          callback(fresh);
-        }
-      )
-      .subscribe();
+  let channel = null;
 
-    return () => {
-      client.removeChannel(channel);
-    };
+  if (client) {
+    try {
+      const channelId = `realtime_landing_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+      channel = client
+        .channel(channelId)
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'tournament_config', filter: 'key=eq.landing_textos' },
+          async () => {
+            try {
+              const fresh = await getLandingConfig();
+              callback(fresh);
+            } catch (err) {
+              console.warn('Error refrescando landing en tiempo real:', err);
+            }
+          }
+        )
+        .subscribe((status, err) => {
+          if (err) console.warn('Supabase realtime error (landing):', err);
+        });
+    } catch (e) {
+      console.warn('No se pudo inicializar canal realtime para landingConfig:', e);
+    }
   }
 
   const handleStorage = () => {
     getLandingConfig().then(cfg => callback(cfg)).catch(() => {});
   };
   window.addEventListener('storage', handleStorage);
+
   return () => {
     window.removeEventListener('storage', handleStorage);
+    if (client && channel) {
+      try {
+        client.removeChannel(channel);
+      } catch (e) {
+        // ignore cleanup error
+      }
+    }
   };
 }
 

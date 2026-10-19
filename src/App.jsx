@@ -9,6 +9,40 @@ import AdminLoginModal from './components/AdminLoginModal';
 import FloatingWhatsApp from './components/FloatingWhatsApp';
 import Footer from './components/Footer';
 
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+  componentDidCatch(error, errorInfo) {
+    console.error('ErrorBoundary capturó un error:', error, errorInfo);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-[60vh] flex flex-col items-center justify-center p-6 text-center">
+          <div className="max-w-md bg-[#082363] border border-[#A3E229]/40 p-6 rounded-3xl shadow-2xl">
+            <h2 className="text-xl font-bold font-orbitron text-white mb-2">Copa Navidad LMSC 2026</h2>
+            <p className="text-sm text-blue-200 mb-4">
+              Actualizando datos en tiempo real...
+            </p>
+            <button
+              onClick={() => { window.location.reload(); }}
+              className="px-5 py-2.5 rounded-xl bg-[#A3E229] text-[#150D8B] font-black text-xs font-orbitron uppercase tracking-wider"
+            >
+              Actualizar Página
+            </button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 export default function App() {
   const [currentView, setCurrentView] = useState('landing'); // 'landing' | 'admin'
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
@@ -100,15 +134,17 @@ export default function App() {
 
       {/* CONTENIDO PRINCIPAL */}
       <main className="flex-1">
-        {currentView === 'landing' ? (
-          <>
-            <Hero />
-            <RegistrationForm onSuccess={(data) => setSuccessData(data)} />
-            <SponsorsSection />
-          </>
-        ) : (
-          <AdminDashboard onLogout={handleLogout} currentUser={currentUser} />
-        )}
+        <ErrorBoundary>
+          {currentView === 'landing' ? (
+            <>
+              <Hero />
+              <RegistrationForm onSuccess={(data) => setSuccessData(data)} />
+              <SponsorsSection />
+            </>
+          ) : (
+            <AdminDashboard onLogout={handleLogout} currentUser={currentUser} />
+          )}
+        </ErrorBoundary>
       </main>
 
       {/* MODAL DE CONFIRMACIÓN DE INSCRIPCIÓN */}
