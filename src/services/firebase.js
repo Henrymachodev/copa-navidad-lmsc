@@ -15,24 +15,64 @@ import {
   onSnapshot 
 } from 'firebase/firestore';
 
-// Obtención de variables de entorno de Vite
-const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID
+// Clave local para credenciales de Firebase en la nube configuradas desde el Dashboard
+export const CLOUD_FIREBASE_STORAGE_KEY = 'copa_navidad_cloud_firebase_config';
+
+// Obtiene la configuración de Firebase activa (prioriza localStorage del panel si fue configurada, o .env de Vite)
+export const getActiveFirebaseConfig = () => {
+  try {
+    const saved = localStorage.getItem(CLOUD_FIREBASE_STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (parsed.apiKey && parsed.projectId) {
+        return parsed;
+      }
+    }
+  } catch (e) {
+    console.warn('Error leyendo configuración de Firebase guardada:', e);
+  }
+
+  return {
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY || '',
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || '',
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || '',
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || '',
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '',
+    appId: import.meta.env.VITE_FIREBASE_APP_ID || ''
+  };
 };
+
+const firebaseConfig = getActiveFirebaseConfig();
 
 // Verifica si las credenciales mínimas de Firebase están completas
 export const isFirebaseConfigured = () => {
+  const cfg = getActiveFirebaseConfig();
   return Boolean(
-    firebaseConfig.apiKey && 
-    firebaseConfig.projectId && 
-    firebaseConfig.apiKey !== 'tu_api_key_aqui' &&
-    firebaseConfig.projectId !== 'tu-proyecto-id'
+    cfg.apiKey && 
+    cfg.projectId && 
+    cfg.apiKey !== 'tu_api_key_aqui' &&
+    cfg.projectId !== 'tu-proyecto-id' &&
+    cfg.apiKey.trim().length > 10
   );
+};
+
+export const getFirebaseProjectId = () => {
+  const cfg = getActiveFirebaseConfig();
+  return isFirebaseConfigured() ? cfg.projectId : null;
+};
+
+// Guarda credenciales personalizadas de Firebase desde el Admin
+export const saveCustomFirebaseConfig = (newCfg) => {
+  if (newCfg && newCfg.apiKey && newCfg.projectId) {
+    localStorage.setItem(CLOUD_FIREBASE_STORAGE_KEY, JSON.stringify(newCfg));
+    return true;
+  }
+  return false;
+};
+
+// Elimina credenciales personalizadas
+export const clearCustomFirebaseConfig = () => {
+  localStorage.removeItem(CLOUD_FIREBASE_STORAGE_KEY);
 };
 
 let db = null;
@@ -41,12 +81,12 @@ if (isFirebaseConfigured()) {
   try {
     const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
     db = getFirestore(app);
-    console.log('✅ Firebase Firestore inicializado con éxito');
+    console.log('✅ Firebase Firestore inicializado con éxito en la nube (Proyecto:', firebaseConfig.projectId, ')');
   } catch (error) {
     console.error('⚠️ Error al inicializar Firebase:', error);
   }
 } else {
-  console.warn('ℹ️ Firebase no configurado aún en .env. Se usará almacenamiento local de prueba para desarrollo.');
+  console.warn('ℹ️ Firebase no configurado aún con credenciales en la nube. Se usará almacenamiento local de prueba.');
 }
 
 const COLLECTION_NAME = 'inscripciones_copa_navidad';
@@ -446,14 +486,16 @@ export async function saveRegistration(registrationData) {
   const limits = await getCategoryLimits();
   const maxForCat = limits[registrationData.categoria] || limits.defaultMax || DEFAULT_MAX_PAIRS_PER_CATEGORY;
   
-  const initialStatus = categoryPairsCount >= maxForCat 
-    ? 'lista de espera' 
-    : (registrationData.comprobantePagoUrl || registrationData.referenciaPago ? 'esperando pago' : 'preinscrito');
+  const initialStatus = registrationData.status || (
+    categoryPairsCount >= maxForCat 
+      ? 'lista de espera' 
+      : (registrationData.comprobantePagoUrl || registrationData.referenciaPago ? 'esperando pago' : 'preinscrito')
+  );
 
   const finalData = {
     ...registrationData,
     status: initialStatus,
-    monto: registrationData.monto || '$170',
+    monto: registrationData.monto || '$140',
     createdAtISO: timestamp
   };
 
@@ -480,6 +522,39 @@ export async function saveRegistration(registrationData) {
     existing.unshift(newEntry);
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(existing));
     return { success: true, id: localId, status: initialStatus, isLocal: true };
+  }
+}
+
+/**
+ * Actualiza la información completa de una inscripción (jugadores, categoría, pago, estatus)
+ */
+export async function updateRegistration(id, updatedData) {
+  if (isFirebaseConfigured() && db && !id.startsWith('loc_')) {
+    try {
+      const docRef = doc(db, COLLECTION_NAME, id);
+      await updateDoc(docRef, {
+        ...updatedData,
+        updatedAt: serverTimestamp()
+      });
+      return true;
+    } catch (e) {
+      console.error('Error al actualizar inscripción en Firestore:', e);
+      throw e;
+    }
+  } else {
+    const existing = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '[]');
+    const updated = existing.map(item => {
+      if (item.id === id) {
+        return {
+          ...item,
+          ...updatedData,
+          updatedAtISO: new Date().toISOString()
+        };
+      }
+      return item;
+    });
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updated));
+    return true;
   }
 }
 

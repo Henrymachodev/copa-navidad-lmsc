@@ -39,12 +39,19 @@ import {
   KeyRound,
   RotateCcw,
   Sparkles,
+  UserPlus,
+  Cloud,
+  CloudOff,
+  Database,
+  Pencil,
   Image as ImageIcon
 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { 
   getRegistrations, 
   deleteRegistration, 
+  updateRegistration,
+  saveRegistration,
   updateRegistrationStatus,
   getCategoryLimits, 
   saveCategoryLimits,
@@ -64,7 +71,12 @@ import {
   ADMIN_ROLES,
   getAdminUsers,
   saveAdminUser,
-  deleteAdminUser
+  deleteAdminUser,
+  isFirebaseConfigured,
+  getActiveFirebaseConfig,
+  saveCustomFirebaseConfig,
+  clearCustomFirebaseConfig,
+  getFirebaseProjectId
 } from '../services/firebase';
 import { CATEGORIAS } from './RegistrationForm';
 
@@ -84,6 +96,57 @@ export default function AdminDashboard({ onLogout, currentUser }) {
 
   // Modal para ver ficha completa del registro
   const [detailModalData, setDetailModalData] = useState(null);
+
+  // Modal para editar dupla completa
+  const [editModalData, setEditModalData] = useState(null);
+  const [savingEdit, setSavingEdit] = useState(false);
+
+  // Modal para inscribir pareja desde el administrador
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [savingCreate, setSavingCreate] = useState(false);
+  const initialNewDupla = {
+    categoria: '',
+    status: 'confirmado',
+    monto: '$140',
+    metodoPago: 'Pago Móvil',
+    referenciaPago: '',
+    comprobantePagoUrl: '',
+    comprobanteNombre: '',
+    aceptaReglamento: 'si',
+    jugador1: {
+      nombre: '',
+      apellido: '',
+      cedula: '',
+      email: '',
+      telefono: '',
+      tallaFranela: 'M',
+      ladoJuego: 'Derecha',
+      categoriaHabitual: '',
+      torneoActual: '',
+      historialTorneos: '',
+      alergias: '',
+      aceptaReglamento: 'si'
+    },
+    jugador2: {
+      nombre: '',
+      apellido: '',
+      cedula: '',
+      email: '',
+      telefono: '',
+      tallaFranela: 'M',
+      ladoJuego: 'Revés',
+      categoriaHabitual: '',
+      torneoActual: '',
+      historialTorneos: '',
+      alergias: '',
+      aceptaReglamento: 'si'
+    }
+  };
+  const [newDuplaForm, setNewDuplaForm] = useState(initialNewDupla);
+
+  // Modal para configuración de Base de Datos en la Nube
+  const [cloudDbModalOpen, setCloudDbModalOpen] = useState(false);
+  const [cloudDbForm, setCloudDbForm] = useState(() => getActiveFirebaseConfig());
 
   // Cupos por categoría
   const [limits, setLimits] = useState({ defaultMax: DEFAULT_MAX_PAIRS_PER_CATEGORY });
@@ -427,6 +490,171 @@ export default function AdminDashboard({ onLogout, currentUser }) {
     }
   };
 
+  // Abrir modal de edición con la información completa
+  const handleOpenEditModal = (item) => {
+    setEditModalData({
+      id: item.id,
+      categoria: item.categoria || '',
+      status: item.status || item.estado || 'preinscrito',
+      monto: item.monto || '$140',
+      metodoPago: item.metodoPago || 'Pago Móvil',
+      referenciaPago: item.referenciaPago || '',
+      comprobantePagoUrl: item.comprobantePagoUrl || '',
+      comprobanteNombre: item.comprobanteNombre || '',
+      aceptaReglamento: item.aceptaReglamento || 'si',
+      createdAtISO: item.createdAtISO || new Date().toISOString(),
+      jugador1: {
+        nombre: item.jugador1?.nombre || '',
+        apellido: item.jugador1?.apellido || '',
+        cedula: item.jugador1?.cedula || '',
+        email: item.jugador1?.email || '',
+        telefono: item.jugador1?.telefono || '',
+        tallaFranela: item.jugador1?.tallaFranela || 'M',
+        ladoJuego: item.jugador1?.ladoJuego || 'Derecha',
+        categoriaHabitual: item.jugador1?.categoriaHabitual || '',
+        torneoActual: item.jugador1?.torneoActual || '',
+        historialTorneos: item.jugador1?.historialTorneos || '',
+        alergias: item.jugador1?.alergias || '',
+        aceptaReglamento: item.jugador1?.aceptaReglamento || 'si'
+      },
+      jugador2: {
+        nombre: item.jugador2?.nombre || '',
+        apellido: item.jugador2?.apellido || '',
+        cedula: item.jugador2?.cedula || '',
+        email: item.jugador2?.email || '',
+        telefono: item.jugador2?.telefono || '',
+        tallaFranela: item.jugador2?.tallaFranela || 'M',
+        ladoJuego: item.jugador2?.ladoJuego || 'Revés',
+        categoriaHabitual: item.jugador2?.categoriaHabitual || '',
+        torneoActual: item.jugador2?.torneoActual || '',
+        historialTorneos: item.jugador2?.historialTorneos || '',
+        alergias: item.jugador2?.alergias || '',
+        aceptaReglamento: item.jugador2?.aceptaReglamento || 'si'
+      }
+    });
+  };
+
+  // Guardar edición completa de dupla
+  const handleSaveEditDupla = async (e) => {
+    e.preventDefault();
+    if (!editModalData) return;
+    if (!editModalData.categoria) {
+      alert('Por favor selecciona la categoría de la pareja.');
+      return;
+    }
+    if (!editModalData.jugador1?.nombre?.trim() || !editModalData.jugador2?.nombre?.trim()) {
+      alert('Por favor completa al menos los nombres de ambos jugadores.');
+      return;
+    }
+
+    setSavingEdit(true);
+    try {
+      await updateRegistration(editModalData.id, editModalData);
+      setRegistrations(prev => prev.map(r => r.id === editModalData.id ? { ...editModalData } : r));
+      setEditModalData(null);
+      setFeedback({ type: 'success', message: '¡Información de la dupla actualizada exitosamente!' });
+      setTimeout(() => setFeedback(null), 3500);
+    } catch (err) {
+      console.error('Error al actualizar la dupla:', err);
+      setFeedback({ type: 'error', message: 'Error al actualizar los datos de la dupla.' });
+    } finally {
+      setSavingEdit(false);
+    }
+  };
+
+  // Inscribir nueva pareja directamente desde el Administrador
+  const handleCreateDuplaSubmit = async (e) => {
+    e.preventDefault();
+    if (!newDuplaForm.categoria) {
+      alert('Por favor selecciona la categoría oficial de competencia.');
+      return;
+    }
+    if (!newDuplaForm.jugador1?.nombre?.trim() || !newDuplaForm.jugador2?.nombre?.trim()) {
+      alert('Por favor completa al menos los nombres de ambos jugadores.');
+      return;
+    }
+
+    setSavingCreate(true);
+    try {
+      const res = await saveRegistration(newDuplaForm);
+      await fetchData();
+      setCreateModalOpen(false);
+      setNewDuplaForm(initialNewDupla);
+      setFeedback({ 
+        type: 'success', 
+        message: `¡Pareja inscrita con éxito desde el administrador! (Estatus: ${res.status || newDuplaForm.status})` 
+      });
+      setTimeout(() => setFeedback(null), 3500);
+    } catch (err) {
+      console.error('Error al registrar pareja desde admin:', err);
+      setFeedback({ type: 'error', message: 'Error al registrar la pareja.' });
+    } finally {
+      setSavingCreate(false);
+    }
+  };
+
+  // Guardar configuración de Firebase Cloud
+  const handleSaveCloudConfig = (e) => {
+    e.preventDefault();
+    if (!cloudDbForm.apiKey?.trim() || !cloudDbForm.projectId?.trim()) {
+      alert('Por favor ingresa al menos la API Key y el Project ID de Firebase.');
+      return;
+    }
+    saveCustomFirebaseConfig(cloudDbForm);
+    setCloudDbModalOpen(false);
+    setFeedback({ type: 'success', message: '¡Configuración de Firebase guardada! Recargando para conectar en la nube...' });
+    setTimeout(() => {
+      window.location.reload();
+    }, 1200);
+  };
+
+  const handleClearCloudConfig = () => {
+    if (window.confirm('¿Deseas restablecer la configuración de base de datos a los valores predeterminados?')) {
+      clearCustomFirebaseConfig();
+      window.location.reload();
+    }
+  };
+
+  // Carga de comprobante en modal de edición
+  const handleReceiptUploadEdit = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 1048576) {
+      alert(`El archivo supera 1 MB (${(file.size / (1024 * 1024)).toFixed(2)} MB). Por favor comprímelo antes de subir.`);
+      e.target.value = '';
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      setEditModalData(prev => ({
+        ...prev,
+        comprobantePagoUrl: ev.target.result,
+        comprobanteNombre: file.name
+      }));
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Carga de comprobante en modal de nueva pareja (Admin)
+  const handleReceiptUploadNew = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 1048576) {
+      alert(`El archivo supera 1 MB (${(file.size / (1024 * 1024)).toFixed(2)} MB). Por favor comprímelo antes de subir.`);
+      e.target.value = '';
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      setNewDuplaForm(prev => ({
+        ...prev,
+        comprobantePagoUrl: ev.target.result,
+        comprobanteNombre: file.name
+      }));
+    };
+    reader.readAsDataURL(file);
+  };
+
   // Guardar o Crear Patrocinador
   const handleSaveSponsorSubmit = async (e) => {
     e.preventDefault();
@@ -686,6 +914,32 @@ export default function AdminDashboard({ onLogout, currentUser }) {
               </span>
             </div>
           )}
+
+          {/* Indicador y Selector de Base de Datos en la Nube */}
+          <button
+            type="button"
+            onClick={() => setCloudDbModalOpen(true)}
+            className={`px-3 py-1.5 rounded-xl border text-xs font-bold flex items-center gap-2 transition-all shadow-md ${
+              isFirebaseConfigured()
+                ? 'bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border-emerald-500/40'
+                : 'bg-amber-500/25 hover:bg-amber-500/35 text-amber-300 border-amber-500/50 animate-pulse'
+            }`}
+            title="Ver o configurar conexión a la base de datos en la nube (Firestore)"
+          >
+            {isFirebaseConfigured() ? (
+              <>
+                <Cloud className="w-4 h-4 text-emerald-400" />
+                <span className="hidden sm:inline">BD Nube: <strong className="text-white font-mono">{getFirebaseProjectId() || 'Firestore'}</strong></span>
+                <span className="sm:hidden">Nube ✓</span>
+              </>
+            ) : (
+              <>
+                <CloudOff className="w-4 h-4 text-amber-400" />
+                <span className="hidden sm:inline">BD: <strong>Local (Conectar Nube)</strong></span>
+                <span className="sm:hidden">Conectar Nube</span>
+              </>
+            )}
+          </button>
 
           <button
             onClick={fetchData}
@@ -1908,19 +2162,29 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                 </div>
               </div>
 
-              {/* Botones de Exportar */}
-              <div className="flex items-center gap-2">
+              {/* Botón Inscribir Pareja y Exportación */}
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setCreateModalOpen(true)}
+                  className="px-4 py-2.5 rounded-xl bg-[#A3E229] hover:bg-[#b6f23d] text-[#150D8B] font-orbitron font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-[#A3E229]/25 transition-all transform hover:scale-105 active:scale-95"
+                  title="Inscribir una nueva pareja directamente desde el Administrador"
+                >
+                  <UserPlus className="w-4 h-4 text-[#150D8B]" />
+                  <span>+ Inscribir Pareja</span>
+                </button>
+
                 <button
                   onClick={exportToExcel}
-                  className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition-transform active:scale-95"
+                  className="px-3.5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition-transform active:scale-95"
                 >
                   <FileSpreadsheet className="w-4 h-4" />
-                  <span>Exportar Excel</span>
+                  <span>Excel</span>
                 </button>
 
                 <button
                   onClick={exportToCSV}
-                  className="px-3.5 py-2.5 rounded-xl bg-navy-800 hover:bg-navy-700 text-slate-200 border border-slate-700 font-semibold text-xs sm:text-sm flex items-center justify-center gap-2"
+                  className="px-3 py-2.5 rounded-xl bg-navy-800 hover:bg-navy-700 text-slate-200 border border-slate-700 font-semibold text-xs sm:text-sm flex items-center justify-center gap-2"
                 >
                   <FileText className="w-4 h-4" />
                   <span>CSV</span>
@@ -2085,7 +2349,7 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                             </div>
                           </td>
 
-                          {/* Acciones: Ver Ficha & Eliminar */}
+                          {/* Acciones: Ver Ficha, Editar & Eliminar */}
                           <td className="px-3 py-3.5 text-right whitespace-nowrap">
                             <div className="flex items-center justify-end gap-1">
                               <button
@@ -2094,6 +2358,14 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                                 title="Ver Ficha Completa de la Dupla"
                               >
                                 <Eye className="w-4 h-4" />
+                              </button>
+
+                              <button
+                                onClick={() => handleOpenEditModal(item)}
+                                className="p-1.5 rounded-lg text-slate-300 hover:text-[#A3E229] hover:bg-navy-800 transition-colors"
+                                title="Editar Datos de la Dupla"
+                              >
+                                <Pencil className="w-4 h-4 text-[#A3E229]" />
                               </button>
 
                               <button
@@ -2696,6 +2968,1148 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                 >
                   {savingUser ? 'Guardando...' : 'Guardar Usuario'}
                 </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL EDITAR DUPLA INSCRITA */}
+      {editModalData && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-navy-950/85 backdrop-blur-md overflow-y-auto">
+          <div className="relative w-full max-w-4xl bg-gradient-to-b from-navy-800 to-navy-900 border border-blue-500/30 rounded-3xl p-5 sm:p-7 shadow-2xl my-8 max-h-[92vh] flex flex-col">
+            
+            {/* Header Modal */}
+            <div className="flex items-center justify-between pb-4 border-b border-slate-700/80 shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-gold-500/20 text-gold-400 border border-gold-500/40 flex items-center justify-center">
+                  <Pencil className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-lg sm:text-xl font-bold font-orbitron text-white flex items-center gap-2">
+                    Editar Pareja Inscrita
+                    <span className="text-xs px-2.5 py-0.5 rounded-full bg-blue-500/20 text-blue-300 font-sans border border-blue-500/30">
+                      ID: {editModalData.id}
+                    </span>
+                  </h3>
+                  <p className="text-xs text-slate-300">
+                    Modifica cualquier dato de la dupla, estado oficial de inscripción o método de pago
+                  </p>
+                </div>
+              </div>
+              <button 
+                type="button"
+                onClick={() => setEditModalData(null)} 
+                className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-navy-700 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Form Body Scrollable */}
+            <form onSubmit={handleSaveEditDupla} className="overflow-y-auto pr-2 py-4 space-y-6 flex-1 text-xs">
+              
+              {/* Bloque 1: Categoría, Estado y Datos Financieros */}
+              <div className="bg-navy-900/90 border border-blue-400/20 rounded-2xl p-4 sm:p-5 space-y-4">
+                <h4 className="text-sm font-bold font-orbitron text-gold-400 uppercase tracking-wide flex items-center gap-2">
+                  <Trophy className="w-4 h-4 text-gold-400" />
+                  Categoría y Estado de Inscripción
+                </h4>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div>
+                    <label className="block font-semibold text-slate-200 mb-1.5">Categoría Oficial *</label>
+                    <select
+                      value={editModalData.categoria}
+                      onChange={(e) => setEditModalData({ ...editModalData, categoria: e.target.value })}
+                      required
+                      className="w-full px-3 py-2.5 rounded-xl bg-navy-950 text-white border border-slate-700 focus:border-gold-400 font-semibold text-xs"
+                    >
+                      <option value="">Selecciona Categoría</option>
+                      {CATEGORIAS.map(c => (
+                        <option key={c.id} value={c.label}>
+                          {c.label} ({c.group})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block font-semibold text-slate-200 mb-1.5">Estado Oficial *</label>
+                    <select
+                      value={editModalData.status}
+                      onChange={(e) => setEditModalData({ ...editModalData, status: e.target.value })}
+                      required
+                      className="w-full px-3 py-2.5 rounded-xl bg-navy-950 text-white border border-slate-700 focus:border-gold-400 font-semibold text-xs capitalize"
+                    >
+                      {PLAYER_STATUSES.map(st => (
+                        <option key={st} value={st}>
+                          {st.toUpperCase()}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block font-semibold text-slate-200 mb-1.5">Método de Pago</label>
+                    <select
+                      value={editModalData.metodoPago}
+                      onChange={(e) => setEditModalData({ ...editModalData, metodoPago: e.target.value })}
+                      className="w-full px-3 py-2.5 rounded-xl bg-navy-950 text-white border border-slate-700 focus:border-gold-400 text-xs"
+                    >
+                      <option value="Pago Móvil">Pago Móvil (BCV)</option>
+                      <option value="Zelle">Zelle</option>
+                      <option value="Banesco Panamá">Banesco Panamá</option>
+                      <option value="Binance Pay">Binance Pay (USDT)</option>
+                      <option value="Efectivo / Directo en Club">Efectivo / Directo en Club</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block font-semibold text-slate-200 mb-1.5">Referencia de Pago</label>
+                    <input
+                      type="text"
+                      placeholder="Ej: PM-94827104"
+                      value={editModalData.referenciaPago}
+                      onChange={(e) => setEditModalData({ ...editModalData, referenciaPago: e.target.value })}
+                      className="w-full px-3 py-2.5 rounded-xl bg-navy-950 text-white border border-slate-700 focus:border-gold-400 font-mono text-xs"
+                    />
+                  </div>
+                </div>
+
+                {/* Comprobante */}
+                <div className="pt-2 border-t border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-2">
+                    <FileCheck className="w-4 h-4 text-emerald-400" />
+                    <span className="text-slate-300">
+                      Comprobante actual: {editModalData.comprobantePagoUrl ? (
+                        <strong className="text-emerald-300 font-semibold">{editModalData.comprobanteNombre || 'Adjunto'}</strong>
+                      ) : (
+                        <span className="text-slate-400 italic">Sin comprobante</span>
+                      )}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <label className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-navy-800 hover:bg-navy-700 text-blue-300 border border-blue-500/30 text-xs font-semibold transition-colors">
+                      <UploadCloud className="w-3.5 h-3.5" />
+                      <span>{editModalData.comprobantePagoUrl ? 'Reemplazar Comprobante' : 'Subir Comprobante'}</span>
+                      <input type="file" accept="image/*,application/pdf" onChange={handleReceiptUploadEdit} className="hidden" />
+                    </label>
+                    {editModalData.comprobantePagoUrl && (
+                      <button
+                        type="button"
+                        onClick={() => setEditModalData(prev => ({ ...prev, comprobantePagoUrl: '', comprobanteNombre: '' }))}
+                        className="px-2.5 py-1.5 rounded-xl bg-red-500/15 text-red-300 hover:bg-red-500/25 border border-red-500/30 text-xs"
+                        title="Quitar comprobante"
+                      >
+                        Quitar
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Bloque 2: Jugador 1 y Jugador 2 en columnas */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                
+                {/* JUGADOR 1 */}
+                <div className="bg-navy-900/90 border border-blue-500/30 rounded-2xl p-4 sm:p-5 space-y-3.5">
+                  <div className="flex items-center gap-2 pb-2 border-b border-blue-500/20">
+                    <div className="w-6 h-6 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold text-xs">
+                      1
+                    </div>
+                    <h4 className="text-sm font-bold text-white font-orbitron">Datos de Jugador 1 (Capitán)</h4>
+                  </div>
+
+                  <div>
+                    <label className="block text-slate-300 font-semibold mb-1">Nombre Completo *</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="Nombre y Apellido"
+                      value={editModalData.jugador1?.nombre || ''}
+                      onChange={(e) => setEditModalData({
+                        ...editModalData,
+                        jugador1: { ...editModalData.jugador1, nombre: e.target.value }
+                      })}
+                      className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700 focus:border-blue-400"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-slate-300 font-semibold mb-1">Cédula de Identidad</label>
+                      <input
+                        type="text"
+                        placeholder="V-12.345.678"
+                        value={editModalData.jugador1?.cedula || ''}
+                        onChange={(e) => setEditModalData({
+                          ...editModalData,
+                          jugador1: { ...editModalData.jugador1, cedula: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-slate-300 font-semibold mb-1">Teléfono Móvil</label>
+                      <input
+                        type="text"
+                        placeholder="0412-1234567"
+                        value={editModalData.jugador1?.telefono || ''}
+                        onChange={(e) => setEditModalData({
+                          ...editModalData,
+                          jugador1: { ...editModalData.jugador1, telefono: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-slate-300 font-semibold mb-1">Correo Electrónico</label>
+                    <input
+                      type="email"
+                      placeholder="jugador1@email.com"
+                      value={editModalData.jugador1?.email || ''}
+                      onChange={(e) => setEditModalData({
+                        ...editModalData,
+                        jugador1: { ...editModalData.jugador1, email: e.target.value }
+                      })}
+                      className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-slate-300 font-semibold mb-1">Talla de Franela</label>
+                      <select
+                        value={editModalData.jugador1?.tallaFranela || 'M'}
+                        onChange={(e) => setEditModalData({
+                          ...editModalData,
+                          jugador1: { ...editModalData.jugador1, tallaFranela: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700"
+                      >
+                        {['S', 'M', 'L', 'XL', 'XXL'].map(t => (
+                          <option key={t} value={t}>Talla {t}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-slate-300 font-semibold mb-1">Lado de Juego</label>
+                      <select
+                        value={editModalData.jugador1?.ladoJuego || 'Derecha'}
+                        onChange={(e) => setEditModalData({
+                          ...editModalData,
+                          jugador1: { ...editModalData.jugador1, ladoJuego: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700"
+                      >
+                        <option value="Derecha">Derecha</option>
+                        <option value="Revés">Revés</option>
+                        <option value="Ambos">Ambos</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-slate-300 font-semibold mb-1">Categoría Habitual</label>
+                      <input
+                        type="text"
+                        placeholder="Ej: 4ta"
+                        value={editModalData.jugador1?.categoriaHabitual || ''}
+                        onChange={(e) => setEditModalData({
+                          ...editModalData,
+                          jugador1: { ...editModalData.jugador1, categoriaHabitual: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-slate-300 font-semibold mb-1">Liga / Torneo Actual</label>
+                      <input
+                        type="text"
+                        placeholder="Ej: FVP Oriente"
+                        value={editModalData.jugador1?.torneoActual || ''}
+                        onChange={(e) => setEditModalData({
+                          ...editModalData,
+                          jugador1: { ...editModalData.jugador1, torneoActual: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-slate-300 font-semibold mb-1">Historial de Torneos / Resultados</label>
+                    <input
+                      type="text"
+                      placeholder="Ej: Finalista 4ta LMSC 2025"
+                      value={editModalData.jugador1?.historialTorneos || ''}
+                      onChange={(e) => setEditModalData({
+                        ...editModalData,
+                        jugador1: { ...editModalData.jugador1, historialTorneos: e.target.value }
+                      })}
+                      className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-slate-300 font-semibold mb-1">Alergias / Condiciones Médicas</label>
+                    <input
+                      type="text"
+                      placeholder="Ninguna o detalle"
+                      value={editModalData.jugador1?.alergias || ''}
+                      onChange={(e) => setEditModalData({
+                        ...editModalData,
+                        jugador1: { ...editModalData.jugador1, alergias: e.target.value }
+                      })}
+                      className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700"
+                    />
+                  </div>
+                </div>
+
+                {/* JUGADOR 2 */}
+                <div className="bg-navy-900/90 border border-[#A3E229]/30 rounded-2xl p-4 sm:p-5 space-y-3.5">
+                  <div className="flex items-center gap-2 pb-2 border-b border-[#A3E229]/20">
+                    <div className="w-6 h-6 rounded-lg bg-[#A3E229]/20 text-[#A3E229] flex items-center justify-center font-bold text-xs">
+                      2
+                    </div>
+                    <h4 className="text-sm font-bold text-white font-orbitron">Datos de Jugador 2 (Compañero)</h4>
+                  </div>
+
+                  <div>
+                    <label className="block text-slate-300 font-semibold mb-1">Nombre Completo *</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="Nombre y Apellido"
+                      value={editModalData.jugador2?.nombre || ''}
+                      onChange={(e) => setEditModalData({
+                        ...editModalData,
+                        jugador2: { ...editModalData.jugador2, nombre: e.target.value }
+                      })}
+                      className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700 focus:border-[#A3E229]"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-slate-300 font-semibold mb-1">Cédula de Identidad</label>
+                      <input
+                        type="text"
+                        placeholder="V-12.345.678"
+                        value={editModalData.jugador2?.cedula || ''}
+                        onChange={(e) => setEditModalData({
+                          ...editModalData,
+                          jugador2: { ...editModalData.jugador2, cedula: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-slate-300 font-semibold mb-1">Teléfono Móvil</label>
+                      <input
+                        type="text"
+                        placeholder="0412-1234567"
+                        value={editModalData.jugador2?.telefono || ''}
+                        onChange={(e) => setEditModalData({
+                          ...editModalData,
+                          jugador2: { ...editModalData.jugador2, telefono: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-slate-300 font-semibold mb-1">Correo Electrónico</label>
+                    <input
+                      type="email"
+                      placeholder="jugador2@email.com"
+                      value={editModalData.jugador2?.email || ''}
+                      onChange={(e) => setEditModalData({
+                        ...editModalData,
+                        jugador2: { ...editModalData.jugador2, email: e.target.value }
+                      })}
+                      className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-slate-300 font-semibold mb-1">Talla de Franela</label>
+                      <select
+                        value={editModalData.jugador2?.tallaFranela || 'M'}
+                        onChange={(e) => setEditModalData({
+                          ...editModalData,
+                          jugador2: { ...editModalData.jugador2, tallaFranela: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700"
+                      >
+                        {['S', 'M', 'L', 'XL', 'XXL'].map(t => (
+                          <option key={t} value={t}>Talla {t}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-slate-300 font-semibold mb-1">Lado de Juego</label>
+                      <select
+                        value={editModalData.jugador2?.ladoJuego || 'Revés'}
+                        onChange={(e) => setEditModalData({
+                          ...editModalData,
+                          jugador2: { ...editModalData.jugador2, ladoJuego: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700"
+                      >
+                        <option value="Derecha">Derecha</option>
+                        <option value="Revés">Revés</option>
+                        <option value="Ambos">Ambos</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-slate-300 font-semibold mb-1">Categoría Habitual</label>
+                      <input
+                        type="text"
+                        placeholder="Ej: 4ta"
+                        value={editModalData.jugador2?.categoriaHabitual || ''}
+                        onChange={(e) => setEditModalData({
+                          ...editModalData,
+                          jugador2: { ...editModalData.jugador2, categoriaHabitual: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-slate-300 font-semibold mb-1">Liga / Torneo Actual</label>
+                      <input
+                        type="text"
+                        placeholder="Ej: FVP Oriente"
+                        value={editModalData.jugador2?.torneoActual || ''}
+                        onChange={(e) => setEditModalData({
+                          ...editModalData,
+                          jugador2: { ...editModalData.jugador2, torneoActual: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-slate-300 font-semibold mb-1">Historial de Torneos / Resultados</label>
+                    <input
+                      type="text"
+                      placeholder="Ej: Campeón 5ta LMSC 2025"
+                      value={editModalData.jugador2?.historialTorneos || ''}
+                      onChange={(e) => setEditModalData({
+                        ...editModalData,
+                        jugador2: { ...editModalData.jugador2, historialTorneos: e.target.value }
+                      })}
+                      className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-slate-300 font-semibold mb-1">Alergias / Condiciones Médicas</label>
+                    <input
+                      type="text"
+                      placeholder="Ninguna o detalle"
+                      value={editModalData.jugador2?.alergias || ''}
+                      onChange={(e) => setEditModalData({
+                        ...editModalData,
+                        jugador2: { ...editModalData.jugador2, alergias: e.target.value }
+                      })}
+                      className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700"
+                    />
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Botones de acción */}
+              <div className="pt-4 flex flex-col sm:flex-row items-center justify-end gap-3 border-t border-slate-700/80 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setEditModalData(null)}
+                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-navy-800 text-slate-300 font-semibold hover:bg-navy-700 transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  disabled={savingEdit}
+                  className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-gold-500 to-amber-500 hover:from-gold-400 hover:to-amber-400 text-navy-950 font-bold flex items-center justify-center gap-2 shadow-lg transition-all"
+                >
+                  {savingEdit ? (
+                    <>
+                      <RotateCcw className="w-4 h-4 animate-spin" />
+                      <span>Guardando Cambios...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Save className="w-4 h-4" />
+                      <span>Guardar Cambios de la Pareja</span>
+                    </>
+                  )}
+                </button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL INSCRIBIR PAREJA DESDE EL ADMINISTRADOR */}
+      {createModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-navy-950/85 backdrop-blur-md overflow-y-auto">
+          <div className="relative w-full max-w-4xl bg-gradient-to-b from-navy-800 to-navy-900 border border-[#A3E229]/40 rounded-3xl p-5 sm:p-7 shadow-2xl my-8 max-h-[92vh] flex flex-col">
+            
+            {/* Header Modal */}
+            <div className="flex items-center justify-between pb-4 border-b border-slate-700/80 shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-[#A3E229]/20 text-[#A3E229] border border-[#A3E229]/40 flex items-center justify-center">
+                  <UserPlus className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-lg sm:text-xl font-bold font-orbitron text-white flex items-center gap-2">
+                    Inscribir Nueva Pareja (Admin)
+                    <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-sans border border-emerald-500/30">
+                      Registro Manual
+                    </span>
+                  </h3>
+                  <p className="text-xs text-slate-300">
+                    Registra una pareja directamente en el torneo con estatus Confirmado o Preinscrito
+                  </p>
+                </div>
+              </div>
+              <button 
+                type="button"
+                onClick={() => setCreateModalOpen(false)} 
+                className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-navy-700 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Form Body Scrollable */}
+            <form onSubmit={handleCreateDuplaSubmit} className="overflow-y-auto pr-2 py-4 space-y-6 flex-1 text-xs">
+              
+              {/* Bloque 1: Categoría, Estado y Datos Financieros */}
+              <div className="bg-navy-900/90 border border-[#A3E229]/20 rounded-2xl p-4 sm:p-5 space-y-4">
+                <h4 className="text-sm font-bold font-orbitron text-[#A3E229] uppercase tracking-wide flex items-center gap-2">
+                  <Trophy className="w-4 h-4 text-[#A3E229]" />
+                  Categoría Oficial y Estado Inicial
+                </h4>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div>
+                    <label className="block font-semibold text-slate-200 mb-1.5">Categoría Oficial *</label>
+                    <select
+                      value={newDuplaForm.categoria}
+                      onChange={(e) => setNewDuplaForm({ ...newDuplaForm, categoria: e.target.value })}
+                      required
+                      className="w-full px-3 py-2.5 rounded-xl bg-navy-950 text-white border border-slate-700 focus:border-[#A3E229] font-semibold text-xs"
+                    >
+                      <option value="">Selecciona Categoría</option>
+                      {CATEGORIAS.map(c => (
+                        <option key={c.id} value={c.label}>
+                          {c.label} ({c.group})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block font-semibold text-slate-200 mb-1.5">Estado Inicial *</label>
+                    <select
+                      value={newDuplaForm.status}
+                      onChange={(e) => setNewDuplaForm({ ...newDuplaForm, status: e.target.value })}
+                      required
+                      className="w-full px-3 py-2.5 rounded-xl bg-navy-950 text-white border border-slate-700 focus:border-[#A3E229] font-semibold text-xs capitalize"
+                    >
+                      {PLAYER_STATUSES.map(st => (
+                        <option key={st} value={st}>
+                          {st.toUpperCase()}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block font-semibold text-slate-200 mb-1.5">Método de Pago</label>
+                    <select
+                      value={newDuplaForm.metodoPago}
+                      onChange={(e) => setNewDuplaForm({ ...newDuplaForm, metodoPago: e.target.value })}
+                      className="w-full px-3 py-2.5 rounded-xl bg-navy-950 text-white border border-slate-700 focus:border-[#A3E229] text-xs"
+                    >
+                      <option value="Pago Móvil">Pago Móvil (BCV)</option>
+                      <option value="Zelle">Zelle</option>
+                      <option value="Banesco Panamá">Banesco Panamá</option>
+                      <option value="Binance Pay">Binance Pay (USDT)</option>
+                      <option value="Efectivo / Directo en Club">Efectivo / Directo en Club</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block font-semibold text-slate-200 mb-1.5">Referencia de Pago</label>
+                    <input
+                      type="text"
+                      placeholder="Ej: PM-94827104 o Efectivo"
+                      value={newDuplaForm.referenciaPago}
+                      onChange={(e) => setNewDuplaForm({ ...newDuplaForm, referenciaPago: e.target.value })}
+                      className="w-full px-3 py-2.5 rounded-xl bg-navy-950 text-white border border-slate-700 focus:border-[#A3E229] font-mono text-xs"
+                    />
+                  </div>
+                </div>
+
+                {/* Comprobante Opcional */}
+                <div className="pt-2 border-t border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-2">
+                    <FileCheck className="w-4 h-4 text-[#A3E229]" />
+                    <span className="text-slate-300">
+                      Comprobante: {newDuplaForm.comprobantePagoUrl ? (
+                        <strong className="text-emerald-300 font-semibold">{newDuplaForm.comprobanteNombre || 'Adjunto'}</strong>
+                      ) : (
+                        <span className="text-slate-400 italic">Opcional para admin</span>
+                      )}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <label className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-navy-800 hover:bg-navy-700 text-[#A3E229] border border-[#A3E229]/30 text-xs font-semibold transition-colors">
+                      <UploadCloud className="w-3.5 h-3.5" />
+                      <span>{newDuplaForm.comprobantePagoUrl ? 'Reemplazar Comprobante' : 'Adjuntar Comprobante'}</span>
+                      <input type="file" accept="image/*,application/pdf" onChange={handleReceiptUploadNew} className="hidden" />
+                    </label>
+                    {newDuplaForm.comprobantePagoUrl && (
+                      <button
+                        type="button"
+                        onClick={() => setNewDuplaForm(prev => ({ ...prev, comprobantePagoUrl: '', comprobanteNombre: '' }))}
+                        className="px-2.5 py-1.5 rounded-xl bg-red-500/15 text-red-300 hover:bg-red-500/25 border border-red-500/30 text-xs"
+                      >
+                        Quitar
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Bloque 2: Jugador 1 y Jugador 2 en columnas */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                
+                {/* JUGADOR 1 */}
+                <div className="bg-navy-900/90 border border-blue-500/30 rounded-2xl p-4 sm:p-5 space-y-3.5">
+                  <div className="flex items-center gap-2 pb-2 border-b border-blue-500/20">
+                    <div className="w-6 h-6 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold text-xs">
+                      1
+                    </div>
+                    <h4 className="text-sm font-bold text-white font-orbitron">Datos de Jugador 1 (Capitán)</h4>
+                  </div>
+
+                  <div>
+                    <label className="block text-slate-300 font-semibold mb-1">Nombre Completo *</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="Nombre y Apellido"
+                      value={newDuplaForm.jugador1?.nombre || ''}
+                      onChange={(e) => setNewDuplaForm({
+                        ...newDuplaForm,
+                        jugador1: { ...newDuplaForm.jugador1, nombre: e.target.value }
+                      })}
+                      className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700 focus:border-blue-400"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-slate-300 font-semibold mb-1">Cédula de Identidad</label>
+                      <input
+                        type="text"
+                        placeholder="V-12.345.678"
+                        value={newDuplaForm.jugador1?.cedula || ''}
+                        onChange={(e) => setNewDuplaForm({
+                          ...newDuplaForm,
+                          jugador1: { ...newDuplaForm.jugador1, cedula: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-slate-300 font-semibold mb-1">Teléfono Móvil</label>
+                      <input
+                        type="text"
+                        placeholder="0412-1234567"
+                        value={newDuplaForm.jugador1?.telefono || ''}
+                        onChange={(e) => setNewDuplaForm({
+                          ...newDuplaForm,
+                          jugador1: { ...newDuplaForm.jugador1, telefono: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-slate-300 font-semibold mb-1">Correo Electrónico</label>
+                    <input
+                      type="email"
+                      placeholder="jugador1@email.com"
+                      value={newDuplaForm.jugador1?.email || ''}
+                      onChange={(e) => setNewDuplaForm({
+                        ...newDuplaForm,
+                        jugador1: { ...newDuplaForm.jugador1, email: e.target.value }
+                      })}
+                      className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-slate-300 font-semibold mb-1">Talla de Franela</label>
+                      <select
+                        value={newDuplaForm.jugador1?.tallaFranela || 'M'}
+                        onChange={(e) => setNewDuplaForm({
+                          ...newDuplaForm,
+                          jugador1: { ...newDuplaForm.jugador1, tallaFranela: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700"
+                      >
+                        {['S', 'M', 'L', 'XL', 'XXL'].map(t => (
+                          <option key={t} value={t}>Talla {t}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-slate-300 font-semibold mb-1">Lado de Juego</label>
+                      <select
+                        value={newDuplaForm.jugador1?.ladoJuego || 'Derecha'}
+                        onChange={(e) => setNewDuplaForm({
+                          ...newDuplaForm,
+                          jugador1: { ...newDuplaForm.jugador1, ladoJuego: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700"
+                      >
+                        <option value="Derecha">Derecha</option>
+                        <option value="Revés">Revés</option>
+                        <option value="Ambos">Ambos</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-slate-300 font-semibold mb-1">Categoría Habitual</label>
+                      <input
+                        type="text"
+                        placeholder="Ej: 4ta"
+                        value={newDuplaForm.jugador1?.categoriaHabitual || ''}
+                        onChange={(e) => setNewDuplaForm({
+                          ...newDuplaForm,
+                          jugador1: { ...newDuplaForm.jugador1, categoriaHabitual: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-slate-300 font-semibold mb-1">Liga / Torneo Actual</label>
+                      <input
+                        type="text"
+                        placeholder="Ej: FVP Oriente"
+                        value={newDuplaForm.jugador1?.torneoActual || ''}
+                        onChange={(e) => setNewDuplaForm({
+                          ...newDuplaForm,
+                          jugador1: { ...newDuplaForm.jugador1, torneoActual: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-slate-300 font-semibold mb-1">Historial de Torneos</label>
+                    <input
+                      type="text"
+                      placeholder="Ej: Finalista 4ta LMSC 2025"
+                      value={newDuplaForm.jugador1?.historialTorneos || ''}
+                      onChange={(e) => setNewDuplaForm({
+                        ...newDuplaForm,
+                        jugador1: { ...newDuplaForm.jugador1, historialTorneos: e.target.value }
+                      })}
+                      className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-slate-300 font-semibold mb-1">Alergias / Condiciones</label>
+                    <input
+                      type="text"
+                      placeholder="Ninguna o detalle"
+                      value={newDuplaForm.jugador1?.alergias || ''}
+                      onChange={(e) => setNewDuplaForm({
+                        ...newDuplaForm,
+                        jugador1: { ...newDuplaForm.jugador1, alergias: e.target.value }
+                      })}
+                      className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700"
+                    />
+                  </div>
+                </div>
+
+                {/* JUGADOR 2 */}
+                <div className="bg-navy-900/90 border border-[#A3E229]/30 rounded-2xl p-4 sm:p-5 space-y-3.5">
+                  <div className="flex items-center gap-2 pb-2 border-b border-[#A3E229]/20">
+                    <div className="w-6 h-6 rounded-lg bg-[#A3E229]/20 text-[#A3E229] flex items-center justify-center font-bold text-xs">
+                      2
+                    </div>
+                    <h4 className="text-sm font-bold text-white font-orbitron">Datos de Jugador 2 (Compañero)</h4>
+                  </div>
+
+                  <div>
+                    <label className="block text-slate-300 font-semibold mb-1">Nombre Completo *</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="Nombre y Apellido"
+                      value={newDuplaForm.jugador2?.nombre || ''}
+                      onChange={(e) => setNewDuplaForm({
+                        ...newDuplaForm,
+                        jugador2: { ...newDuplaForm.jugador2, nombre: e.target.value }
+                      })}
+                      className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700 focus:border-[#A3E229]"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-slate-300 font-semibold mb-1">Cédula de Identidad</label>
+                      <input
+                        type="text"
+                        placeholder="V-12.345.678"
+                        value={newDuplaForm.jugador2?.cedula || ''}
+                        onChange={(e) => setNewDuplaForm({
+                          ...newDuplaForm,
+                          jugador2: { ...newDuplaForm.jugador2, cedula: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-slate-300 font-semibold mb-1">Teléfono Móvil</label>
+                      <input
+                        type="text"
+                        placeholder="0412-1234567"
+                        value={newDuplaForm.jugador2?.telefono || ''}
+                        onChange={(e) => setNewDuplaForm({
+                          ...newDuplaForm,
+                          jugador2: { ...newDuplaForm.jugador2, telefono: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-slate-300 font-semibold mb-1">Correo Electrónico</label>
+                    <input
+                      type="email"
+                      placeholder="jugador2@email.com"
+                      value={newDuplaForm.jugador2?.email || ''}
+                      onChange={(e) => setNewDuplaForm({
+                        ...newDuplaForm,
+                        jugador2: { ...newDuplaForm.jugador2, email: e.target.value }
+                      })}
+                      className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-slate-300 font-semibold mb-1">Talla de Franela</label>
+                      <select
+                        value={newDuplaForm.jugador2?.tallaFranela || 'M'}
+                        onChange={(e) => setNewDuplaForm({
+                          ...newDuplaForm,
+                          jugador2: { ...newDuplaForm.jugador2, tallaFranela: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700"
+                      >
+                        {['S', 'M', 'L', 'XL', 'XXL'].map(t => (
+                          <option key={t} value={t}>Talla {t}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-slate-300 font-semibold mb-1">Lado de Juego</label>
+                      <select
+                        value={newDuplaForm.jugador2?.ladoJuego || 'Revés'}
+                        onChange={(e) => setNewDuplaForm({
+                          ...newDuplaForm,
+                          jugador2: { ...newDuplaForm.jugador2, ladoJuego: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700"
+                      >
+                        <option value="Derecha">Derecha</option>
+                        <option value="Revés">Revés</option>
+                        <option value="Ambos">Ambos</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-slate-300 font-semibold mb-1">Categoría Habitual</label>
+                      <input
+                        type="text"
+                        placeholder="Ej: 4ta"
+                        value={newDuplaForm.jugador2?.categoriaHabitual || ''}
+                        onChange={(e) => setNewDuplaForm({
+                          ...newDuplaForm,
+                          jugador2: { ...newDuplaForm.jugador2, categoriaHabitual: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-slate-300 font-semibold mb-1">Liga / Torneo Actual</label>
+                      <input
+                        type="text"
+                        placeholder="Ej: FVP Oriente"
+                        value={newDuplaForm.jugador2?.torneoActual || ''}
+                        onChange={(e) => setNewDuplaForm({
+                          ...newDuplaForm,
+                          jugador2: { ...newDuplaForm.jugador2, torneoActual: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-slate-300 font-semibold mb-1">Historial de Torneos</label>
+                    <input
+                      type="text"
+                      placeholder="Ej: Campeón 5ta LMSC 2025"
+                      value={newDuplaForm.jugador2?.historialTorneos || ''}
+                      onChange={(e) => setNewDuplaForm({
+                        ...newDuplaForm,
+                        jugador2: { ...newDuplaForm.jugador2, historialTorneos: e.target.value }
+                      })}
+                      className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-slate-300 font-semibold mb-1">Alergias / Condiciones</label>
+                    <input
+                      type="text"
+                      placeholder="Ninguna o detalle"
+                      value={newDuplaForm.jugador2?.alergias || ''}
+                      onChange={(e) => setNewDuplaForm({
+                        ...newDuplaForm,
+                        jugador2: { ...newDuplaForm.jugador2, alergias: e.target.value }
+                      })}
+                      className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700"
+                    />
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Botones de acción */}
+              <div className="pt-4 flex flex-col sm:flex-row items-center justify-end gap-3 border-t border-slate-700/80 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setCreateModalOpen(false)}
+                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-navy-800 text-slate-300 font-semibold hover:bg-navy-700 transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  disabled={savingCreate}
+                  className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-[#A3E229] hover:bg-[#8ecb1b] text-navy-950 font-bold flex items-center justify-center gap-2 shadow-lg transition-all"
+                >
+                  {savingCreate ? (
+                    <>
+                      <RotateCcw className="w-4 h-4 animate-spin" />
+                      <span>Registrando Pareja...</span>
+                    </>
+                  ) : (
+                    <>
+                      <UserPlus className="w-4 h-4" />
+                      <span>Inscribir Pareja Oficial</span>
+                    </>
+                  )}
+                </button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL CONFIGURACIÓN BASE DE DATOS EN LA NUBE (FIRESTORE) */}
+      {cloudDbModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-navy-950/85 backdrop-blur-md overflow-y-auto">
+          <div className="relative w-full max-w-2xl bg-gradient-to-b from-navy-800 to-navy-900 border border-blue-400/30 rounded-3xl p-5 sm:p-7 shadow-2xl my-8">
+            
+            <div className="flex items-center justify-between pb-4 border-b border-slate-700 mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 border border-blue-500/40 flex items-center justify-center">
+                  <Database className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white font-orbitron">
+                    Sincronización en la Nube (Firebase Firestore)
+                  </h3>
+                  <p className="text-xs text-slate-300">
+                    Conecta la aplicación a la nube para sincronizar en tiempo real entre todos los dispositivos
+                  </p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setCloudDbModalOpen(false)} 
+                className="p-1.5 rounded-full text-slate-400 hover:text-white hover:bg-navy-700"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Estado Actual */}
+            <div className={`p-4 rounded-2xl border mb-5 flex items-start gap-3 ${
+              isFirebaseConfigured()
+                ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-200'
+                : 'bg-amber-500/15 border-amber-500/30 text-amber-200'
+            }`}>
+              {isFirebaseConfigured() ? (
+                <Cloud className="w-6 h-6 text-emerald-400 shrink-0 mt-0.5" />
+              ) : (
+                <CloudOff className="w-6 h-6 text-amber-400 shrink-0 mt-0.5" />
+              )}
+              <div className="text-xs">
+                <div className="font-bold text-sm text-white mb-0.5 flex items-center gap-2">
+                  <span>Estado: {isFirebaseConfigured() ? 'Conectado a la Nube (Multi-dispositivo)' : 'Almacenamiento Local (Este navegador)'}</span>
+                </div>
+                <p className="text-slate-300 leading-relaxed">
+                  {isFirebaseConfigured() ? (
+                    <>
+                      La base de datos está conectada a Firestore en el proyecto: <strong className="text-emerald-300 font-mono">{getFirebaseProjectId()}</strong>. Todas las inscripciones, ediciones y cambios de estatus se guardan en la nube y son visibles al instante desde cualquier teléfono o computadora.
+                    </>
+                  ) : (
+                    <>
+                      Actualmente el sistema está usando la memoria local de este navegador (LocalStorage). Para que las inscripciones y ediciones se sincronicen <strong>en tiempo real en cualquier dispositivo</strong>, ingresa las credenciales de tu proyecto de Firebase a continuación.
+                    </>
+                  )}
+                </p>
+              </div>
+            </div>
+
+            <form onSubmit={handleSaveCloudConfig} className="space-y-3.5 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold text-slate-300 mb-1">API Key de Firebase *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="AIzaSy..."
+                    value={cloudDbForm.apiKey || ''}
+                    onChange={(e) => setCloudDbForm({ ...cloudDbForm, apiKey: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700 font-mono text-xs focus:border-blue-400"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-slate-300 mb-1">Project ID *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="copa-navidad-lmsc"
+                    value={cloudDbForm.projectId || ''}
+                    onChange={(e) => setCloudDbForm({ ...cloudDbForm, projectId: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700 font-mono text-xs focus:border-blue-400"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold text-slate-300 mb-1">Auth Domain</label>
+                  <input
+                    type="text"
+                    placeholder="proyecto.firebaseapp.com"
+                    value={cloudDbForm.authDomain || ''}
+                    onChange={(e) => setCloudDbForm({ ...cloudDbForm, authDomain: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700 font-mono text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-slate-300 mb-1">Storage Bucket</label>
+                  <input
+                    type="text"
+                    placeholder="proyecto.appspot.com"
+                    value={cloudDbForm.storageBucket || ''}
+                    onChange={(e) => setCloudDbForm({ ...cloudDbForm, storageBucket: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700 font-mono text-xs"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold text-slate-300 mb-1">Messaging Sender ID</label>
+                  <input
+                    type="text"
+                    placeholder="1029384756"
+                    value={cloudDbForm.messagingSenderId || ''}
+                    onChange={(e) => setCloudDbForm({ ...cloudDbForm, messagingSenderId: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700 font-mono text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-slate-300 mb-1">App ID</label>
+                  <input
+                    type="text"
+                    placeholder="1:1029384756:web:abcd1234"
+                    value={cloudDbForm.appId || ''}
+                    onChange={(e) => setCloudDbForm({ ...cloudDbForm, appId: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700 font-mono text-xs"
+                  />
+                </div>
+              </div>
+
+              <div className="bg-navy-950/70 p-3 rounded-xl border border-slate-800 text-[11px] text-slate-400 space-y-1">
+                <span className="font-semibold text-slate-200 block">¿Cómo obtener tus credenciales de Firebase en 1 minuto?</span>
+                <p>1. Ve a <a href="https://console.firebase.google.com/" target="_blank" rel="noreferrer" className="text-blue-400 underline font-semibold">Firebase Console</a> y crea un proyecto gratuito.</p>
+                <p>2. En el menú izquierdo ve a <strong>Firestore Database</strong> y haz clic en "Crear base de datos" (Modo producción o prueba).</p>
+                <p>3. En <strong>Configuración del Proyecto &gt; General &gt; Tus apps</strong>, añade una app Web y copia el objeto `firebaseConfig`.</p>
+              </div>
+
+              <div className="pt-4 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-slate-700/80">
+                <button
+                  type="button"
+                  onClick={handleClearCloudConfig}
+                  className="w-full sm:w-auto px-4 py-2 rounded-xl bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/30 text-xs font-semibold"
+                >
+                  Restablecer a Local
+                </button>
+                <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+                  <button
+                    type="button"
+                    onClick={() => setCloudDbModalOpen(false)}
+                    className="px-4 py-2 rounded-xl bg-navy-700 text-slate-300 font-semibold"
+                  >
+                    Cerrar
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-navy-950 font-bold flex items-center gap-1.5 shadow-lg shadow-emerald-500/20"
+                  >
+                    <Cloud className="w-4 h-4" />
+                    <span>Guardar y Conectar Nube</span>
+                  </button>
+                </div>
               </div>
             </form>
           </div>
