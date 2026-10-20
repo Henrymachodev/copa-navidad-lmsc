@@ -3288,7 +3288,7 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                         })}
                         className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700"
                       >
-                        {['S', 'M', 'L', 'XL', 'XXL'].map(t => (
+                        {['XS', 'S', 'M', 'L', 'XL', 'XXL'].map(t => (
                           <option key={t} value={t}>Talla {t}</option>
                         ))}
                       </select>
@@ -3328,7 +3328,7 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                       <label className="block text-slate-300 font-semibold mb-1">Liga / Torneo Actual</label>
                       <input
                         type="text"
-                        placeholder="Ej: FVP Oriente"
+                        placeholder="Ej: Liga Máster / Superliga de Clubes / Ninguno"
                         value={editModalData.jugador1?.torneoActual || ''}
                         onChange={(e) => setEditModalData({
                           ...editModalData,
@@ -3343,7 +3343,7 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                     <label className="block text-slate-300 font-semibold mb-1">Historial de Torneos / Resultados</label>
                     <input
                       type="text"
-                      placeholder="Ej: Finalista 4ta LMSC 2025"
+                      placeholder="Ej: Último torneo jugado y posición"
                       value={editModalData.jugador1?.historialTorneos || ''}
                       onChange={(e) => setEditModalData({
                         ...editModalData,
@@ -3446,7 +3446,7 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                         })}
                         className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700"
                       >
-                        {['S', 'M', 'L', 'XL', 'XXL'].map(t => (
+                        {['XS', 'S', 'M', 'L', 'XL', 'XXL'].map(t => (
                           <option key={t} value={t}>Talla {t}</option>
                         ))}
                       </select>
@@ -3486,7 +3486,7 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                       <label className="block text-slate-300 font-semibold mb-1">Liga / Torneo Actual</label>
                       <input
                         type="text"
-                        placeholder="Ej: FVP Oriente"
+                        placeholder="Ej: Liga Máster / Superliga de Clubes / Ninguno"
                         value={editModalData.jugador2?.torneoActual || ''}
                         onChange={(e) => setEditModalData({
                           ...editModalData,
@@ -3501,7 +3501,7 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                     <label className="block text-slate-300 font-semibold mb-1">Historial de Torneos / Resultados</label>
                     <input
                       type="text"
-                      placeholder="Ej: Campeón 5ta LMSC 2025"
+                      placeholder="Ej: Último torneo jugado y posición"
                       value={editModalData.jugador2?.historialTorneos || ''}
                       onChange={(e) => setEditModalData({
                         ...editModalData,
@@ -3791,7 +3791,7 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                         })}
                         className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700"
                       >
-                        {['S', 'M', 'L', 'XL', 'XXL'].map(t => (
+                        {['XS', 'S', 'M', 'L', 'XL', 'XXL'].map(t => (
                           <option key={t} value={t}>Talla {t}</option>
                         ))}
                       </select>
@@ -3831,7 +3831,7 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                       <label className="block text-slate-300 font-semibold mb-1">Liga / Torneo Actual</label>
                       <input
                         type="text"
-                        placeholder="Ej: FVP Oriente"
+                        placeholder="Ej: Liga Máster / Superliga de Clubes / Ninguno"
                         value={newDuplaForm.jugador1?.torneoActual || ''}
                         onChange={(e) => setNewDuplaForm({
                           ...newDuplaForm,
@@ -3846,7 +3846,7 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                     <label className="block text-slate-300 font-semibold mb-1">Historial de Torneos</label>
                     <input
                       type="text"
-                      placeholder="Ej: Finalista 4ta LMSC 2025"
+                      placeholder="Ej: Último torneo jugado y posición"
                       value={newDuplaForm.jugador1?.historialTorneos || ''}
                       onChange={(e) => setNewDuplaForm({
                         ...newDuplaForm,
@@ -3949,7 +3949,7 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                         })}
                         className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700"
                       >
-                        {['S', 'M', 'L', 'XL', 'XXL'].map(t => (
+                        {['XS', 'S', 'M', 'L', 'XL', 'XXL'].map(t => (
                           <option key={t} value={t}>Talla {t}</option>
                         ))}
                       </select>
@@ -3989,7 +3989,7 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                       <label className="block text-slate-300 font-semibold mb-1">Liga / Torneo Actual</label>
                       <input
                         type="text"
-                        placeholder="Ej: FVP Oriente"
+                        placeholder="Ej: Liga Máster / Superliga de Clubes / Ninguno"
                         value={newDuplaForm.jugador2?.torneoActual || ''}
                         onChange={(e) => setNewDuplaForm({
                           ...newDuplaForm,
@@ -4004,7 +4004,7 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                     <label className="block text-slate-300 font-semibold mb-1">Historial de Torneos</label>
                     <input
                       type="text"
-                      placeholder="Ej: Campeón 5ta LMSC 2025"
+                      placeholder="Ej: Último torneo jugado y posición"
                       value={newDuplaForm.jugador2?.historialTorneos || ''}
                       onChange={(e) => setNewDuplaForm({
                         ...newDuplaForm,

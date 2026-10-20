@@ -60,7 +60,7 @@ export const CATEGORIAS = [
   { id: 'master-fem', label: 'Master Femenino', group: 'Máster Femenino' },
 ];
 
-export const TALLAS_FRANELA = ['S', 'M', 'L', 'XL', 'XXL'];
+export const TALLAS_FRANELA = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 export const LADOS_JUEGO = ['Derecha', 'Revés', 'Ambos'];
 export const METODOS_PAGO = [
   { id: 'pago-movil', label: 'Pago Móvil' },
@@ -360,6 +360,10 @@ export default function RegistrationForm({ onSuccess }) {
   // Renderizador de campos para un jugador con tarjeta blanca de máxima legibilidad y sin truncamiento
   const renderPlayerForm = (playerKey, playerTitle, numberBadge) => {
     const p = formData[playerKey];
+    const isCategoriaFemenina = formData.categoria && formData.categoria.toLowerCase().includes('fem');
+    const tallasDisponibles = (formData.categoria && !isCategoriaFemenina)
+      ? ['S', 'M', 'L', 'XL', 'XXL']
+      : ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 
     return (
       <div className="form-card bg-white p-5 sm:p-7 rounded-3xl border border-blue-200/60 shadow-2xl relative space-y-4 text-slate-800">
@@ -496,13 +500,13 @@ export default function RegistrationForm({ onSuccess }) {
             <label className="block text-xs font-black text-slate-800 uppercase tracking-wider mb-1.5">
               Talla de Franela Oficial <span className="text-rose-500">*</span>
             </label>
-            <div className="grid grid-cols-5 gap-1.5 sm:gap-2">
-              {TALLAS_FRANELA.map((talla) => (
+            <div className={`grid ${tallasDisponibles.length === 6 ? 'grid-cols-6' : 'grid-cols-5'} gap-1 sm:gap-1.5`}>
+              {tallasDisponibles.map((talla) => (
                 <button
                   type="button"
                   key={talla}
                   onClick={() => handlePlayerChange(playerKey, 'tallaFranela', talla)}
-                  className={`min-h-[42px] py-2 px-1 flex items-center justify-center text-xs font-black rounded-xl border transition-all duration-200 select-none active:scale-95 leading-none text-center ${
+                  className={`min-h-[42px] py-2 px-0.5 sm:px-1 flex items-center justify-center text-xs font-black rounded-xl border transition-all duration-200 select-none active:scale-95 leading-none text-center ${
                     p.tallaFranela === talla
                       ? 'bg-[#150D8B] text-[#A3E229] border-[#150D8B] shadow-md font-black'
                       : 'bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200 hover:text-slate-900'
@@ -580,7 +584,7 @@ export default function RegistrationForm({ onSuccess }) {
             </label>
             <input
               type="text"
-              placeholder="Ej. Circuito FVP Oriente / Liga Local / Ninguno"
+              placeholder="Ej: Liga Máster / Superliga de Clubes / Ninguno"
               value={p.torneoActual}
               onChange={(e) => handlePlayerChange(playerKey, 'torneoActual', e.target.value)}
               className={`w-full px-3.5 py-2.5 rounded-xl border text-sm font-medium focus:outline-none focus:ring-2 transition-all ${
@@ -608,7 +612,7 @@ export default function RegistrationForm({ onSuccess }) {
           </label>
           <textarea
             rows="2"
-            placeholder="Ej. Torneo Aniversario LMSC: Campeón 5ta Cat; 2da Nacional FVP: Cuartos de final..."
+            placeholder="Ej: Último torneo jugado y posición"
             value={p.historialTorneos}
             onChange={(e) => handlePlayerChange(playerKey, 'historialTorneos', e.target.value)}
             className={`w-full px-3.5 py-2.5 rounded-xl border text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 transition-all resize-none ${
