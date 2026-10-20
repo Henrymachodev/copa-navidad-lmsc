@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a2a7a" />
+      <stop offset="60%" stop-color="#071b50" />
+      <stop offset="100%" stop-color="#030b20" />
+    </linearGradient>
+    <linearGradient id="limeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#bdfa3c" />
+      <stop offset="100%" stop-color="#84e000" />
+    </linearGradient>
+    <filter id="neonGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="1" stdDeviation="1.5" flood-color="#80e100" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <!-- Squircle Base con borde Neon Lime LMSC -->
+  <rect x="2" y="2" width="60" height="60" rx="15" fill="url(#bgGrad)" stroke="url(#limeGrad)" stroke-width="2.5" />
+  
+  <!-- Borde interior sutil para profundidad -->
+  <rect x="4.5" y="4.5" width="55" height="55" rx="12.5" fill="none" stroke="#1d449e" stroke-width="1" opacity="0.4" />
+
+  <!-- Monograma Deportivo LM -->
+  <!-- Letra L en Blanco Puro Atlético -->
+  <path d="M13 16 H22 V42 H34 V49 H13 Z" fill="#FFFFFF" />
+
+  <!-- Letra M en Neon Lime Vibrante Entrelazada -->
+  <path d="M31 22 L39 37 L47 22 H54 V49 H47 V33 L41 44 H37 L31 33 V49 H24 V22 Z" fill="url(#limeGrad)" filter="url(#neonGlow)" />
+
+  <!-- Pelota de Pádel Oficial LMSC en la esquina superior derecha -->
+  <g transform="translate(48, 12)">
+    <circle cx="0" cy="0" r="5" fill="#A3E229" stroke="#05102c" stroke-width="0.8" />
+    <path d="M-3 -3.5 C0 -1 0 1 -3 3.5" stroke="#071b50" stroke-width="0.8" fill="none" />
+    <path d="M3 -3.5 C0 -1 0 1 3 3.5" stroke="#071b50" stroke-width="0.8" fill="none" />
+  </g>
+
+  <!-- Píldora inferior "LMSC" -->
+  <g transform="translate(32, 54)">
+    <rect x="-16" y="-4.5" width="32" height="7.5" rx="2" fill="#A3E229" />
+    <text x="0" y="1.2" font-family="'Orbitron', 'Poppins', sans-serif" font-size="5.5" font-weight="900" fill="#040c22" text-anchor="middle" letter-spacing="0.8">LMSC</text>
+  </g>
+</svg>

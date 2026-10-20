@@ -44,6 +44,7 @@ import {
   CloudOff,
   Database,
   Pencil,
+  MessageSquare,
   Image as ImageIcon
 } from 'lucide-react';
 import * as XLSX from 'xlsx';
@@ -53,6 +54,7 @@ import {
   updateRegistration,
   saveRegistration,
   updateRegistrationStatus,
+  updateRegistrationObservation,
   getCategoryLimits, 
   saveCategoryLimits,
   getSponsors, 
@@ -101,6 +103,10 @@ export default function AdminDashboard({ onLogout, currentUser }) {
   const [editModalData, setEditModalData] = useState(null);
   const [savingEdit, setSavingEdit] = useState(false);
 
+  // Modal para agregar/editar observaciones rápidas
+  const [observationModalData, setObservationModalData] = useState(null);
+  const [savingObservation, setSavingObservation] = useState(false);
+
   // Modal para inscribir pareja desde el administrador
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [savingCreate, setSavingCreate] = useState(false);
@@ -110,6 +116,7 @@ export default function AdminDashboard({ onLogout, currentUser }) {
     monto: '$140',
     metodoPago: 'Pago Móvil',
     referenciaPago: '',
+    observaciones: '',
     comprobantePagoUrl: '',
     comprobanteNombre: '',
     aceptaReglamento: 'si',
@@ -499,6 +506,7 @@ export default function AdminDashboard({ onLogout, currentUser }) {
       monto: item.monto || '$140',
       metodoPago: item.metodoPago || 'Pago Móvil',
       referenciaPago: item.referenciaPago || '',
+      observaciones: item.observaciones || item.metadata?.observaciones || '',
       comprobantePagoUrl: item.comprobantePagoUrl || '',
       comprobanteNombre: item.comprobanteNombre || '',
       aceptaReglamento: item.aceptaReglamento || 'si',
@@ -559,6 +567,40 @@ export default function AdminDashboard({ onLogout, currentUser }) {
       setFeedback({ type: 'error', message: 'Error al actualizar los datos de la dupla.' });
     } finally {
       setSavingEdit(false);
+    }
+  };
+
+  // Abrir modal de observaciones rápidas
+  const handleOpenObservationModal = (item) => {
+    setObservationModalData({
+      id: item.id,
+      playerNames: `${item.jugador1?.nombre || ''} y ${item.jugador2?.nombre || ''}`,
+      categoria: item.categoria,
+      observaciones: item.observaciones || item.metadata?.observaciones || ''
+    });
+  };
+
+  // Guardar observación rápida en Supabase y local
+  const handleSaveObservation = async (e) => {
+    e.preventDefault();
+    if (!observationModalData) return;
+    setSavingObservation(true);
+    try {
+      const text = observationModalData.observaciones.trim();
+      await updateRegistrationObservation(observationModalData.id, text);
+      setRegistrations(prev => prev.map(r => r.id === observationModalData.id ? {
+        ...r,
+        observaciones: text,
+        metadata: { ...(r.metadata || {}), observaciones: text }
+      } : r));
+      setObservationModalData(null);
+      setFeedback({ type: 'success', message: '¡Observación guardada con éxito!' });
+      setTimeout(() => setFeedback(null), 3000);
+    } catch (err) {
+      console.error('Error guardando observación:', err);
+      alert('Error al guardar la observación.');
+    } finally {
+      setSavingObservation(false);
     }
   };
 
@@ -732,10 +774,11 @@ export default function AdminDashboard({ onLogout, currentUser }) {
       'Fecha': r.createdAtFormatted || r.createdAtISO || 'N/A',
       'Categoría': r.categoria,
       'Status': (r.status || r.estado || 'preinscrito').toUpperCase(),
-      'Monto': r.monto || '$150',
+      'Monto': r.monto || '$140',
       'Método de Pago': r.metodoPago || 'No especificado',
-      'Referencia / ID Pago': r.referenciaPago || 'Sin referencia',
+      'Referencia / ID Pago': r.referenciaPago || r.referencia_pago || r.referencia || 'Sin referencia',
       'Comprobante Adjunto': r.comprobantePagoUrl ? 'SÍ' : 'NO',
+      'Observaciones': r.observaciones || r.metadata?.observaciones || 'Sin observaciones',
 
       // Jugador 1
       'J1 Nombre y Apellido': `${r.jugador1?.nombre || ''} ${r.jugador1?.apellido || ''}`.trim(),
@@ -775,8 +818,9 @@ export default function AdminDashboard({ onLogout, currentUser }) {
       { wch: 15 }, // Status
       { wch: 10 }, // Monto
       { wch: 20 }, // Método de Pago
-      { wch: 22 }, // Referencia
+      { wch: 24 }, // Referencia / ID Pago
       { wch: 14 }, // Comprobante
+      { wch: 32 }, // Observaciones
       
       // J1
       { wch: 25 }, { wch: 16 }, { wch: 25 }, { wch: 16 }, { wch: 12 },
@@ -804,7 +848,7 @@ export default function AdminDashboard({ onLogout, currentUser }) {
     }
 
     const headers = [
-      'Nro', 'Fecha', 'Categoria', 'Status', 'Monto', 'Metodo_Pago', 'Referencia_Pago', 'Comprobante_Adjunto',
+      'Nro', 'Fecha', 'Categoria', 'Status', 'Monto', 'Metodo_Pago', 'Referencia_Pago', 'Comprobante_Adjunto', 'Observaciones',
       'J1_Nombre', 'J1_Cedula', 'J1_Email', 'J1_Telefono', 'J1_Talla_Franela', 'J1_Lado_Juego', 'J1_Categoria_Habitual', 'J1_Torneo_Actual', 'J1_Historial_Torneos', 'J1_Alergias', 'J1_Acepta_Reglamento',
       'J2_Nombre', 'J2_Cedula', 'J2_Email', 'J2_Telefono', 'J2_Talla_Franela', 'J2_Lado_Juego', 'J2_Categoria_Habitual', 'J2_Torneo_Actual', 'J2_Historial_Torneos', 'J2_Alergias', 'J2_Acepta_Reglamento',
       'Acepta_Reglamento_Dupla', 'ID_Documento'
@@ -817,10 +861,11 @@ export default function AdminDashboard({ onLogout, currentUser }) {
       clean(r.createdAtFormatted || r.createdAtISO || ''),
       clean(r.categoria || ''),
       clean((r.status || r.estado || 'preinscrito').toUpperCase()),
-      clean(r.monto || '$150'),
+      clean(r.monto || '$140'),
       clean(r.metodoPago || ''),
-      clean(r.referenciaPago || ''),
+      clean(r.referenciaPago || r.referencia_pago || r.referencia || ''),
       clean(r.comprobantePagoUrl ? 'SI' : 'NO'),
+      clean(r.observaciones || r.metadata?.observaciones || ''),
 
       clean(`${r.jugador1?.nombre || ''} ${r.jugador1?.apellido || ''}`.trim()),
       clean(r.jugador1?.cedula || ''),
@@ -2313,6 +2358,18 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                             ) : (
                               <span className="text-[10px] text-slate-500 italic">Sin archivo</span>
                             )}
+
+                            {item.observaciones && (
+                              <button
+                                type="button"
+                                onClick={() => handleOpenObservationModal(item)}
+                                className="mt-1.5 flex items-center gap-1.5 text-[11px] text-amber-300 bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/35 rounded-lg px-2 py-0.5 max-w-[170px] truncate transition-colors text-left font-medium"
+                                title={`Observación: ${item.observaciones}`}
+                              >
+                                <MessageSquare className="w-3 h-3 text-amber-400 shrink-0" />
+                                <span className="truncate">{item.observaciones}</span>
+                              </button>
+                            )}
                           </td>
 
                           {/* Selector y Acción Rápida de Status */}
@@ -2359,6 +2416,18 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                                 title="Ver Ficha Completa de la Dupla"
                               >
                                 <Eye className="w-4 h-4" />
+                              </button>
+
+                              <button
+                                onClick={() => handleOpenObservationModal(item)}
+                                className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
+                                  item.observaciones 
+                                    ? 'text-amber-400 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 shadow-[0_0_8px_rgba(245,158,11,0.2)]' 
+                                    : 'text-slate-400 hover:text-amber-300 hover:bg-navy-800'
+                                }`}
+                                title={item.observaciones ? `Observaciones: ${item.observaciones}` : 'Agregar Observación'}
+                              >
+                                <MessageSquare className="w-4 h-4" />
                               </button>
 
                               <button
@@ -2479,6 +2548,19 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                   </select>
                 </div>
               </div>
+
+              {/* Observaciones del Administrador */}
+              {detailModalData.observaciones && (
+                <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4">
+                  <div className="flex items-center gap-2 text-amber-300 font-bold text-xs uppercase tracking-wider mb-1.5">
+                    <MessageSquare className="w-4 h-4 text-amber-400" />
+                    <span>Observaciones / Notas Internas</span>
+                  </div>
+                  <p className="text-xs sm:text-sm text-slate-200 whitespace-pre-wrap leading-relaxed">
+                    {detailModalData.observaciones}
+                  </p>
+                </div>
+              )}
 
               {/* Ficha Jugador 1 */}
               <div className="bg-navy-900/90 p-5 rounded-2xl border border-slate-700">
@@ -3108,6 +3190,21 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                     )}
                   </div>
                 </div>
+
+                {/* Observaciones Internas Admin */}
+                <div className="pt-2 border-t border-slate-800">
+                  <label className="flex items-center gap-1.5 text-xs font-bold text-amber-300 uppercase tracking-wider mb-1.5">
+                    <MessageSquare className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Observaciones / Notas Internas (Opcional - Solo Admin)</span>
+                  </label>
+                  <textarea
+                    rows={2}
+                    placeholder="Notas internas del comité (ej: pago pendiente, horarios especiales, observaciones médicas)..."
+                    value={editModalData.observaciones || ''}
+                    onChange={(e) => setEditModalData({ ...editModalData, observaciones: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700 focus:border-amber-400 text-xs"
+                  />
+                </div>
               </div>
 
               {/* Bloque 2: Jugador 1 y Jugador 2 en columnas */}
@@ -3119,7 +3216,7 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                     <div className="w-6 h-6 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold text-xs">
                       1
                     </div>
-                    <h4 className="text-sm font-bold text-white font-orbitron">Datos de Jugador 1 (Capitán)</h4>
+                    <h4 className="text-sm font-bold text-white font-orbitron">Datos de Jugador 1</h4>
                   </div>
 
                   <div>
@@ -3277,7 +3374,7 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                     <div className="w-6 h-6 rounded-lg bg-[#A3E229]/20 text-[#A3E229] flex items-center justify-center font-bold text-xs">
                       2
                     </div>
-                    <h4 className="text-sm font-bold text-white font-orbitron">Datos de Jugador 2 (Compañero)</h4>
+                    <h4 className="text-sm font-bold text-white font-orbitron">Datos de Jugador 2</h4>
                   </div>
 
                   <div>
@@ -3596,6 +3693,21 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                     )}
                   </div>
                 </div>
+
+                {/* Observaciones Internas Admin */}
+                <div className="pt-2 border-t border-slate-800">
+                  <label className="flex items-center gap-1.5 text-xs font-bold text-amber-300 uppercase tracking-wider mb-1.5">
+                    <MessageSquare className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Observaciones / Notas Internas (Opcional - Solo Admin)</span>
+                  </label>
+                  <textarea
+                    rows={2}
+                    placeholder="Notas internas del comité (ej: pago en taquilla, observaciones de categoría, etc.)..."
+                    value={newDuplaForm.observaciones || ''}
+                    onChange={(e) => setNewDuplaForm({ ...newDuplaForm, observaciones: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white border border-slate-700 focus:border-amber-400 text-xs"
+                  />
+                </div>
               </div>
 
               {/* Bloque 2: Jugador 1 y Jugador 2 en columnas */}
@@ -3607,7 +3719,7 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                     <div className="w-6 h-6 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold text-xs">
                       1
                     </div>
-                    <h4 className="text-sm font-bold text-white font-orbitron">Datos de Jugador 1 (Capitán)</h4>
+                    <h4 className="text-sm font-bold text-white font-orbitron">Datos de Jugador 1</h4>
                   </div>
 
                   <div>
@@ -3765,7 +3877,7 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                     <div className="w-6 h-6 rounded-lg bg-[#A3E229]/20 text-[#A3E229] flex items-center justify-center font-bold text-xs">
                       2
                     </div>
-                    <h4 className="text-sm font-bold text-white font-orbitron">Datos de Jugador 2 (Compañero)</h4>
+                    <h4 className="text-sm font-bold text-white font-orbitron">Datos de Jugador 2</h4>
                   </div>
 
                   <div>
@@ -4073,6 +4185,84 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                     <span>Guardar y Conectar Supabase</span>
                   </button>
                 </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL PARA AGREGAR / EDITAR OBSERVACIONES RÁPIDAS DE LA PAREJA */}
+      {observationModalData && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/80 backdrop-blur-md animate-fade-in">
+          <div className="bg-navy-900 border border-amber-500/40 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col">
+            {/* Header */}
+            <div className="p-5 border-b border-slate-800 flex items-center justify-between bg-navy-950/60">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400">
+                  <MessageSquare className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white font-orbitron">Observaciones de la Dupla</h3>
+                  <p className="text-xs text-slate-400">
+                    {observationModalData.playerNames} • <span className="text-gold-400 font-semibold">{observationModalData.categoria}</span>
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setObservationModalData(null)}
+                className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-navy-800 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Form */}
+            <form onSubmit={handleSaveObservation} className="p-5 space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+                  Notas / Observaciones del Administrador (Opcional)
+                </label>
+                <textarea
+                  rows={4}
+                  autoFocus
+                  placeholder="Escribe aquí observaciones privadas del comité (ej: Pago pendiente de $70, horarios solicitados, observaciones médicas, etc.)..."
+                  value={observationModalData.observaciones}
+                  onChange={(e) => setObservationModalData({
+                    ...observationModalData,
+                    observaciones: e.target.value
+                  })}
+                  className="w-full px-3.5 py-2.5 rounded-2xl bg-navy-950 text-white border border-slate-700 focus:border-amber-400 text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-amber-400/50 resize-y"
+                />
+                <p className="text-[11px] text-slate-500 mt-1.5">
+                  * Este campo es opcional y solo visible para los administradores y en la exportación de Excel / CSV.
+                </p>
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setObservationModalData(null)}
+                  className="px-4 py-2 rounded-xl bg-navy-800 hover:bg-navy-700 text-slate-300 text-xs sm:text-sm font-semibold transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  disabled={savingObservation}
+                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-navy-950 font-bold text-xs sm:text-sm shadow-lg shadow-amber-500/20 flex items-center gap-2 transition-all active:scale-95 disabled:opacity-50"
+                >
+                  {savingObservation ? (
+                    <>
+                      <RotateCcw className="w-4 h-4 animate-spin" />
+                      <span>Guardando...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Save className="w-4 h-4" />
+                      <span>Guardar Observación</span>
+                    </>
+                  )}
+                </button>
               </div>
             </form>
           </div>

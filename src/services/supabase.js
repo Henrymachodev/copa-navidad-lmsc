@@ -291,6 +291,8 @@ function mapRegistrationFromSupabase(row) {
     comprobantePagoUrl: row.comprobante_url || row.comprobantePagoUrl || '',
     comprobanteNombre: row.comprobante_nombre || row.comprobanteNombre || '',
     aceptaReglamento: row.acepta_reglamento || row.aceptaReglamento || 'si',
+    observaciones: row.observaciones || row.metadata?.observaciones || '',
+    metadata: row.metadata || {},
     jugador1: row.jugador1 || {},
     jugador2: row.jugador2 || {},
     createdAtISO: row.created_at || new Date().toISOString(),
@@ -310,6 +312,10 @@ function mapRegistrationToSupabase(data) {
     comprobante_url: data.comprobantePagoUrl || '',
     comprobante_nombre: data.comprobanteNombre || '',
     acepta_reglamento: data.aceptaReglamento || 'si',
+    metadata: {
+      ...(data.metadata || {}),
+      observaciones: data.observaciones || ''
+    },
     jugador1: data.jugador1 || {},
     jugador2: data.jugador2 || {},
     updated_at: new Date().toISOString()
@@ -428,6 +434,8 @@ export async function updateRegistration(id, updatedData) {
   return true;
 }
 
+
+
 export async function updateRegistrationStatus(id, newStatus) {
   const client = getSupabaseClient();
   if (client) {
@@ -450,6 +458,48 @@ export async function updateRegistrationStatus(id, newStatus) {
     window.dispatchEvent(new Event('storage'));
   } catch (e) {
     console.warn('Error local:', e);
+  }
+
+  return true;
+}
+
+
+
+export async function updateRegistrationObservation(id, observaciones) {
+  const client = getSupabaseClient();
+  const list = await getRegistrations();
+  const current = list.find(r => r.id === id);
+  const updatedMetadata = {
+    ...(current?.metadata || {}),
+    observaciones: observaciones || ''
+  };
+
+  if (client) {
+    try {
+      const { error } = await client
+        .from('registrations')
+        .update({
+          metadata: updatedMetadata,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', id);
+
+      if (error) throw error;
+    } catch (err) {
+      console.error('Error actualizando observación en Supabase:', err);
+    }
+  }
+
+  try {
+    const updated = list.map(r => r.id === id ? { 
+      ...r, 
+      observaciones: observaciones || '', 
+      metadata: updatedMetadata 
+    } : r);
+    localStorage.setItem(LOCAL_STORAGE_REGISTRATIONS_KEY, JSON.stringify(updated));
+    window.dispatchEvent(new Event('storage'));
+  } catch (e) {
+    console.warn('Error actualizando observación local:', e);
   }
 
   return true;
@@ -491,6 +541,8 @@ export async function updateRegistrationPayment(id, paymentData) {
   return true;
 }
 
+
+
 export async function deleteRegistration(id) {
   const client = getSupabaseClient();
   if (client) {
@@ -517,6 +569,8 @@ export async function deleteRegistration(id) {
 
   return true;
 }
+
+
 
 export function subscribeToRegistrations(callback) {
   // Ejecutar primera carga
@@ -623,6 +677,8 @@ export async function saveLandingConfig(config) {
   return true;
 }
 
+
+
 export function subscribeToLandingConfig(callback) {
   getLandingConfig().then(cfg => callback(cfg)).catch(() => {});
 
@@ -723,6 +779,8 @@ export async function saveCategoryLimits(limitsData) {
   return true;
 }
 
+
+
 // ==================== PATROCINADORES Y ALIADOS ====================
 
 export async function getSponsors() {
@@ -822,6 +880,8 @@ export async function deleteSponsor(id) {
   return true;
 }
 
+
+
 // ==================== USUARIOS ADMINISTRADORES ====================
 
 export async function getAdminUsers() {
@@ -910,6 +970,8 @@ export async function deleteAdminUser(userId) {
   window.dispatchEvent(new Event('storage'));
   return true;
 }
+
+
 
 export async function verifyAdminLogin(identifier, pin) {
   const users = await getAdminUsers();
