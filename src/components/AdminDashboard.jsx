@@ -45,7 +45,12 @@ import {
   Database,
   Pencil,
   MessageSquare,
-  Image as ImageIcon
+  Image as ImageIcon,
+  ChevronLeft,
+  ChevronRight,
+  GripVertical,
+  Move,
+  ArrowUpDown
 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { 
@@ -59,6 +64,7 @@ import {
   saveCategoryLimits,
   getSponsors, 
   saveSponsor, 
+  saveSponsorsOrder,
   deleteSponsor,
   getLandingConfig,
   saveLandingConfig,
@@ -166,6 +172,8 @@ export default function AdminDashboard({ onLogout, currentUser }) {
   // Patrocinadores
   const [sponsorsList, setSponsorsList] = useState([]);
   const [sponsorModal, setSponsorModal] = useState(null);
+  const [draggedSponsorIdx, setDraggedSponsorIdx] = useState(null);
+  const [savingSponsorOrder, setSavingSponsorOrder] = useState(false);
 
   // Usuarios y Roles de Administrador
   const [adminUsersList, setAdminUsersList] = useState([]);
@@ -298,6 +306,85 @@ export default function AdminDashboard({ onLogout, currentUser }) {
       await loadSponsorsData();
     } catch (e) {
       console.error('Error ajustando tamaño de sponsor:', e);
+    }
+  };
+
+  // Reordenar patrocinadores (Mover flechas)
+  const handleMoveSponsor = async (index, direction) => {
+    const newIndex = index + direction;
+    if (newIndex < 0 || newIndex >= sponsorsList.length) return;
+    const updated = [...sponsorsList];
+    const [moved] = updated.splice(index, 1);
+    updated.splice(newIndex, 0, moved);
+    setSponsorsList(updated);
+    try {
+      setSavingSponsorOrder(true);
+      await saveSponsorsOrder(updated);
+      setFeedback({ type: 'success', message: `Posición actualizada: "${moved.name}" ahora está en el puesto #${newIndex + 1}` });
+      setTimeout(() => setFeedback(null), 2500);
+    } catch (err) {
+      console.error('Error al guardar nuevo orden de sponsors:', err);
+      setFeedback({ type: 'error', message: 'Error guardando nuevo orden de patrocinadores' });
+    } finally {
+      setSavingSponsorOrder(false);
+    }
+  };
+
+  // Asignar posición numérica directa
+  const handleSetSponsorPosition = async (fromIndex, toPosition) => {
+    const toIndex = Math.max(0, Math.min(sponsorsList.length - 1, Number(toPosition) - 1));
+    if (toIndex === fromIndex || isNaN(toIndex)) return;
+    const updated = [...sponsorsList];
+    const [moved] = updated.splice(fromIndex, 1);
+    updated.splice(toIndex, 0, moved);
+    setSponsorsList(updated);
+    try {
+      setSavingSponsorOrder(true);
+      await saveSponsorsOrder(updated);
+      setFeedback({ type: 'success', message: `Posición actualizada: "${moved.name}" ahora está en el puesto #${toIndex + 1}` });
+      setTimeout(() => setFeedback(null), 2500);
+    } catch (err) {
+      console.error('Error al cambiar posición:', err);
+      setFeedback({ type: 'error', message: 'Error al cambiar posición' });
+    } finally {
+      setSavingSponsorOrder(false);
+    }
+  };
+
+  // Arrastrar y soltar (Drag and Drop)
+  const handleDragStart = (e, index) => {
+    setDraggedSponsorIdx(index);
+    e.dataTransfer.effectAllowed = 'move';
+    try {
+      e.dataTransfer.setData('text/plain', String(index));
+    } catch (_) {}
+  };
+
+  const handleDragOver = (e, index) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handleDrop = async (e, targetIndex) => {
+    e.preventDefault();
+    if (draggedSponsorIdx === null || draggedSponsorIdx === targetIndex) {
+      setDraggedSponsorIdx(null);
+      return;
+    }
+    const updated = [...sponsorsList];
+    const [moved] = updated.splice(draggedSponsorIdx, 1);
+    updated.splice(targetIndex, 0, moved);
+    setDraggedSponsorIdx(null);
+    setSponsorsList(updated);
+    try {
+      setSavingSponsorOrder(true);
+      await saveSponsorsOrder(updated);
+      setFeedback({ type: 'success', message: `Nuevo orden guardado: "${moved.name}" en el puesto #${targetIndex + 1}` });
+      setTimeout(() => setFeedback(null), 2500);
+    } catch (err) {
+      console.error('Error al guardar orden arrastrado:', err);
+    } finally {
+      setSavingSponsorOrder(false);
     }
   };
 
@@ -1896,100 +1983,210 @@ export default function AdminDashboard({ onLogout, currentUser }) {
       {activeTab === 'patrocinadores' && (
         <div className="max-w-7xl mx-auto space-y-6">
           <div className="glass-panel p-6 rounded-3xl border border-slate-800">
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
               <div>
                 <h2 className="text-xl font-bold text-white flex items-center gap-2">
                   <Handshake className="w-5 h-5 text-gold-400" />
-                  Gestión de Patrocinadores & Aliados
+                  Gestión y Orden de Patrocinadores & Aliados
                 </h2>
-                <p className="text-xs text-slate-400">
-                  Asigna logos y enlaces externos para cada marca. Se visualizarán en la web pública en escala de grises con hover a color.
+                <p className="text-xs text-slate-400 mt-1">
+                  Asigna logos, enlaces externos y define el <strong className="text-white">orden exacto de aparición</strong> en la web. Arrastra las tarjetas o usa los controles numéricos y flechas.
                 </p>
               </div>
 
-              <button
-                onClick={() => setSponsorModal({ id: '', name: '', tier: 'Auspiciador Oficial', logo: '', link: 'https://' })}
-                className="px-4 py-2.5 rounded-xl bg-[#A3E229] hover:bg-[#b6f23d] text-[#150D8B] text-xs font-orbitron font-black flex items-center gap-2 shadow-[0_0_20px_rgba(163,226,41,0.4)] transition-all uppercase"
-              >
-                <Plus className="w-4 h-4 text-[#150D8B]" />
-                <span>Agregar Patrocinador</span>
-              </button>
+              <div className="flex items-center gap-3">
+                {savingSponsorOrder && (
+                  <span className="text-xs text-[#A3E229] flex items-center gap-1.5 bg-[#A3E229]/10 px-3 py-1.5 rounded-xl border border-[#A3E229]/30 animate-pulse">
+                    <RefreshCw className="w-3.5 h-3.5 animate-spin text-[#A3E229]" />
+                    <span>Guardando orden...</span>
+                  </span>
+                )}
+                <button
+                  onClick={() => setSponsorModal({ id: '', name: '', tier: 'Auspiciador Oficial', logo: '', link: 'https://' })}
+                  className="px-4 py-2.5 rounded-xl bg-[#A3E229] hover:bg-[#b6f23d] text-[#150D8B] text-xs font-orbitron font-black flex items-center gap-2 shadow-[0_0_20px_rgba(163,226,41,0.4)] transition-all uppercase"
+                >
+                  <Plus className="w-4 h-4 text-[#150D8B]" />
+                  <span>Agregar Patrocinador</span>
+                </button>
+              </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {sponsorsList.map(sp => (
-                <div key={sp.id} className="bg-navy-800/80 p-5 rounded-2xl border border-slate-700/80 flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#A3E229]/20 text-[#A3E229] border border-[#A3E229]/30">
-                        {sp.tier}
-                      </span>
-                      {sp.link && (
-                        <a href={sp.link} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white">
-                          <ExternalLink className="w-4 h-4" />
-                        </a>
-                      )}
-                    </div>
+            {/* BARRA INFORMATIVA DE ORDEN */}
+            <div className="bg-navy-900/90 border border-slate-700/80 rounded-2xl p-4 mb-6 flex flex-col md:flex-row md:items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-[#A3E229]/15 border border-[#A3E229]/30 flex items-center justify-center text-[#A3E229] shrink-0">
+                  <ArrowUpDown className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-white flex items-center gap-2">
+                    <span>Orden de visualización oficial ({sponsorsList.length} patrocinadores)</span>
+                    <span className="px-2 py-0.2 text-[10px] rounded bg-gold-400/20 text-gold-400 border border-gold-400/30">En vivo</span>
+                  </div>
+                  <p className="text-[11px] text-slate-400 mt-0.5">
+                    El patrocinador en el <strong className="text-white">Puesto #1</strong> aparecerá primero a la izquierda en la landing page. Usa las flechas <strong className="text-slate-200">◀ ▶</strong>, selecciona el número directo o arrastra cualquier tarjeta.
+                  </p>
+                </div>
+              </div>
+            </div>
 
-                    <div className="h-16 flex items-center justify-center p-2 bg-navy-900 rounded-xl border border-slate-800 my-2">
-                      {sp.logo ? (
-                        <img 
-                          src={sp.logo} 
-                          alt={sp.name} 
-                          style={{ height: `${sp.logoHeight || 65}px`, maxHeight: '60px' }}
-                          className="max-h-full max-w-full object-contain" 
-                        />
-                      ) : (
-                        <span className="text-xs text-slate-500">Sin logo asignado</span>
-                      )}
-                    </div>
+            {sponsorsList.length === 0 ? (
+              <div className="p-12 text-center text-slate-400 bg-navy-900/40 rounded-2xl border border-slate-800">
+                <Handshake className="w-12 h-12 text-slate-600 mx-auto mb-3" />
+                <p className="text-sm">No hay patrocinadores registrados.</p>
+                <button
+                  onClick={() => setSponsorModal({ id: '', name: '', tier: 'Auspiciador Oficial', logo: '', link: 'https://' })}
+                  className="mt-4 px-4 py-2 rounded-xl bg-[#A3E229] text-[#150D8B] text-xs font-bold inline-flex items-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Agregar el primer patrocinador</span>
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {sponsorsList.map((sp, index) => (
+                  <div
+                    key={sp.id}
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, index)}
+                    onDragOver={(e) => handleDragOver(e, index)}
+                    onDrop={(e) => handleDrop(e, index)}
+                    className={`bg-navy-800/80 p-5 rounded-2xl border flex flex-col justify-between transition-all duration-200 cursor-default ${
+                      draggedSponsorIdx === index 
+                        ? 'opacity-40 border-[#A3E229] ring-2 ring-[#A3E229]/60 scale-[0.98]' 
+                        : 'border-slate-700/80 hover:border-slate-600'
+                    }`}
+                  >
+                    <div>
+                      {/* HEADER DE LA TARJETA: POSICIÓN Y CONTROLES DE ORDEN */}
+                      <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-700/60">
+                        <div className="flex items-center gap-2">
+                          <span 
+                            className="cursor-grab active:cursor-grabbing text-slate-500 hover:text-white p-1 rounded hover:bg-navy-900 transition-colors"
+                            title="Arrastra para mover de lugar"
+                          >
+                            <GripVertical className="w-4 h-4" />
+                          </span>
+                          <span className="px-2.5 py-0.5 rounded-lg bg-[#150D8B] text-[#A3E229] border border-[#A3E229]/40 font-mono font-black text-xs shadow-sm">
+                            #{index + 1}
+                          </span>
+                          <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#A3E229]/15 text-[#A3E229] border border-[#A3E229]/30 truncate max-w-[110px]">
+                            {sp.tier}
+                          </span>
+                        </div>
 
-                    <h4 className="text-sm font-bold text-white mt-1">{sp.name}</h4>
-                    <p className="text-xs text-slate-400 truncate mt-0.5">{sp.link || 'Sin enlace'}</p>
+                        {/* CONTROLES RÁPIDOS DE REORDENAMIENTO */}
+                        <div className="flex items-center gap-1 bg-navy-950/80 p-1 rounded-xl border border-slate-800">
+                          <button
+                            type="button"
+                            onClick={() => handleMoveSponsor(index, -1)}
+                            disabled={index === 0}
+                            className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors text-xs font-bold ${
+                              index === 0 
+                                ? 'text-slate-600 cursor-not-allowed bg-transparent' 
+                                : 'text-slate-300 hover:text-white hover:bg-navy-800 active:scale-95'
+                            }`}
+                            title="Mover antes / izquierda"
+                          >
+                            <ChevronLeft className="w-4 h-4" />
+                          </button>
 
-                    {/* CONTROL RÁPIDO DE TAMAÑO DEL LOGO */}
-                    <div className="flex items-center justify-between text-[11px] text-slate-400 mt-2.5 bg-navy-900/80 px-3 py-1.5 rounded-xl border border-slate-800">
-                      <span>Tamaño en web: <strong className="text-gold-400 font-mono font-bold">{sp.logoHeight || 65}px</strong></span>
-                      <div className="flex items-center gap-1.5">
-                        <button
-                          type="button"
-                          onClick={() => handleQuickResizeSponsor(sp, -5)}
-                          className="w-6 h-6 rounded-lg bg-navy-800 text-slate-300 hover:text-white border border-slate-700 font-bold flex items-center justify-center text-xs transition-colors"
-                          title="Reducir 5px"
-                        >
-                          -
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleQuickResizeSponsor(sp, 5)}
-                          className="w-6 h-6 rounded-lg bg-navy-800 text-slate-300 hover:text-white border border-slate-700 font-bold flex items-center justify-center text-xs transition-colors"
-                          title="Aumentar 5px"
-                        >
-                          +
-                        </button>
+                          <select
+                            value={index + 1}
+                            onChange={(e) => handleSetSponsorPosition(index, e.target.value)}
+                            className="bg-navy-900 text-[#A3E229] font-mono font-bold text-xs px-1.5 py-1 rounded-md border border-slate-700 focus:border-[#A3E229] focus:outline-none cursor-pointer"
+                            title="Cambiar a posición exacta"
+                          >
+                            {sponsorsList.map((_, pIdx) => (
+                              <option key={pIdx} value={pIdx + 1}>
+                                Puesto #{pIdx + 1}
+                              </option>
+                            ))}
+                          </select>
+
+                          <button
+                            type="button"
+                            onClick={() => handleMoveSponsor(index, 1)}
+                            disabled={index === sponsorsList.length - 1}
+                            className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors text-xs font-bold ${
+                              index === sponsorsList.length - 1 
+                                ? 'text-slate-600 cursor-not-allowed bg-transparent' 
+                                : 'text-slate-300 hover:text-white hover:bg-navy-800 active:scale-95'
+                            }`}
+                            title="Mover después / derecha"
+                          >
+                            <ChevronRight className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* VISTA PREVIA DEL LOGO */}
+                      <div className="h-16 flex items-center justify-center p-2 bg-navy-900 rounded-xl border border-slate-800 my-2">
+                        {sp.logo ? (
+                          <img 
+                            src={sp.logo} 
+                            alt={sp.name} 
+                            style={{ height: `${sp.logoHeight || 65}px`, maxHeight: '60px' }}
+                            className="max-h-full max-w-full object-contain" 
+                          />
+                        ) : (
+                          <span className="text-xs text-slate-500">Sin logo asignado</span>
+                        )}
+                      </div>
+
+                      <div className="flex items-center justify-between mt-2">
+                        <h4 className="text-sm font-bold text-white truncate max-w-[200px]">{sp.name}</h4>
+                        {sp.link && (
+                          <a href={sp.link} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-[#A3E229] transition-colors" title={sp.link}>
+                            <ExternalLink className="w-3.5 h-3.5" />
+                          </a>
+                        )}
+                      </div>
+                      <p className="text-xs text-slate-400 truncate mt-0.5">{sp.link || 'Sin enlace'}</p>
+
+                      {/* CONTROL RÁPIDO DE TAMAÑO DEL LOGO */}
+                      <div className="flex items-center justify-between text-[11px] text-slate-400 mt-2.5 bg-navy-900/80 px-3 py-1.5 rounded-xl border border-slate-800">
+                        <span>Tamaño en web: <strong className="text-gold-400 font-mono font-bold">{sp.logoHeight || 65}px</strong></span>
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => handleQuickResizeSponsor(sp, -5)}
+                            className="w-6 h-6 rounded-lg bg-navy-800 text-slate-300 hover:text-white border border-slate-700 font-bold flex items-center justify-center text-xs transition-colors"
+                            title="Reducir 5px"
+                          >
+                            -
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleQuickResizeSponsor(sp, 5)}
+                            className="w-6 h-6 rounded-lg bg-navy-800 text-slate-300 hover:text-white border border-slate-700 font-bold flex items-center justify-center text-xs transition-colors"
+                            title="Aumentar 5px"
+                          >
+                            +
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="mt-4 pt-3 border-t border-slate-700/60 flex items-center justify-end gap-2">
-                    <button
-                      onClick={() => setSponsorModal({ ...sp, logoHeight: sp.logoHeight || 65 })}
-                      className="p-1.5 rounded-lg bg-navy-700 text-slate-300 hover:text-gold-400 text-xs flex items-center gap-1"
-                    >
-                      <Edit className="w-3.5 h-3.5" />
-                      <span>Editar</span>
-                    </button>
-                    <button
-                      onClick={() => handleDeleteSponsor(sp.id, sp.name)}
-                      className="p-1.5 rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500/30 text-xs flex items-center gap-1"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                      <span>Eliminar</span>
-                    </button>
+                    <div className="mt-4 pt-3 border-t border-slate-700/60 flex items-center justify-end gap-2">
+                      <button
+                        onClick={() => setSponsorModal({ ...sp, logoHeight: sp.logoHeight || 65 })}
+                        className="p-1.5 rounded-lg bg-navy-700 text-slate-300 hover:text-gold-400 text-xs flex items-center gap-1"
+                      >
+                        <Edit className="w-3.5 h-3.5" />
+                        <span>Editar</span>
+                      </button>
+                      <button
+                        onClick={() => handleDeleteSponsor(sp.id, sp.name)}
+                        className="p-1.5 rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500/30 text-xs flex items-center gap-1"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        <span>Eliminar</span>
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}

@@ -789,19 +789,44 @@ export async function getSponsors() {
     try {
       const { data, error } = await client
         .from('sponsors')
-        .select('*')
-        .order('created_at', { ascending: true });
+        .select('*');
 
       if (!error && data && data.length > 0) {
-        const mapped = data.map(s => ({
+        let mapped = data.map(s => ({
           id: s.id,
           name: s.name,
           tier: s.tier,
           logo: s.logo,
           link: s.link,
           isHero: s.is_hero,
-          logoHeight: s.logo_height || 65
+          logoHeight: s.logo_height || 65,
+          createdAt: s.created_at
         }));
+
+        // Consultar el orden guardado en tournament_config
+        try {
+          const { data: orderData } = await client
+            .from('tournament_config')
+            .select('value')
+            .eq('key', 'sponsors_order')
+            .maybeSingle();
+
+          if (orderData && Array.isArray(orderData.value) && orderData.value.length > 0) {
+            const orderMap = new Map();
+            orderData.value.forEach((id, idx) => orderMap.set(String(id), idx));
+            mapped.sort((a, b) => {
+              const idxA = orderMap.has(String(a.id)) ? orderMap.get(String(a.id)) : 9999;
+              const idxB = orderMap.has(String(b.id)) ? orderMap.get(String(b.id)) : 9999;
+              if (idxA !== idxB) return idxA - idxB;
+              return new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
+            });
+          } else {
+            mapped.sort((a, b) => new Date(a.createdAt || 0) - new Date(b.createdAt || 0));
+          }
+        } catch (oe) {
+          mapped.sort((a, b) => new Date(a.createdAt || 0) - new Date(b.createdAt || 0));
+        }
+
         localStorage.setItem(LOCAL_STORAGE_SPONSORS_KEY, JSON.stringify(mapped));
         return mapped;
       }
@@ -849,13 +874,68 @@ export async function saveSponsor(sponsor) {
   let updated;
   if (index >= 0) {
     updated = [...existing];
-    updated[index] = { ...sponsor, id };
+    updated[index] = { ...existing[index], ...sponsor, id };
   } else {
     updated = [...existing, { ...sponsor, id }];
   }
+
+  // Guardar en tournament_config el orden actualizado con el nuevo sponsor si corresponde
+  if (client) {
+    try {
+      await client
+        .from('tournament_config')
+        .upsert({
+          key: 'sponsors_order',
+          value: updated.map(s => s.id),
+          updated_at: new Date().toISOString()
+        });
+    } catch (e) {
+      console.warn('Error actualizando sponsors_order:', e);
+    }
+  }
+
   localStorage.setItem(LOCAL_STORAGE_SPONSORS_KEY, JSON.stringify(updated));
+  window.dispatchEvent(new Event('sponsors_updated'));
   window.dispatchEvent(new Event('storage'));
   return { ...sponsor, id };
+}
+
+export async function saveSponsorsOrder(orderedSponsors) {
+  if (!Array.isArray(orderedSponsors)) return [];
+  const client = getSupabaseClient();
+  const orderIds = orderedSponsors.map(s => String(s.id));
+
+  if (client) {
+    try {
+      // 1. Guardar el orden exacto en tournament_config
+      const { error: cfgErr } = await client
+        .from('tournament_config')
+        .upsert({
+          key: 'sponsors_order',
+          value: orderIds,
+          updated_at: new Date().toISOString()
+        });
+      if (cfgErr) console.warn('Aviso guardando sponsors_order en tournament_config:', cfgErr);
+
+      // 2. Escalonar created_at para mantener consistencia física en la tabla sponsors
+      const baseTime = 1700000000000;
+      for (let i = 0; i < orderedSponsors.length; i++) {
+        const item = orderedSponsors[i];
+        const staggeredDate = new Date(baseTime + i * 60000).toISOString();
+        await client
+          .from('sponsors')
+          .update({ created_at: staggeredDate })
+          .eq('id', item.id);
+      }
+    } catch (e) {
+      console.error('Error sincronizando orden de sponsors en Supabase:', e);
+    }
+  }
+
+  localStorage.setItem(LOCAL_STORAGE_SPONSORS_KEY, JSON.stringify(orderedSponsors));
+  window.dispatchEvent(new Event('sponsors_updated'));
+  window.dispatchEvent(new Event('storage'));
+  return orderedSponsors;
 }
 
 export async function deleteSponsor(id) {
@@ -868,6 +948,17 @@ export async function deleteSponsor(id) {
         .eq('id', id);
 
       if (error) throw error;
+
+      // Actualizar sponsors_order quitando el id eliminado
+      const existing = await getSponsors();
+      const updatedIds = existing.filter(s => s.id !== id).map(s => s.id);
+      await client
+        .from('tournament_config')
+        .upsert({
+          key: 'sponsors_order',
+          value: updatedIds,
+          updated_at: new Date().toISOString()
+        });
     } catch (e) {
       console.error('Error eliminando patrocinador en Supabase:', e);
     }
@@ -876,6 +967,7 @@ export async function deleteSponsor(id) {
   const existing = await getSponsors();
   const updated = existing.filter(s => s.id !== id);
   localStorage.setItem(LOCAL_STORAGE_SPONSORS_KEY, JSON.stringify(updated));
+  window.dispatchEvent(new Event('sponsors_updated'));
   window.dispatchEvent(new Event('storage'));
   return true;
 }
