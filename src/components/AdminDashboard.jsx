@@ -50,7 +50,10 @@ import {
   ChevronRight,
   GripVertical,
   Move,
-  ArrowUpDown
+  ArrowUpDown,
+  Smartphone,
+  Landmark,
+  Coins
 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { 
@@ -1900,7 +1903,7 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                 <div className="bg-navy-900/90 p-4 rounded-2xl border border-amber-500/30 space-y-3">
                   <div className="flex items-center justify-between pb-2 border-b border-slate-800">
                     <div className="flex items-center gap-2">
-                      <CreditCard className="w-4 h-4 text-amber-400" />
+                      <Coins className="w-4 h-4 text-amber-400" />
                       <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">Método 4</span>
                     </div>
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
