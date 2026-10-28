@@ -211,12 +211,27 @@ export const DEFAULT_LANDING_CONFIG = {
   montoInscripcion: '$140',
   
   // Métodos de pago oficiales
-  pagoMovilDetalle: 'Banco: Banesco (0134)\nTeléfono: 0414-8889900\nRIF: J-50000000-0\nTitular: La Marina Sport Club C.A.\nTasa oficial BCV del día',
-  zelleDetalle: 'Correo Zelle: pagos@copanavidadlmsc.com\nTitular: LMSC Padel Operations LLC',
+  pagoMovilNombre: 'Pago Móvil',
+  pagoMovilSubtitulo: 'Tasa oficial BCV del día',
+  pagoMovilDetalle: 'Banco: Banco Plaza\nCédula: 16.248.462\nTeléfono: 0414-8188308\nTasa oficial BCV del día',
+
+  zelleNombre: 'Zelle',
+  zelleSubtitulo: 'Dólares USD directos',
+  zelleDetalle: 'Correo Zelle: Armasveronica@gmail.com\nTitular: Verónica De Iglesias',
+
+  cuentaInternacionalNombre: 'Cuenta Internacional',
+  cuentaInternacionalSubtitulo: 'Banco General Panamá (Ahorros)',
+  cuentaInternacionalDetalle: 'Banco: Banco General Panamá\nBeneficiario: Verónica Armas\nCuenta de ahorros: 04-43-00-002370-4',
+
+  banescoPanamaNombre: 'Cuenta Internacional',
+  banescoPanamaDetalle: 'Banco: Banco General Panamá\nBeneficiario: Verónica Armas\nCuenta de ahorros: 04-43-00-002370-4',
+
+  binancePayNombre: 'Binance',
+  binancePaySubtitulo: 'Binance Pay / USDT',
+  binancePayDetalle: 'Usuario: User-845f5\nID Binance: 1136516403\nMoneda: USDT',
+
+  efectivoNombre: 'Efectivo',
   efectivoDetalle: 'Recepción y Administración de La Marina Sport Club (Lechería, Anzoátegui).\nPago directo en efectivo (Divisas USD o Bolívares) en taquilla oficial con el comité organizador.\nHorario: Lunes a Domingo de 8:00 AM a 9:00 PM.',
-  cuentaInternacionalDetalle: 'Banco: Banesco Panamá\nCuenta Corriente USD: 1029384756\nBeneficiario: LMSC Corp Panamá\nSWIFT / BIC: BAPAPAXX\nAcepta transferencias ACH y Wire internacionales.',
-  banescoPanamaDetalle: 'Banco: Banesco Panamá\nCuenta Corriente USD: 1029384756\nBeneficiario: LMSC Corp Panamá\nSWIFT: BAPAPAXX',
-  binancePayDetalle: 'Binance Pay ID: 849201948\nAlias: @CopaNavidadLMSC\nMoneda: USDT (Red BEP20 o Pay)',
 
   // Reglamento Oficial
   reglamentoUrl: '',
@@ -275,6 +290,30 @@ export function sanitizeLandingConfig(cfg) {
   if (merged.heroInversionDesglose === '$75 por jugador' || merged.heroInversionDesglose === '$85 por jugador') {
     merged.heroInversionDesglose = '$70 por jugador';
   }
+
+  // Migrar datos de pago previos si contienen los mocks antiguos
+  if (!merged.pagoMovilDetalle || merged.pagoMovilDetalle.includes('0414-8889900') || merged.pagoMovilDetalle.includes('Banesco (0134)')) {
+    merged.pagoMovilDetalle = DEFAULT_LANDING_CONFIG.pagoMovilDetalle;
+  }
+  if (!merged.zelleDetalle || merged.zelleDetalle.includes('pagos@copanavidadlmsc.com') || merged.zelleDetalle.includes('LMSC Padel Operations')) {
+    merged.zelleDetalle = DEFAULT_LANDING_CONFIG.zelleDetalle;
+  }
+  if (!merged.cuentaInternacionalDetalle || merged.cuentaInternacionalDetalle.includes('1029384756') || merged.cuentaInternacionalDetalle.includes('BAPAPAXX') || merged.cuentaInternacionalDetalle.includes('Banesco Panamá')) {
+    merged.cuentaInternacionalDetalle = DEFAULT_LANDING_CONFIG.cuentaInternacionalDetalle;
+  }
+  if (!merged.banescoPanamaDetalle || merged.banescoPanamaDetalle.includes('1029384756') || merged.banescoPanamaDetalle.includes('BAPAPAXX')) {
+    merged.banescoPanamaDetalle = DEFAULT_LANDING_CONFIG.cuentaInternacionalDetalle;
+  }
+  if (!merged.binancePayDetalle || merged.binancePayDetalle.includes('849201948') || merged.binancePayDetalle.includes('@CopaNavidadLMSC')) {
+    merged.binancePayDetalle = DEFAULT_LANDING_CONFIG.binancePayDetalle;
+  }
+
+  // Asegurar nombres de métodos editables
+  if (!merged.pagoMovilNombre) merged.pagoMovilNombre = 'Pago Móvil';
+  if (!merged.zelleNombre) merged.zelleNombre = 'Zelle';
+  if (!merged.cuentaInternacionalNombre) merged.cuentaInternacionalNombre = 'Cuenta Internacional';
+  if (!merged.binancePayNombre) merged.binancePayNombre = 'Binance';
+
   return merged;
 }
 

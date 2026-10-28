@@ -1706,61 +1706,300 @@ export default function AdminDashboard({ onLogout, currentUser }) {
 
             {/* SECCIÓN 4: DETALLES DE CADA MÉTODO DE PAGO */}
             <div className="space-y-4 pt-4 border-t border-slate-800">
-              <h3 className="text-sm font-bold text-gold-400 uppercase tracking-wider">
-                4. Cuentas y Datos de los Métodos de Pago
-              </h3>
-              <p className="text-xs text-slate-400">
-                Esta información se despliega de forma dinámica a los jugadores al seleccionar su forma de pago.
-              </p>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                  <h3 className="text-sm font-bold text-gold-400 uppercase tracking-wider flex items-center gap-2">
+                    <CreditCard className="w-4 h-4 text-emerald-400" />
+                    <span>4. Cuentas y Nombres de Métodos de Pago</span>
+                  </h3>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    Edita el <strong className="text-white">Nombre</strong> y los <strong className="text-white">Datos de Pago</strong> de cada método. Se reflejan inmediatamente en la ventana de confirmación tras inscribirse una dupla y en la web pública.
+                  </p>
+                </div>
+              </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-emerald-400 mb-1">
-                    Datos de Pago Móvil (Tasa BCV)
-                  </label>
-                  <textarea
-                    rows="4"
-                    value={landingForm.pagoMovilDetalle || ''}
-                    onChange={(e) => setLandingForm({ ...landingForm, pagoMovilDetalle: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl bg-navy-900 font-mono text-slate-300 border border-slate-700 text-xs"
-                  ></textarea>
+                
+                {/* MÉTODO 1: PAGO MÓVIL */}
+                <div className="bg-navy-900/90 p-4 rounded-2xl border border-emerald-500/30 space-y-3">
+                  <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+                    <div className="flex items-center gap-2">
+                      <Smartphone className="w-4 h-4 text-emerald-400" />
+                      <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">Método 1</span>
+                    </div>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                      Tasa BCV
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                        Nombre del Método
+                      </label>
+                      <input
+                        type="text"
+                        value={landingForm.pagoMovilNombre ?? 'Pago Móvil'}
+                        onChange={(e) => setLandingForm({ ...landingForm, pagoMovilNombre: e.target.value })}
+                        placeholder="Ej: Pago Móvil"
+                        className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white font-semibold border border-slate-700 text-xs focus:border-emerald-400 focus:outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                        Subtítulo / Etiqueta
+                      </label>
+                      <input
+                        type="text"
+                        value={landingForm.pagoMovilSubtitulo ?? 'Tasa oficial BCV del día'}
+                        onChange={(e) => setLandingForm({ ...landingForm, pagoMovilSubtitulo: e.target.value })}
+                        placeholder="Ej: Tasa oficial BCV"
+                        className="w-full px-3 py-2 rounded-xl bg-navy-950 text-slate-300 border border-slate-700 text-xs focus:border-emerald-400 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                      Cuentas y Datos Bancarios (Banco, Cédula, Teléfono)
+                    </label>
+                    <textarea
+                      rows="4"
+                      value={landingForm.pagoMovilDetalle || ''}
+                      onChange={(e) => setLandingForm({ ...landingForm, pagoMovilDetalle: e.target.value })}
+                      placeholder="Banco: Banco Plaza&#10;Cédula: 16.248.462&#10;Teléfono: 0414-8188308"
+                      className="w-full px-3 py-2 rounded-xl bg-navy-950 font-mono text-slate-200 border border-slate-700 text-xs focus:border-emerald-400 focus:outline-none"
+                    ></textarea>
+                    <span className="text-[10px] text-slate-500 block mt-1">
+                      Tip: Escribe en formato "Etiqueta: Valor" para que el jugador tenga botones de copia rápida.
+                    </span>
+                  </div>
                 </div>
 
-                <div>
-                  <label className="block text-xs font-semibold text-purple-400 mb-1">
-                    Datos de Zelle (USD)
-                  </label>
-                  <textarea
-                    rows="4"
-                    value={landingForm.zelleDetalle || ''}
-                    onChange={(e) => setLandingForm({ ...landingForm, zelleDetalle: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl bg-navy-900 font-mono text-slate-300 border border-slate-700 text-xs"
-                  ></textarea>
+                {/* MÉTODO 2: ZELLE */}
+                <div className="bg-navy-900/90 p-4 rounded-2xl border border-purple-500/30 space-y-3">
+                  <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+                    <div className="flex items-center gap-2">
+                      <CreditCard className="w-4 h-4 text-purple-400" />
+                      <span className="text-xs font-bold text-purple-400 uppercase tracking-wider">Método 2</span>
+                    </div>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                      USD Directo
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                        Nombre del Método
+                      </label>
+                      <input
+                        type="text"
+                        value={landingForm.zelleNombre ?? 'Zelle'}
+                        onChange={(e) => setLandingForm({ ...landingForm, zelleNombre: e.target.value })}
+                        placeholder="Ej: Zelle"
+                        className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white font-semibold border border-slate-700 text-xs focus:border-purple-400 focus:outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                        Subtítulo / Etiqueta
+                      </label>
+                      <input
+                        type="text"
+                        value={landingForm.zelleSubtitulo ?? 'Dólares USD directos'}
+                        onChange={(e) => setLandingForm({ ...landingForm, zelleSubtitulo: e.target.value })}
+                        placeholder="Ej: Sin comisiones"
+                        className="w-full px-3 py-2 rounded-xl bg-navy-950 text-slate-300 border border-slate-700 text-xs focus:border-purple-400 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                      Cuentas y Datos Zelle (Correo, Titular)
+                    </label>
+                    <textarea
+                      rows="4"
+                      value={landingForm.zelleDetalle || ''}
+                      onChange={(e) => setLandingForm({ ...landingForm, zelleDetalle: e.target.value })}
+                      placeholder="Correo Zelle: Armasveronica@gmail.com&#10;Titular: Verónica De Iglesias"
+                      className="w-full px-3 py-2 rounded-xl bg-navy-950 font-mono text-slate-200 border border-slate-700 text-xs focus:border-purple-400 focus:outline-none"
+                    ></textarea>
+                    <span className="text-[10px] text-slate-500 block mt-1">
+                      El correo y titular oficial para pagos internacionales vía Zelle.
+                    </span>
+                  </div>
                 </div>
 
-                <div>
-                  <label className="block text-xs font-semibold text-blue-400 mb-1">
-                    Datos de Banesco Panamá (USD)
-                  </label>
-                  <textarea
-                    rows="4"
-                    value={landingForm.banescoPanamaDetalle || ''}
-                    onChange={(e) => setLandingForm({ ...landingForm, banescoPanamaDetalle: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl bg-navy-900 font-mono text-slate-300 border border-slate-700 text-xs"
-                  ></textarea>
+                {/* MÉTODO 3: CUENTA INTERNACIONAL */}
+                <div className="bg-navy-900/90 p-4 rounded-2xl border border-blue-500/30 space-y-3">
+                  <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+                    <div className="flex items-center gap-2">
+                      <Landmark className="w-4 h-4 text-blue-400" />
+                      <span className="text-xs font-bold text-blue-400 uppercase tracking-wider">Método 3</span>
+                    </div>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/30">
+                      Panamá / Wire / ACH
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                        Nombre del Método
+                      </label>
+                      <input
+                        type="text"
+                        value={landingForm.cuentaInternacionalNombre ?? 'Cuenta Internacional'}
+                        onChange={(e) => setLandingForm({ 
+                          ...landingForm, 
+                          cuentaInternacionalNombre: e.target.value,
+                          banescoPanamaNombre: e.target.value
+                        })}
+                        placeholder="Ej: Cuenta Internacional"
+                        className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white font-semibold border border-slate-700 text-xs focus:border-blue-400 focus:outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                        Subtítulo / Etiqueta
+                      </label>
+                      <input
+                        type="text"
+                        value={landingForm.cuentaInternacionalSubtitulo ?? 'Banco General Panamá (Ahorros)'}
+                        onChange={(e) => setLandingForm({ ...landingForm, cuentaInternacionalSubtitulo: e.target.value })}
+                        placeholder="Ej: Banco General Panamá"
+                        className="w-full px-3 py-2 rounded-xl bg-navy-950 text-slate-300 border border-slate-700 text-xs focus:border-blue-400 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                      Cuentas y Datos (Banco, Titular, Tipo, Número)
+                    </label>
+                    <textarea
+                      rows="4"
+                      value={landingForm.cuentaInternacionalDetalle || landingForm.banescoPanamaDetalle || ''}
+                      onChange={(e) => setLandingForm({ 
+                        ...landingForm, 
+                        cuentaInternacionalDetalle: e.target.value,
+                        banescoPanamaDetalle: e.target.value
+                      })}
+                      placeholder="Banco: Banco General Panamá&#10;Beneficiario: Verónica Armas&#10;Cuenta de ahorros: 04-43-00-002370-4"
+                      className="w-full px-3 py-2 rounded-xl bg-navy-950 font-mono text-slate-200 border border-slate-700 text-xs focus:border-blue-400 focus:outline-none"
+                    ></textarea>
+                    <span className="text-[10px] text-slate-500 block mt-1">
+                      Datos de cuenta internacional / Panamá para transferencias bancarias.
+                    </span>
+                  </div>
                 </div>
 
-                <div>
-                  <label className="block text-xs font-semibold text-amber-400 mb-1">
-                    Datos de Binance Pay (USDT)
-                  </label>
-                  <textarea
-                    rows="4"
-                    value={landingForm.binancePayDetalle || ''}
-                    onChange={(e) => setLandingForm({ ...landingForm, binancePayDetalle: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl bg-navy-900 font-mono text-slate-300 border border-slate-700 text-xs"
-                  ></textarea>
+                {/* MÉTODO 4: BINANCE */}
+                <div className="bg-navy-900/90 p-4 rounded-2xl border border-amber-500/30 space-y-3">
+                  <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+                    <div className="flex items-center gap-2">
+                      <CreditCard className="w-4 h-4 text-amber-400" />
+                      <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">Método 4</span>
+                    </div>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                      Cripto / Pay ID
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                        Nombre del Método
+                      </label>
+                      <input
+                        type="text"
+                        value={landingForm.binancePayNombre ?? 'Binance'}
+                        onChange={(e) => setLandingForm({ ...landingForm, binancePayNombre: e.target.value })}
+                        placeholder="Ej: Binance"
+                        className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white font-semibold border border-slate-700 text-xs focus:border-amber-400 focus:outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                        Subtítulo / Etiqueta
+                      </label>
+                      <input
+                        type="text"
+                        value={landingForm.binancePaySubtitulo ?? 'Binance Pay / USDT'}
+                        onChange={(e) => setLandingForm({ ...landingForm, binancePaySubtitulo: e.target.value })}
+                        placeholder="Ej: Pay ID / USDT"
+                        className="w-full px-3 py-2 rounded-xl bg-navy-950 text-slate-300 border border-slate-700 text-xs focus:border-amber-400 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                      Cuentas y Datos Binance (Usuario, Binance ID)
+                    </label>
+                    <textarea
+                      rows="4"
+                      value={landingForm.binancePayDetalle || ''}
+                      onChange={(e) => setLandingForm({ ...landingForm, binancePayDetalle: e.target.value })}
+                      placeholder="Usuario: User-845f5&#10;ID Binance: 1136516403&#10;Moneda: USDT"
+                      className="w-full px-3 py-2 rounded-xl bg-navy-950 font-mono text-slate-200 border border-slate-700 text-xs focus:border-amber-400 focus:outline-none"
+                    ></textarea>
+                    <span className="text-[10px] text-slate-500 block mt-1">
+                      ID de Binance Pay y usuario de la cuenta para transferencias en USDT.
+                    </span>
+                  </div>
                 </div>
+
+              </div>
+
+              {/* OPCIÓN ADICIONAL: EFECTIVO EN CLUB */}
+              <div className="bg-navy-900/60 p-4 rounded-2xl border border-slate-800 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id="mostrarEfectivo"
+                      checked={!!landingForm.mostrarEfectivo}
+                      onChange={(e) => setLandingForm({ ...landingForm, mostrarEfectivo: e.target.checked })}
+                      className="w-4 h-4 rounded text-[#A3E229] focus:ring-[#A3E229] bg-navy-950 border-slate-700 cursor-pointer"
+                    />
+                    <label htmlFor="mostrarEfectivo" className="text-xs font-bold text-white cursor-pointer">
+                      Habilitar método adicional de "Efectivo en Taquilla / Club" en la ventana de confirmación
+                    </label>
+                  </div>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-400">
+                    Opcional
+                  </span>
+                </div>
+
+                {landingForm.mostrarEfectivo && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-800">
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                        Nombre del Método
+                      </label>
+                      <input
+                        type="text"
+                        value={landingForm.efectivoNombre ?? 'Efectivo'}
+                        onChange={(e) => setLandingForm({ ...landingForm, efectivoNombre: e.target.value })}
+                        className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white font-semibold border border-slate-700 text-xs"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                        Lugar y Horarios de Atención
+                      </label>
+                      <textarea
+                        rows="2"
+                        value={landingForm.efectivoDetalle || ''}
+                        onChange={(e) => setLandingForm({ ...landingForm, efectivoDetalle: e.target.value })}
+                        className="w-full px-3 py-2 rounded-xl bg-navy-950 font-mono text-slate-200 border border-slate-700 text-xs"
+                      ></textarea>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -3337,10 +3576,10 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                       onChange={(e) => setEditModalData({ ...editModalData, metodoPago: e.target.value })}
                       className="w-full px-3 py-2.5 rounded-xl bg-navy-950 text-white border border-slate-700 focus:border-gold-400 text-xs"
                     >
-                      <option value="Pago Móvil">Pago Móvil (BCV)</option>
-                      <option value="Zelle">Zelle</option>
-                      <option value="Banesco Panamá">Banesco Panamá</option>
-                      <option value="Binance Pay">Binance Pay (USDT)</option>
+                      <option value={landingForm.pagoMovilNombre || 'Pago Móvil'}>{landingForm.pagoMovilNombre || 'Pago Móvil'}</option>
+                      <option value={landingForm.zelleNombre || 'Zelle'}>{landingForm.zelleNombre || 'Zelle'}</option>
+                      <option value={landingForm.cuentaInternacionalNombre || 'Cuenta Internacional'}>{landingForm.cuentaInternacionalNombre || 'Cuenta Internacional (Panamá)'}</option>
+                      <option value={landingForm.binancePayNombre || 'Binance'}>{landingForm.binancePayNombre || 'Binance (USDT)'}</option>
                       <option value="Efectivo / Directo en Club">Efectivo / Directo en Club</option>
                     </select>
                   </div>
@@ -3841,10 +4080,10 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                       onChange={(e) => setNewDuplaForm({ ...newDuplaForm, metodoPago: e.target.value })}
                       className="w-full px-3 py-2.5 rounded-xl bg-navy-950 text-white border border-slate-700 focus:border-[#A3E229] text-xs"
                     >
-                      <option value="Pago Móvil">Pago Móvil (BCV)</option>
-                      <option value="Zelle">Zelle</option>
-                      <option value="Banesco Panamá">Banesco Panamá</option>
-                      <option value="Binance Pay">Binance Pay (USDT)</option>
+                      <option value={landingForm.pagoMovilNombre || 'Pago Móvil'}>{landingForm.pagoMovilNombre || 'Pago Móvil'}</option>
+                      <option value={landingForm.zelleNombre || 'Zelle'}>{landingForm.zelleNombre || 'Zelle'}</option>
+                      <option value={landingForm.cuentaInternacionalNombre || 'Cuenta Internacional'}>{landingForm.cuentaInternacionalNombre || 'Cuenta Internacional (Panamá)'}</option>
+                      <option value={landingForm.binancePayNombre || 'Binance'}>{landingForm.binancePayNombre || 'Binance (USDT)'}</option>
                       <option value="Efectivo / Directo en Club">Efectivo / Directo en Club</option>
                     </select>
                   </div>

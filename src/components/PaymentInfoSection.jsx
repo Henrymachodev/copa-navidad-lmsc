@@ -18,8 +18,8 @@ export default function PaymentInfoSection() {
   const paymentMethods = [
     {
       id: 'pago-movil',
-      title: 'Pago Móvil',
-      subtitle: 'Tasa oficial BCV del día',
+      title: config.pagoMovilNombre || 'Pago Móvil',
+      subtitle: config.pagoMovilSubtitulo || 'Tasa oficial BCV del día',
       desc: 'Transferencia instantánea en Bolívares a tasa del Banco Central de Venezuela.',
       detail: config.pagoMovilDetalle,
       icon: <Smartphone className="w-6 h-6 text-emerald-400" />,
@@ -27,26 +27,26 @@ export default function PaymentInfoSection() {
     },
     {
       id: 'zelle',
-      title: 'Zelle',
-      subtitle: 'Dólares USD directos',
+      title: config.zelleNombre || 'Zelle',
+      subtitle: config.zelleSubtitulo || 'Dólares USD directos',
       desc: 'Envío directo y sin comisiones desde tu cuenta bancaria de EE.UU.',
       detail: config.zelleDetalle,
       icon: <CreditCard className="w-6 h-6 text-purple-400" />,
       badge: 'USD'
     },
     {
-      id: 'banesco-panama',
-      title: 'Banesco Panamá',
-      subtitle: 'Transferencia Internacional / Banesco a Banesco',
-      desc: 'Cuenta en USD para transferencias entre clientes Banesco Panamá o ACH.',
-      detail: config.banescoPanamaDetalle,
+      id: 'cuenta-internacional',
+      title: config.cuentaInternacionalNombre || 'Cuenta Internacional',
+      subtitle: config.cuentaInternacionalSubtitulo || 'Banco General Panamá (Ahorros)',
+      desc: 'Cuenta en USD para transferencias internacionales y ACH.',
+      detail: config.cuentaInternacionalDetalle || config.banescoPanamaDetalle,
       icon: <Landmark className="w-6 h-6 text-blue-400" />,
       badge: 'Panamá USD'
     },
     {
       id: 'binance',
-      title: 'Binance (USDT)',
-      subtitle: 'Pay ID / Criptoactivos',
+      title: config.binancePayNombre || 'Binance',
+      subtitle: config.binancePaySubtitulo || 'Pay ID / USDT',
       desc: 'Pago inmediato en USDT mediante Binance Pay sin comisiones de red.',
       detail: config.binancePayDetalle,
       icon: <Coins className="w-6 h-6 text-amber-400" />,

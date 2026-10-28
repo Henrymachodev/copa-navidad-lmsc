@@ -65,8 +65,8 @@ export const LADOS_JUEGO = ['Derecha', 'Revés', 'Ambos'];
 export const METODOS_PAGO = [
   { id: 'pago-movil', label: 'Pago Móvil' },
   { id: 'zelle', label: 'Zelle' },
-  { id: 'banesco-panama', label: 'Banesco Panamá' },
-  { id: 'binance-pay', label: 'Binance Pay' },
+  { id: 'cuenta-internacional', label: 'Cuenta Internacional' },
+  { id: 'binance-pay', label: 'Binance' },
 ];
 
 const emptyPlayer = () => ({
@@ -345,12 +345,19 @@ export default function RegistrationForm({ onSuccess }) {
   const getMetodoDetalle = () => {
     switch (formData.metodoPago) {
       case 'Pago Móvil':
+      case landingConfig.pagoMovilNombre:
         return landingConfig.pagoMovilDetalle;
       case 'Zelle':
+      case landingConfig.zelleNombre:
         return landingConfig.zelleDetalle;
+      case 'Cuenta Internacional':
       case 'Banesco Panamá':
-        return landingConfig.banescoPanamaDetalle;
+      case landingConfig.cuentaInternacionalNombre:
+      case landingConfig.banescoPanamaNombre:
+        return landingConfig.cuentaInternacionalDetalle || landingConfig.banescoPanamaDetalle;
+      case 'Binance':
       case 'Binance Pay':
+      case landingConfig.binancePayNombre:
         return landingConfig.binancePayDetalle;
       default:
         return null;

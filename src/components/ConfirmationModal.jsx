@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   CheckCircle2, 
   Smartphone, 
   CreditCard, 
   Banknote, 
   Landmark, 
+  Coins,
   Copy, 
   Check, 
   Download, 
@@ -17,12 +18,30 @@ import {
   MessageCircle,
   Trophy
 } from 'lucide-react';
-import { updateRegistrationPayment } from '../services/supabase';
+import { 
+  updateRegistrationPayment, 
+  subscribeToLandingConfig, 
+  getLandingConfig, 
+  DEFAULT_LANDING_CONFIG 
+} from '../services/supabase';
 
 export default function ConfirmationModal({ data, onClose }) {
-  if (!data) return null;
+  const [config, setConfig] = useState(DEFAULT_LANDING_CONFIG);
 
-  const [activeTab, setActiveTab] = useState('pago-movil'); // 'pago-movil' | 'zelle' | 'efectivo' | 'cuenta-internacional'
+  useEffect(() => {
+    let unsub;
+    getLandingConfig().then(cfg => {
+      if (cfg) setConfig(cfg);
+    });
+    unsub = subscribeToLandingConfig(cfg => {
+      if (cfg) setConfig(cfg);
+    });
+    return () => {
+      if (typeof unsub === 'function') unsub();
+    };
+  }, []);
+
+  const [activeTab, setActiveTab] = useState('pago-movil'); // 'pago-movil' | 'zelle' | 'cuenta-internacional' | 'binance' | 'efectivo'
   const [copiedField, setCopiedField] = useState(null);
   
   // Estado para reporte opcional de comprobante directo
@@ -35,6 +54,8 @@ export default function ConfirmationModal({ data, onClose }) {
   const [savingPayment, setSavingPayment] = useState(false);
   const [paymentSavedSuccess, setPaymentSavedSuccess] = useState(false);
 
+  if (!data) return null;
+
   const handleCopy = (text, fieldName) => {
     navigator.clipboard.writeText(text);
     setCopiedField(fieldName);
@@ -44,6 +65,93 @@ export default function ConfirmationModal({ data, onClose }) {
   const handlePrint = () => {
     window.print();
   };
+
+  const methods = [
+    {
+      id: 'pago-movil',
+      name: config.pagoMovilNombre || 'Pago Móvil',
+      subtitulo: config.pagoMovilSubtitulo || 'Tasa Oficial BCV',
+      detail: config.pagoMovilDetalle || DEFAULT_LANDING_CONFIG.pagoMovilDetalle,
+      icon: Smartphone,
+      badge: 'Tasa BCV',
+      badgeColor: 'bg-emerald-100 text-emerald-800 border-emerald-300',
+      iconColor: 'text-emerald-600',
+      nota: '* El monto en Bolívares se calcula multiplicando $140 USD por la tasa oficial BCV del día de la transferencia.'
+    },
+    {
+      id: 'zelle',
+      name: config.zelleNombre || 'Zelle',
+      subtitulo: config.zelleSubtitulo || 'Dólares USD directos',
+      detail: config.zelleDetalle || DEFAULT_LANDING_CONFIG.zelleDetalle,
+      icon: CreditCard,
+      badge: 'Sin comisiones',
+      badgeColor: 'bg-purple-100 text-purple-800 border-purple-300',
+      iconColor: 'text-purple-600',
+      nota: '* En el memo o concepto de Zelle coloca únicamente el apellido de la pareja o tu número de teléfono.'
+    },
+    {
+      id: 'cuenta-internacional',
+      name: config.cuentaInternacionalNombre || 'Cuenta Internacional',
+      subtitulo: config.cuentaInternacionalSubtitulo || 'Banco General Panamá (Ahorros)',
+      detail: config.cuentaInternacionalDetalle || config.banescoPanamaDetalle || DEFAULT_LANDING_CONFIG.cuentaInternacionalDetalle,
+      icon: Landmark,
+      badge: 'Panamá / Ahorros',
+      badgeColor: 'bg-blue-100 text-blue-800 border-blue-300',
+      iconColor: 'text-blue-600',
+      nota: '* Al realizar la transferencia envía el comprobante por WhatsApp o adjúntalo en esta ventana.'
+    },
+    {
+      id: 'binance',
+      name: config.binancePayNombre || 'Binance',
+      subtitulo: config.binancePaySubtitulo || 'Binance Pay / USDT',
+      detail: config.binancePayDetalle || DEFAULT_LANDING_CONFIG.binancePayDetalle,
+      icon: Coins,
+      badge: 'Binance Pay',
+      badgeColor: 'bg-amber-100 text-amber-800 border-amber-300',
+      iconColor: 'text-amber-600',
+      nota: '* Pago inmediato en USDT mediante Binance Pay sin comisiones de red.'
+    }
+  ];
+
+  if (config.mostrarEfectivo) {
+    methods.push({
+      id: 'efectivo',
+      name: config.efectivoNombre || 'Efectivo',
+      subtitulo: 'Pago en Taquilla / Club',
+      detail: config.efectivoDetalle || DEFAULT_LANDING_CONFIG.efectivoDetalle,
+      icon: Banknote,
+      badge: 'USD o Bs.',
+      badgeColor: 'bg-emerald-100 text-emerald-800 border-emerald-300',
+      iconColor: 'text-emerald-600',
+      nota: '* Dirígete a la recepción o administración de La Marina Sport Club en Lechería.'
+    });
+  }
+
+  const currentMethod = methods.find(m => m.id === activeTab) || methods[0];
+  const CurrentIcon = currentMethod.icon;
+
+  const parseDetailLines = (text) => {
+    if (!text) return [];
+    return text.split('\n').map(l => l.trim()).filter(Boolean).map((line, idx) => {
+      const colonIdx = line.indexOf(':');
+      if (colonIdx > 0) {
+        return {
+          id: `line_${idx}`,
+          label: line.substring(0, colonIdx).trim(),
+          value: line.substring(colonIdx + 1).trim(),
+          isKv: true
+        };
+      }
+      return {
+        id: `line_${idx}`,
+        label: '',
+        value: line,
+        isKv: false
+      };
+    });
+  };
+
+  const parsedLines = parseDetailLines(currentMethod.detail);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -169,7 +277,7 @@ export default function ConfirmationModal({ data, onClose }) {
           </div>
         </div>
 
-        {/* PESTAÑAS DE LOS 4 MÉTODOS DE PAGO */}
+        {/* PESTAÑAS DE MÉTODOS DE PAGO AUTORIZADOS */}
         <div className="mb-6">
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-orbitron text-xs sm:text-sm font-black text-[#150D8B] flex items-center gap-2 uppercase tracking-wide">
@@ -179,258 +287,106 @@ export default function ConfirmationModal({ data, onClose }) {
             <span className="text-[11px] text-slate-500 font-semibold">Selecciona para ver datos</span>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
-            <button
-              type="button"
-              onClick={() => setActiveTab('pago-movil')}
-              className={`py-2.5 px-2 rounded-xl font-orbitron text-xs font-black flex flex-col items-center justify-center gap-1.5 border transition-all ${
-                activeTab === 'pago-movil'
-                  ? 'bg-[#A3E229] text-[#150D8B] border-[#A3E229] shadow-md shadow-[#A3E229]/40'
-                  : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'
-              }`}
-            >
-              <Smartphone className="w-4 h-4" />
-              <span>Pago Móvil</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveTab('zelle')}
-              className={`py-2.5 px-2 rounded-xl font-orbitron text-xs font-black flex flex-col items-center justify-center gap-1.5 border transition-all ${
-                activeTab === 'zelle'
-                  ? 'bg-[#A3E229] text-[#150D8B] border-[#A3E229] shadow-md shadow-[#A3E229]/40'
-                  : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'
-              }`}
-            >
-              <CreditCard className="w-4 h-4" />
-              <span>Zelle</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveTab('efectivo')}
-              className={`py-2.5 px-2 rounded-xl font-orbitron text-xs font-black flex flex-col items-center justify-center gap-1.5 border transition-all ${
-                activeTab === 'efectivo'
-                  ? 'bg-[#A3E229] text-[#150D8B] border-[#A3E229] shadow-md shadow-[#A3E229]/40'
-                  : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'
-              }`}
-            >
-              <Banknote className="w-4 h-4" />
-              <span>Efectivo</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveTab('cuenta-internacional')}
-              className={`py-2.5 px-2 rounded-xl font-orbitron text-xs font-black flex flex-col items-center justify-center gap-1.5 border transition-all ${
-                activeTab === 'cuenta-internacional'
-                  ? 'bg-[#A3E229] text-[#150D8B] border-[#A3E229] shadow-md shadow-[#A3E229]/40'
-                  : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'
-              }`}
-            >
-              <Landmark className="w-4 h-4" />
-              <span className="truncate">Cuenta Internac.</span>
-            </button>
+          <div className={`grid ${methods.length > 4 ? 'grid-cols-2 sm:grid-cols-5' : 'grid-cols-2 sm:grid-cols-4'} gap-2 mb-4`}>
+            {methods.map(m => {
+              const isActive = activeTab === m.id;
+              const Icon = m.icon;
+              return (
+                <button
+                  key={m.id}
+                  type="button"
+                  onClick={() => setActiveTab(m.id)}
+                  className={`py-2.5 px-2 rounded-xl font-orbitron text-xs font-black flex flex-col items-center justify-center gap-1.5 border transition-all ${
+                    isActive
+                      ? 'bg-[#A3E229] text-[#150D8B] border-[#A3E229] shadow-md shadow-[#A3E229]/40 ring-1 ring-[#A3E229]'
+                      : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span className="truncate max-w-full">{m.name}</span>
+                </button>
+              );
+            })}
           </div>
 
-          {/* DETALLES DEL MÉTODO SELECCIONADO */}
-          <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200 shadow-inner">
-            
-            {/* PAGO MÓVIL */}
-            {activeTab === 'pago-movil' && (
-              <div className="space-y-3">
-                <div className="flex items-center justify-between pb-2 border-b border-slate-200">
-                  <div className="flex items-center gap-2">
-                    <Smartphone className="w-5 h-5 text-emerald-600" />
-                    <span className="font-orbitron font-bold text-[#150D8B] text-xs sm:text-sm">Pago Móvil Interbancario</span>
-                  </div>
-                  <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 font-orbitron">
-                    Tasa Oficial BCV
+          {/* DETALLES DINÁMICOS DEL MÉTODO SELECCIONADO */}
+          <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200 shadow-inner space-y-3.5">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+              <div className="flex items-center gap-2 overflow-hidden">
+                <CurrentIcon className={`w-5 h-5 ${currentMethod.iconColor} shrink-0`} />
+                <span className="font-orbitron font-bold text-[#150D8B] text-xs sm:text-sm truncate">
+                  {currentMethod.name}
+                </span>
+                {currentMethod.subtitulo && (
+                  <span className="hidden sm:inline text-xs text-slate-500 font-medium truncate">
+                    • {currentMethod.subtitulo}
                   </span>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                  <div className="p-3 rounded-xl bg-white border border-slate-200/80 shadow-sm flex justify-between items-center">
-                    <div>
-                      <span className="text-slate-500 block text-[10px] font-extrabold uppercase">Banco</span>
-                      <strong className="text-[#150D8B] text-sm font-bold">Banesco (0134)</strong>
-                    </div>
-                  </div>
-
-                  <div className="p-3 rounded-xl bg-white border border-slate-200/80 shadow-sm flex justify-between items-center">
-                    <div>
-                      <span className="text-slate-500 block text-[10px] font-extrabold uppercase">Teléfono</span>
-                      <strong className="text-[#150D8B] font-mono text-sm font-bold">0414-8889900</strong>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => handleCopy('04148889900', 'pm_tel')}
-                      className="p-1.5 rounded-lg bg-blue-50 hover:bg-[#A3E229] hover:text-[#150D8B] text-[#150D8B] transition-colors"
-                      title="Copiar teléfono"
-                    >
-                      {copiedField === 'pm_tel' ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
-                    </button>
-                  </div>
-
-                  <div className="p-3 rounded-xl bg-white border border-slate-200/80 shadow-sm flex justify-between items-center">
-                    <div>
-                      <span className="text-slate-500 block text-[10px] font-extrabold uppercase">Cédula / RIF</span>
-                      <strong className="text-[#150D8B] font-mono text-sm font-bold">J-50000000-0</strong>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => handleCopy('J500000000', 'pm_rif')}
-                      className="p-1.5 rounded-lg bg-blue-50 hover:bg-[#A3E229] hover:text-[#150D8B] text-[#150D8B] transition-colors"
-                      title="Copiar RIF"
-                    >
-                      {copiedField === 'pm_rif' ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
-                    </button>
-                  </div>
-
-                  <div className="p-3 rounded-xl bg-white border border-slate-200/80 shadow-sm flex justify-between items-center">
-                    <div>
-                      <span className="text-slate-500 block text-[10px] font-extrabold uppercase">Titular</span>
-                      <strong className="text-[#150D8B] text-xs sm:text-sm font-bold">La Marina Sport Club C.A.</strong>
-                    </div>
-                  </div>
-                </div>
-
-                <p className="text-[11px] text-slate-500 pt-1">
-                  * El monto en Bolívares se calcula multiplicando $170 USD por la tasa oficial BCV del día de la transferencia.
-                </p>
+                )}
               </div>
-            )}
+              <span className={`text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full font-orbitron border shrink-0 ${currentMethod.badgeColor}`}>
+                {currentMethod.badge}
+              </span>
+            </div>
 
-            {/* ZELLE */}
-            {activeTab === 'zelle' && (
-              <div className="space-y-3">
-                <div className="flex items-center justify-between pb-2 border-b border-slate-200">
-                  <div className="flex items-center gap-2">
-                    <CreditCard className="w-5 h-5 text-purple-600" />
-                    <span className="font-orbitron font-bold text-[#150D8B] text-xs sm:text-sm">Zelle (USD Directo)</span>
+            {/* GRILLA DE DATOS CON BOTÓN COPIAR EN CADA CAMPO */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+              {parsedLines.map((item) => (
+                <div 
+                  key={item.id} 
+                  className={`p-3 rounded-xl bg-white border border-slate-200/90 shadow-sm flex items-center justify-between gap-3 ${
+                    !item.isKv ? 'sm:col-span-2 bg-blue-50/50 border-blue-200/60' : ''
+                  }`}
+                >
+                  <div className="overflow-hidden">
+                    {item.isKv && item.label && (
+                      <span className="text-slate-500 block text-[10px] font-extrabold uppercase tracking-wider mb-0.5">
+                        {item.label}
+                      </span>
+                    )}
+                    <strong className="text-[#150D8B] font-mono text-xs sm:text-sm font-bold block break-all">
+                      {item.value}
+                    </strong>
                   </div>
-                  <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-800 border border-purple-300 font-orbitron">
-                    Sin comisiones
-                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleCopy(item.value, item.id)}
+                    className="p-1.5 sm:p-2 rounded-lg bg-blue-50 hover:bg-[#A3E229] hover:text-[#150D8B] text-[#150D8B] transition-colors shrink-0"
+                    title={`Copiar ${item.label || 'dato'}`}
+                  >
+                    {copiedField === item.id ? (
+                      <Check className="w-4 h-4 text-emerald-600" />
+                    ) : (
+                      <Copy className="w-4 h-4" />
+                    )}
+                  </button>
                 </div>
+              ))}
+            </div>
 
-                <div className="space-y-2.5 text-xs">
-                  <div className="p-3 rounded-xl bg-white border border-slate-200/80 shadow-sm flex justify-between items-center">
-                    <div>
-                      <span className="text-slate-500 block text-[10px] font-extrabold uppercase">Correo Oficial Zelle</span>
-                      <strong className="text-[#150D8B] font-mono text-sm sm:text-base font-bold">pagos@copanavidadlmsc.com</strong>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => handleCopy('pagos@copanavidadlmsc.com', 'zelle_email')}
-                      className="p-2 rounded-lg bg-blue-50 hover:bg-[#A3E229] hover:text-[#150D8B] text-[#150D8B] transition-colors"
-                      title="Copiar correo Zelle"
-                    >
-                      {copiedField === 'zelle_email' ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
-                    </button>
-                  </div>
-
-                  <div className="p-3 rounded-xl bg-white border border-slate-200/80 shadow-sm">
-                    <span className="text-slate-500 block text-[10px] font-extrabold uppercase">Titular Registrado</span>
-                    <strong className="text-[#150D8B] font-bold text-sm">LMSC Padel Operations LLC</strong>
-                  </div>
-                </div>
-
-                <p className="text-[11px] text-slate-500 pt-1">
-                  * En el memo o concepto de Zelle coloca únicamente el apellido de la pareja o tu número de teléfono.
-                </p>
-              </div>
-            )}
-
-            {/* EFECTIVO */}
-            {activeTab === 'efectivo' && (
-              <div className="space-y-3">
-                <div className="flex items-center justify-between pb-2 border-b border-slate-200">
-                  <div className="flex items-center gap-2">
-                    <Banknote className="w-5 h-5 text-emerald-600" />
-                    <span className="font-orbitron font-bold text-[#150D8B] text-xs sm:text-sm">Pago en Efectivo (Taquilla / Club)</span>
-                  </div>
-                  <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 font-orbitron">
-                    USD o Bs.
-                  </span>
-                </div>
-
-                <div className="space-y-2.5 text-xs">
-                  <div className="p-3.5 rounded-xl bg-white border border-slate-200/80 shadow-sm">
-                    <span className="text-slate-500 block text-[10px] font-extrabold uppercase">Lugar de Pago Autorizado</span>
-                    <strong className="text-[#150D8B] text-sm font-bold">Recepción de La Marina Sport Club</strong>
-                    <p className="text-slate-600 text-[11px] mt-0.5">
-                      Lechería, estado Anzoátegui. Solicita tu recibo con el comité organizador de la Copa Navidad.
-                    </p>
-                  </div>
-
-                  <div className="p-3 rounded-xl bg-white border border-slate-200/80 shadow-sm flex justify-between items-center">
-                    <div>
-                      <span className="text-slate-500 block text-[10px] font-extrabold uppercase">Horario de Atención</span>
-                      <strong className="text-[#150D8B] font-bold text-sm">Lunes a Domingo: 8:00 AM a 9:00 PM</strong>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* CUENTA BANCARIA INTERNACIONAL */}
-            {activeTab === 'cuenta-internacional' && (
-              <div className="space-y-3">
-                <div className="flex items-center justify-between pb-2 border-b border-slate-200">
-                  <div className="flex items-center gap-2">
-                    <Landmark className="w-5 h-5 text-blue-600" />
-                    <span className="font-orbitron font-bold text-[#150D8B] text-xs sm:text-sm">Cuenta Bancaria Internacional</span>
-                  </div>
-                  <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 border border-blue-300 font-orbitron">
-                    Wire / ACH / Banesco Panamá
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                  <div className="p-3 rounded-xl bg-white border border-slate-200/80 shadow-sm">
-                    <span className="text-slate-500 block text-[10px] font-extrabold uppercase">Banco Destino</span>
-                    <strong className="text-[#150D8B] font-bold text-sm">Banesco Panamá</strong>
-                  </div>
-
-                  <div className="p-3 rounded-xl bg-white border border-slate-200/80 shadow-sm flex justify-between items-center">
-                    <div>
-                      <span className="text-slate-500 block text-[10px] font-extrabold uppercase">Número de Cuenta USD</span>
-                      <strong className="text-[#150D8B] font-mono text-sm font-bold">1029384756</strong>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => handleCopy('1029384756', 'panama_cta')}
-                      className="p-1.5 rounded-lg bg-blue-50 hover:bg-[#A3E229] hover:text-[#150D8B] text-[#150D8B] transition-colors"
-                      title="Copiar cuenta"
-                    >
-                      {copiedField === 'panama_cta' ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
-                    </button>
-                  </div>
-
-                  <div className="p-3 rounded-xl bg-white border border-slate-200/80 shadow-sm">
-                    <span className="text-slate-500 block text-[10px] font-extrabold uppercase">Beneficiario</span>
-                    <strong className="text-[#150D8B] font-bold text-sm">LMSC Corp Panamá</strong>
-                  </div>
-
-                  <div className="p-3 rounded-xl bg-white border border-slate-200/80 shadow-sm flex justify-between items-center">
-                    <div>
-                      <span className="text-slate-500 block text-[10px] font-extrabold uppercase">Código SWIFT / BIC</span>
-                      <strong className="text-[#150D8B] font-mono text-sm font-bold">BAPAPAXX</strong>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => handleCopy('BAPAPAXX', 'panama_swift')}
-                      className="p-1.5 rounded-lg bg-blue-50 hover:bg-[#A3E229] hover:text-[#150D8B] text-[#150D8B] transition-colors"
-                      title="Copiar SWIFT"
-                    >
-                      {copiedField === 'panama_swift' ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-
+            {/* BOTÓN COPIAR TODOS LOS DATOS Y NOTA */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-2 pt-2 border-t border-slate-200/80 text-[11px]">
+              <span className="text-slate-500 italic">
+                {currentMethod.nota}
+              </span>
+              <button
+                type="button"
+                onClick={() => handleCopy(currentMethod.detail, `all_${currentMethod.id}`)}
+                className="px-3 py-1.5 rounded-lg bg-slate-200 hover:bg-[#A3E229] text-[#150D8B] font-bold text-xs flex items-center gap-1.5 transition-colors self-end shrink-0"
+                title="Copiar todos los datos de este método"
+              >
+                {copiedField === `all_${currentMethod.id}` ? (
+                  <>
+                    <Check className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>¡Datos copiados!</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-3.5 h-3.5" />
+                    <span>Copiar todos los datos</span>
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         </div>
 
@@ -477,10 +433,11 @@ export default function ConfirmationModal({ data, onClose }) {
                     onChange={(e) => setMetodoPagoReporte(e.target.value)}
                     className="w-full px-3 py-2.5 rounded-xl bg-white border border-slate-300 text-xs text-slate-800 focus:outline-none focus:border-[#150D8B] font-medium"
                   >
-                    <option value="Pago Móvil">Pago Móvil</option>
-                    <option value="Zelle">Zelle</option>
-                    <option value="Efectivo en Club">Efectivo en Club</option>
-                    <option value="Cuenta Internacional">Cuenta Bancaria Internacional</option>
+                    {methods.map(m => (
+                      <option key={m.id} value={m.name}>
+                        {m.name}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
