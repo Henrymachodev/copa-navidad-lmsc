@@ -49,7 +49,8 @@ export const CATEGORIAS = [
   { id: 'master-45-masc', label: 'Master +45 Masculino', group: 'Máster Masculino' },
   { id: 'master-55-masc', label: 'Master +55 Masculino', group: 'Máster Masculino' },
 
-  // Femenino: 3ra a 7ma
+  // Femenino: Suma 5, 3ra a 7ma
+  { id: 'suma-5-fem', label: 'Suma 5 Femenino', group: 'Femenino' },
   { id: '3ra-fem', label: '3ra Femenino', group: 'Femenino' },
   { id: '4ta-fem', label: '4ta Femenino', group: 'Femenino' },
   { id: '5ta-fem', label: '5ta Femenino', group: 'Femenino' },
@@ -854,7 +855,7 @@ export default function RegistrationForm({ onSuccess }) {
                   ))}
                 </optgroup>
 
-                <optgroup label="Femenino (3ra a 7ma)" className="bg-[#0a389c] text-white font-semibold">
+                <optgroup label="Femenino (Suma 5, 3ra a 7ma)" className="bg-[#0a389c] text-white font-semibold">
                   {CATEGORIAS.filter(c => c.group === 'Femenino').map(cat => (
                     <option key={cat.id} value={cat.label} className="text-white font-normal bg-[#071f5c]">
                       {cat.label}

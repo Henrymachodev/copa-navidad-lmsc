@@ -161,7 +161,7 @@ export const DEFAULT_HERO_FOTOS = [
   {
     id: 'foto_3',
     badge: 'Femenino',
-    categoria: '3ra a 7ma',
+    categoria: 'Suma 5, 3ra a 7ma',
     imagen: './assets/Femenino.jpg',
     objectPosition: 'center 32%'
   },
