@@ -131,7 +131,7 @@ export default function ConfirmationModal({ data, onClose }) {
   const CurrentIcon = currentMethod.icon;
 
   const parseDetailLines = (text) => {
-    if (!text) return [];
+    if (!text || typeof text !== 'string') return [];
     return text.split('\n').map(l => l.trim()).filter(Boolean).map((line, idx) => {
       const colonIdx = line.indexOf(':');
       if (colonIdx > 0) {

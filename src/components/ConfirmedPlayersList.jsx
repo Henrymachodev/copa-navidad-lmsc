@@ -5,22 +5,33 @@ import {
   getCategoryLimits, 
   DEFAULT_MAX_PAIRS_PER_CATEGORY,
   subscribeToLandingConfig,
-  DEFAULT_LANDING_CONFIG
+  DEFAULT_LANDING_CONFIG,
+  getCategories,
+  subscribeToCategories,
+  DEFAULT_CATEGORIAS
 } from '../services/supabase';
-import { CATEGORIAS } from './RegistrationForm';
 
 export default function ConfirmedPlayersList() {
   const [confirmedList, setConfirmedList] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('ALL');
   const [categoryLimits, setCategoryLimits] = useState({});
   const [landingConfig, setLandingConfig] = useState(DEFAULT_LANDING_CONFIG);
+  const [categoriesList, setCategoriesList] = useState(DEFAULT_CATEGORIAS);
 
   useEffect(() => {
     getCategoryLimits().then(setCategoryLimits).catch(() => {});
+    getCategories().then(cats => {
+      if (cats && cats.length > 0) setCategoriesList(cats);
+    }).catch(() => {});
 
     // Suscripción a la configuración de textos
     const unsubConfig = subscribeToLandingConfig((cfg) => {
       setLandingConfig(cfg);
+    });
+
+    // Suscripción en tiempo real a categorías
+    const unsubCats = subscribeToCategories((cats) => {
+      if (cats && cats.length > 0) setCategoriesList(cats);
     });
 
     // Suscripción en tiempo real: al cambiar a 'confirmado' en el admin, se refleja aquí instantáneamente
@@ -35,6 +46,7 @@ export default function ConfirmedPlayersList() {
     return () => {
       if (typeof unsubscribe === 'function') unsubscribe();
       if (typeof unsubConfig === 'function') unsubConfig();
+      if (typeof unsubCats === 'function') unsubCats();
     };
   }, []);
 
@@ -73,7 +85,7 @@ export default function ConfirmedPlayersList() {
           >
             Todas
           </button>
-          {CATEGORIAS.map(cat => (
+          {categoriesList.map(cat => (
             <button
               key={cat.id}
               onClick={() => setSelectedCategory(cat.label)}

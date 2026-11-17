@@ -87,9 +87,15 @@ import {
   getActiveSupabaseConfig,
   saveCustomSupabaseConfig,
   clearCustomSupabaseConfig,
-  getSupabaseProjectRef
+  getSupabaseProjectRef,
+  getCategories,
+  saveCategories,
+  updateCategory,
+  deleteCategory,
+  addCategory,
+  subscribeToCategories,
+  DEFAULT_CATEGORIAS
 } from '../services/supabase';
-import { CATEGORIAS } from './RegistrationForm';
 
 export default function AdminDashboard({ onLogout, currentUser }) {
   // Pestañas: 'inscripciones' | 'cupos' | 'landing' | 'patrocinadores' | 'roles'
@@ -183,6 +189,11 @@ export default function AdminDashboard({ onLogout, currentUser }) {
   const [userModal, setUserModal] = useState(null);
   const [savingUser, setSavingUser] = useState(false);
 
+  // Categorías del Torneo
+  const [categoriesList, setCategoriesList] = useState(DEFAULT_CATEGORIAS);
+  const [categoryModal, setCategoryModal] = useState(null); // { mode: 'create'|'edit', id, label, oldLabel, group, limit }
+  const [savingCategory, setSavingCategory] = useState(false);
+
   // Carga inicial y listeners
   useEffect(() => {
     fetchData();
@@ -190,6 +201,7 @@ export default function AdminDashboard({ onLogout, currentUser }) {
     loadSponsorsData();
     loadLandingData();
     loadAdminUsers();
+    loadCategoriesData();
 
     const unsubRegistrations = subscribeToRegistrations((data) => {
       setRegistrations(data);
@@ -200,11 +212,16 @@ export default function AdminDashboard({ onLogout, currentUser }) {
       setLandingForm(cfg);
     });
 
+    const unsubCategories = subscribeToCategories((cats) => {
+      if (cats && cats.length > 0) setCategoriesList(cats);
+    });
+
     window.addEventListener('admin_users_updated', loadAdminUsers);
 
     return () => {
       if (typeof unsubRegistrations === 'function') unsubRegistrations();
       if (typeof unsubLanding === 'function') unsubLanding();
+      if (typeof unsubCategories === 'function') unsubCategories();
       window.removeEventListener('admin_users_updated', loadAdminUsers);
     };
   }, []);
@@ -228,6 +245,119 @@ export default function AdminDashboard({ onLogout, currentUser }) {
       setLimits(l);
     } catch (e) {
       console.error('Error cargando límites:', e);
+    }
+  };
+
+  const loadCategoriesData = async () => {
+    try {
+      const cats = await getCategories();
+      if (cats && cats.length > 0) setCategoriesList(cats);
+    } catch (e) {
+      console.error('Error cargando categorías:', e);
+    }
+  };
+
+  const handleOpenCreateCategory = () => {
+    setCategoryModal({
+      mode: 'create',
+      id: '',
+      label: '',
+      oldLabel: '',
+      group: 'General',
+      limit: limits.defaultMax || 24
+    });
+  };
+
+  const handleOpenEditCategory = (cat) => {
+    const customLimit = limits[cat.label] !== undefined ? limits[cat.label] : '';
+    setCategoryModal({
+      mode: 'edit',
+      id: cat.id,
+      label: cat.label,
+      oldLabel: cat.label,
+      group: cat.group || 'General',
+      limit: customLimit
+    });
+  };
+
+  const handleSaveCategorySubmit = async (e) => {
+    e.preventDefault();
+    if (!categoryModal.label.trim()) {
+      setFeedback({ type: 'error', message: 'El nombre de la categoría es obligatorio.' });
+      return;
+    }
+
+    setSavingCategory(true);
+    try {
+      if (categoryModal.mode === 'create') {
+        const newCat = {
+          label: categoryModal.label.trim(),
+          group: categoryModal.group?.trim() || 'General'
+        };
+        const updated = await addCategory(newCat);
+        if (updated) setCategoriesList(updated);
+
+        if (categoryModal.limit !== '' && !isNaN(parseInt(categoryModal.limit))) {
+          const newLimits = { ...limits, [newCat.label]: parseInt(categoryModal.limit) };
+          await saveCategoryLimits(newLimits);
+          setLimits(newLimits);
+        }
+
+        setFeedback({ type: 'success', message: `Categoría "${newCat.label}" creada con éxito.` });
+      } else {
+        const updatedCat = {
+          id: categoryModal.id,
+          label: categoryModal.label.trim(),
+          group: categoryModal.group?.trim() || 'General'
+        };
+        const updated = await updateCategory(updatedCat, categoryModal.oldLabel);
+        if (updated) setCategoriesList(updated);
+
+        const newLimits = { ...limits };
+        if (categoryModal.oldLabel !== updatedCat.label && newLimits[categoryModal.oldLabel] !== undefined) {
+          const oldVal = newLimits[categoryModal.oldLabel];
+          delete newLimits[categoryModal.oldLabel];
+          newLimits[updatedCat.label] = oldVal;
+        }
+        if (categoryModal.limit !== '' && !isNaN(parseInt(categoryModal.limit))) {
+          newLimits[updatedCat.label] = parseInt(categoryModal.limit);
+        } else if (categoryModal.limit === '' && newLimits[updatedCat.label] !== undefined) {
+          delete newLimits[updatedCat.label];
+        }
+        await saveCategoryLimits(newLimits);
+        setLimits(newLimits);
+
+        if (categoryModal.oldLabel !== updatedCat.label) {
+          await fetchData();
+        }
+
+        setFeedback({ type: 'success', message: `Categoría "${updatedCat.label}" actualizada con éxito.` });
+      }
+      setCategoryModal(null);
+    } catch (err) {
+      console.error('Error guardando categoría:', err);
+      setFeedback({ type: 'error', message: 'Error al guardar la categoría.' });
+    } finally {
+      setSavingCategory(false);
+    }
+  };
+
+  const handleDeleteCategory = async (cat) => {
+    const enrolledCount = registrations.filter(r => r.categoria === cat.label && r.status !== 'retirado').length;
+    let confirmMsg = `¿Estás seguro de eliminar la categoría "${cat.label}"?`;
+    if (enrolledCount > 0) {
+      confirmMsg = `⚠️ ATENCIÓN: Hay ${enrolledCount} dupla(s) inscrita(s) en "${cat.label}". Si la eliminas, estas parejas mantendrán su registro pero la categoría ya no estará disponible para nuevas inscripciones ni en filtros públicos.\n\n¿Deseas continuar y eliminarla?`;
+    }
+
+    if (!window.confirm(confirmMsg)) return;
+
+    try {
+      const updated = await deleteCategory(cat.id, cat.label);
+      if (updated) setCategoriesList(updated);
+      setFeedback({ type: 'success', message: `Categoría "${cat.label}" eliminada con éxito.` });
+    } catch (err) {
+      console.error('Error eliminando categoría:', err);
+      setFeedback({ type: 'error', message: 'Error al eliminar la categoría.' });
     }
   };
 
@@ -1142,8 +1272,8 @@ export default function AdminDashboard({ onLogout, currentUser }) {
               : 'bg-[#082363]/80 text-blue-200 hover:text-white border border-blue-400/30 hover:bg-[#0b3b95]'
           }`}
         >
-          <Settings className="w-4 h-4" />
-          <span>Control de Cupos</span>
+          <Trophy className="w-4 h-4" />
+          <span>Categorías & Cupos ({categoriesList.length})</span>
         </button>
 
         <button
@@ -2118,27 +2248,40 @@ export default function AdminDashboard({ onLogout, currentUser }) {
         </div>
       )}
 
-      {/* PESTAÑA: CUPOS */}
+      {/* PESTAÑA: CATEGORÍAS & CUPOS */}
       {activeTab === 'cupos' && (
         <div className="max-w-7xl mx-auto space-y-6">
           <div className="glass-panel p-6 rounded-3xl border border-slate-800">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
               <div>
-                <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                  <Trophy className="w-5 h-5 text-gold-400" />
-                  Cupos Disponibles por Categoría (Límite: {limits.defaultMax || 24} parejas)
+                <h2 className="text-xl font-bold font-orbitron text-white flex items-center gap-2">
+                  <Trophy className="w-5 h-5 text-[#A3E229]" />
+                  Categorías Oficiales & Control de Cupos ({categoriesList.length})
                 </h2>
-                <p className="text-xs text-slate-400">
-                  Al completar los cupos disponibles, los nuevos inscritos pasan automáticamente a <strong>Lista de Espera</strong>.
+                <p className="text-xs text-blue-200 mt-1">
+                  Administra las categorías de juego, edita sus nombres, crea nuevas categorías, elimina categorías y define los cupos máximos permitidos por categoría o globales.
                 </p>
               </div>
 
-              <button
-                onClick={() => setEditingLimits(!editingLimits)}
-                className="px-4 py-2 rounded-xl bg-navy-800 hover:bg-navy-700 text-xs font-bold text-gold-300 border border-gold-500/30"
-              >
-                {editingLimits ? 'Cerrar Edición' : 'Modificar Límite General'}
-              </button>
+              <div className="flex items-center gap-2.5">
+                <button
+                  type="button"
+                  onClick={handleOpenCreateCategory}
+                  className="px-4 py-2.5 rounded-xl bg-[#A3E229] hover:bg-[#b6f23d] text-[#150D8B] font-orbitron font-black text-xs uppercase tracking-wider flex items-center gap-2 shadow-md shadow-[#A3E229]/20 transition-all"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Nueva Categoría</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setEditingLimits(!editingLimits)}
+                  className="px-4 py-2.5 rounded-xl bg-navy-800 hover:bg-navy-700 text-xs font-bold text-blue-200 border border-blue-400/30 flex items-center gap-2 transition-all"
+                >
+                  <Settings className="w-4 h-4 text-[#A3E229]" />
+                  <span>{editingLimits ? 'Cerrar Límite General' : `Límite General (${limits.defaultMax || 24})`}</span>
+                </button>
+              </div>
             </div>
 
             {editingLimits && (
@@ -2167,7 +2310,7 @@ export default function AdminDashboard({ onLogout, currentUser }) {
 
             {/* GRID DE CUPOS POR CATEGORÍA */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {CATEGORIAS.map(cat => {
+              {categoriesList.map(cat => {
                 const max = limits[cat.label] || limits.defaultMax || DEFAULT_MAX_PAIRS_PER_CATEGORY;
                 const catRegistrations = registrations.filter(r => r.categoria === cat.label && r.status !== 'retirado');
                 const confirmados = catRegistrations.filter(r => (r.status || r.estado || '').toLowerCase() === 'confirmado').length;
@@ -2179,13 +2322,46 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                 const porcentaje = Math.min(100, Math.round((ocupados / max) * 100));
 
                 return (
-                  <div key={cat.id} className="bg-navy-800/80 p-5 rounded-2xl border border-slate-700/80 flex flex-col justify-between">
+                  <div key={cat.id} className="bg-navy-900/90 p-5 rounded-2xl border border-blue-500/30 flex flex-col justify-between shadow-lg hover:border-[#A3E229]/50 transition-all">
                     <div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-bold text-white">{cat.label}</span>
-                        <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30 font-orbitron inline-block mb-1.5">
+                            {cat.group || 'General'}
+                          </span>
+                          <h3 className="text-sm font-bold text-white font-orbitron">{cat.label}</h3>
+                        </div>
+
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          <button
+                            type="button"
+                            onClick={() => handleOpenEditCategory(cat)}
+                            className="p-1.5 rounded-lg bg-blue-500/20 hover:bg-[#A3E229] text-blue-200 hover:text-[#150D8B] transition-colors"
+                            title="Editar nombre, grupo o cupo de la categoría"
+                          >
+                            <Pencil className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteCategory(cat)}
+                            className="p-1.5 rounded-lg bg-rose-500/20 hover:bg-rose-500 text-rose-300 hover:text-white transition-colors"
+                            title="Eliminar categoría"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="mt-3 flex items-center justify-between text-xs">
+                        <span className="text-slate-300">
+                          Cupo: <strong className="text-white">{ocupados}</strong> / {max}
+                          {limits[cat.label] !== undefined && (
+                            <span className="text-[10px] text-blue-300 font-mono ml-1">(Personalizado)</span>
+                          )}
+                        </span>
+                        <span className={`text-[10px] font-black font-orbitron px-2 py-0.5 rounded-full ${
                           disponibles === 0 
-                            ? 'bg-red-500/20 text-red-300 border border-red-500/40' 
+                            ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40' 
                             : disponibles <= 5
                               ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
                               : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
@@ -2194,24 +2370,20 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                         </span>
                       </div>
 
-                      <div className="mt-3 flex items-baseline justify-between text-xs text-slate-300">
-                        <span>Ocupados: <strong>{ocupados}</strong> / {max}</span>
-                        <span className="font-semibold text-emerald-400">{confirmados} Confirmados</span>
-                      </div>
-
-                      <div className="w-full h-2.5 bg-navy-900 rounded-full overflow-hidden mt-2 border border-slate-700">
+                      <div className="w-full h-2 bg-navy-950 rounded-full overflow-hidden mt-2 border border-slate-700">
                         <div 
                           className={`h-full rounded-full transition-all duration-500 ${
-                            porcentaje >= 100 ? 'bg-red-500' : porcentaje >= 75 ? 'bg-amber-500' : 'bg-emerald-500'
+                            porcentaje >= 100 ? 'bg-rose-500' : porcentaje >= 75 ? 'bg-amber-500' : 'bg-emerald-500'
                           }`}
                           style={{ width: `${porcentaje}%` }}
                         ></div>
                       </div>
                     </div>
 
-                    <div className="mt-3 pt-3 border-t border-slate-700/50 flex items-center justify-between text-[11px] text-slate-400">
-                      <span>Esperando pago: <strong className="text-amber-300">{esperando}</strong></span>
-                      <span>En lista de espera: <strong className="text-purple-300">{enListaEspera}</strong></span>
+                    <div className="mt-3 pt-3 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-300">
+                      <span>Confirmados: <strong className="text-emerald-400">{confirmados}</strong></span>
+                      <span>Esperando: <strong className="text-amber-300">{esperando}</strong></span>
+                      <span>Espera: <strong className="text-purple-300">{enListaEspera}</strong></span>
                     </div>
                   </div>
                 );
@@ -2626,7 +2798,7 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                     className="w-full px-3 py-2.5 rounded-xl bg-navy-900 border border-slate-700 text-xs sm:text-sm text-white focus:outline-none focus:border-gold-500"
                   >
                     <option value="ALL">Todas las Categorías</option>
-                    {CATEGORIAS.map(cat => (
+                    {categoriesList.map(cat => (
                       <option key={cat.id} value={cat.label}>{cat.label}</option>
                     ))}
                   </select>
@@ -3548,7 +3720,7 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                       className="w-full px-3 py-2.5 rounded-xl bg-navy-950 text-white border border-slate-700 focus:border-gold-400 font-semibold text-xs"
                     >
                       <option value="">Selecciona Categoría</option>
-                      {CATEGORIAS.map(c => (
+                      {categoriesList.map(c => (
                         <option key={c.id} value={c.label}>
                           {c.label} ({c.group})
                         </option>
@@ -4052,7 +4224,7 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                       className="w-full px-3 py-2.5 rounded-xl bg-navy-950 text-white border border-slate-700 focus:border-[#A3E229] font-semibold text-xs"
                     >
                       <option value="">Selecciona Categoría</option>
-                      {CATEGORIAS.map(c => (
+                      {categoriesList.map(c => (
                         <option key={c.id} value={c.label}>
                           {c.label} ({c.group})
                         </option>
@@ -4699,6 +4871,117 @@ export default function AdminDashboard({ onLogout, currentUser }) {
                     <>
                       <Save className="w-4 h-4" />
                       <span>Guardar Observación</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL PARA CREAR O EDITAR CATEGORÍA */}
+      {categoryModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/80 backdrop-blur-sm animate-fade-in overflow-y-auto">
+          <div className="relative w-full max-w-lg bg-navy-900 border border-[#A3E229]/50 rounded-3xl p-6 shadow-2xl text-slate-200 my-8">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl bg-[#A3E229]/20 text-[#A3E229] flex items-center justify-center">
+                  <Trophy className="w-4 h-4" />
+                </div>
+                <h3 className="font-orbitron font-bold text-white text-base">
+                  {categoryModal.mode === 'create' ? 'Agregar Nueva Categoría' : 'Editar Categoría'}
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setCategoryModal(null)}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-navy-800 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveCategorySubmit} className="mt-4 space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-300 mb-1">
+                  Nombre de la Categoría *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={categoryModal.label}
+                  onChange={(e) => setCategoryModal({ ...categoryModal, label: e.target.value })}
+                  placeholder="Ej: Master +40 Masculino, Suma 5 Femenino, etc."
+                  className="w-full px-3 py-2.5 rounded-xl bg-navy-950 text-white font-semibold border border-slate-700 text-sm focus:border-[#A3E229] focus:outline-none"
+                />
+                {categoryModal.mode === 'edit' && categoryModal.oldLabel && (
+                  <p className="text-[11px] text-blue-300 mt-1">
+                    * Si modificas el nombre, las duplas inscritas en "{categoryModal.oldLabel}" se actualizarán automáticamente.
+                  </p>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 mb-1">
+                    Rama / Grupo *
+                  </label>
+                  <select
+                    value={categoryModal.group}
+                    onChange={(e) => setCategoryModal({ ...categoryModal, group: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white font-semibold border border-slate-700 text-xs focus:border-[#A3E229] focus:outline-none"
+                  >
+                    <option value="Masculino">Masculino</option>
+                    <option value="Máster Masculino">Máster Masculino</option>
+                    <option value="Femenino">Femenino</option>
+                    <option value="Máster Femenino">Máster Femenino</option>
+                    <option value="Mixto">Mixto</option>
+                    <option value="General">General / Otra</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 mb-1">
+                    Cupo Máximo de Parejas
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="256"
+                    value={categoryModal.limit ?? ''}
+                    onChange={(e) => setCategoryModal({ ...categoryModal, limit: e.target.value })}
+                    placeholder={`Por defecto: ${limits.defaultMax || 24}`}
+                    className="w-full px-3 py-2 rounded-xl bg-navy-950 text-white font-semibold border border-slate-700 text-xs focus:border-[#A3E229] focus:outline-none"
+                  />
+                  <span className="text-[10px] text-slate-400 block mt-0.5">
+                    Dejar vacío para usar el límite general ({limits.defaultMax || 24}).
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setCategoryModal(null)}
+                  className="px-4 py-2 rounded-xl bg-navy-800 hover:bg-navy-700 text-slate-300 text-xs font-bold transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  disabled={savingCategory}
+                  className="px-5 py-2 rounded-xl bg-[#A3E229] hover:bg-[#b6f23d] text-[#150D8B] font-orbitron font-black text-xs uppercase tracking-wider flex items-center gap-2 shadow-md shadow-[#A3E229]/20 transition-all disabled:opacity-50"
+                >
+                  {savingCategory ? (
+                    <>
+                      <RotateCcw className="w-4 h-4 animate-spin" />
+                      <span>Guardando...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Save className="w-4 h-4" />
+                      <span>{categoryModal.mode === 'create' ? 'Crear Categoría' : 'Guardar Cambios'}</span>
                     </>
                   )}
                 </button>

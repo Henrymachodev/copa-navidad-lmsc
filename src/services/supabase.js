@@ -154,7 +154,7 @@ export const DEFAULT_HERO_FOTOS = [
   {
     id: 'foto_2',
     badge: 'Máster Masc',
-    categoria: '+45 y +55',
+    categoria: '+40 y +55',
     imagen: './assets/Master_masculino.jpg',
     objectPosition: 'center 46%'
   },
@@ -272,12 +272,38 @@ export const INITIAL_SPONSORS = [
   }
 ];
 
+export const DEFAULT_CATEGORIAS = [
+  // Masculino: 2da a 7ma
+  { id: '2da-masc', label: '2da Masculino', group: 'Masculino' },
+  { id: '3ra-masc', label: '3ra Masculino', group: 'Masculino' },
+  { id: '4ta-masc', label: '4ta Masculino', group: 'Masculino' },
+  { id: '5ta-masc', label: '5ta Masculino', group: 'Masculino' },
+  { id: '6ta-masc', label: '6ta Masculino', group: 'Masculino' },
+  { id: '7ma-masc', label: '7ma Masculino', group: 'Masculino' },
+
+  // Máster Masculino: +40 y +55
+  { id: 'master-40-masc', label: 'Master +40 Masculino', group: 'Máster Masculino' },
+  { id: 'master-55-masc', label: 'Master +55 Masculino', group: 'Máster Masculino' },
+
+  // Femenino: Suma 5, 3ra a 7ma
+  { id: 'suma-5-fem', label: 'Suma 5 Femenino', group: 'Femenino' },
+  { id: '3ra-fem', label: '3ra Femenino', group: 'Femenino' },
+  { id: '4ta-fem', label: '4ta Femenino', group: 'Femenino' },
+  { id: '5ta-fem', label: '5ta Femenino', group: 'Femenino' },
+  { id: '6ta-fem', label: '6ta Femenino', group: 'Femenino' },
+  { id: '7ma-fem', label: '7ma Femenino', group: 'Femenino' },
+
+  // Máster Femenino
+  { id: 'master-fem', label: 'Master Femenino', group: 'Máster Femenino' },
+];
+
 // Claves de respaldo en localStorage (cuando no hay internet o no se han configurado credenciales)
 const LOCAL_STORAGE_REGISTRATIONS_KEY = 'copa_navidad_local_registrations';
 const LOCAL_STORAGE_CONFIG_KEY = 'copa_navidad_local_config';
 const LOCAL_STORAGE_LANDING_CONFIG_KEY = 'copa_navidad_landing_config';
 const LOCAL_STORAGE_SPONSORS_KEY = 'copa_navidad_local_sponsors';
 const LOCAL_STORAGE_USERS_KEY = 'copa_navidad_admin_users';
+const LOCAL_STORAGE_CATEGORIES_KEY = 'copa_navidad_tournament_categories';
 
 export function sanitizeLandingConfig(cfg) {
   const merged = { ...DEFAULT_LANDING_CONFIG, ...cfg };
@@ -816,6 +842,224 @@ export async function saveCategoryLimits(limitsData) {
   localStorage.setItem(LOCAL_STORAGE_CONFIG_KEY, JSON.stringify(limitsData));
   window.dispatchEvent(new Event('storage'));
   return true;
+}
+
+// ==================== CATEGORÍAS DEL TORNEO ====================
+
+export function sanitizeCategories(list) {
+  if (!Array.isArray(list) || list.length === 0) {
+    return DEFAULT_CATEGORIAS.map(c => ({ ...c }));
+  }
+  return list.map(c => {
+    let label = (c.label || c.nombre || '').trim();
+    let id = c.id || ('cat_' + Math.random().toString(36).substring(2, 9));
+    let group = (c.group || c.grupo || 'General').trim();
+
+    // Migración automática de Master +45 a Master +40
+    if (label === 'Master +45 Masculino' || label === 'Master +45') {
+      label = 'Master +40 Masculino';
+      id = 'master-40-masc';
+    }
+
+    return { id, label, group };
+  });
+}
+
+export async function getCategories() {
+  const client = getSupabaseClient();
+  if (client) {
+    try {
+      const { data, error } = await client
+        .from('tournament_config')
+        .select('value')
+        .eq('key', 'tournament_categories')
+        .single();
+
+      if (!error && data?.value && Array.isArray(data.value)) {
+        const sanitized = sanitizeCategories(data.value);
+        localStorage.setItem(LOCAL_STORAGE_CATEGORIES_KEY, JSON.stringify(sanitized));
+        return sanitized;
+      }
+    } catch (e) {
+      console.warn('Error leyendo categorías de Supabase:', e);
+    }
+  }
+
+  try {
+    const raw = localStorage.getItem(LOCAL_STORAGE_CATEGORIES_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return sanitizeCategories(parsed);
+      }
+    }
+  } catch {}
+
+  return DEFAULT_CATEGORIAS.map(c => ({ ...c }));
+}
+
+export async function saveCategories(categoriesList) {
+  const sanitized = sanitizeCategories(categoriesList);
+  const client = getSupabaseClient();
+  if (client) {
+    try {
+      const { error } = await client
+        .from('tournament_config')
+        .upsert({
+          key: 'tournament_categories',
+          value: sanitized,
+          updated_at: new Date().toISOString()
+        });
+      if (error) throw error;
+    } catch (e) {
+      console.error('Error guardando categorías en Supabase:', e);
+    }
+  }
+
+  localStorage.setItem(LOCAL_STORAGE_CATEGORIES_KEY, JSON.stringify(sanitized));
+  window.dispatchEvent(new Event('categories_updated'));
+  window.dispatchEvent(new Event('storage'));
+  return sanitized;
+}
+
+export async function addCategory(newCategory) {
+  const current = await getCategories();
+  const id = newCategory.id || ('cat_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6));
+  const newCat = {
+    id,
+    label: (newCategory.label || newCategory.nombre || 'Nueva Categoría').trim(),
+    group: (newCategory.group || newCategory.grupo || 'Masculino').trim()
+  };
+  const updated = [...current, newCat];
+  await saveCategories(updated);
+  return updated;
+}
+
+export async function updateCategory(catId, updatedData, oldLabel = '') {
+  const current = await getCategories();
+  const newLabel = (updatedData.label || updatedData.nombre || '').trim();
+  const newGroup = (updatedData.group || updatedData.grupo || '').trim();
+
+  const updated = current.map(c => {
+    if (c.id === catId) {
+      return {
+        ...c,
+        label: newLabel || c.label,
+        group: newGroup || c.group
+      };
+    }
+    return c;
+  });
+
+  // Si cambió el nombre de la categoría, actualizamos en cascada en las inscripciones de Supabase y local
+  if (oldLabel && newLabel && oldLabel !== newLabel) {
+    const client = getSupabaseClient();
+    if (client) {
+      try {
+        await client
+          .from('registrations')
+          .update({ categoria: newLabel })
+          .eq('categoria', oldLabel);
+      } catch (err) {
+        console.error('Error actualizando categoria en registrations:', err);
+      }
+    }
+
+    try {
+      const rawRegs = localStorage.getItem(LOCAL_STORAGE_REGISTRATIONS_KEY);
+      if (rawRegs) {
+        const parsedRegs = JSON.parse(rawRegs);
+        let changed = false;
+        parsedRegs.forEach(r => {
+          if (r.categoria === oldLabel) {
+            r.categoria = newLabel;
+            changed = true;
+          }
+        });
+        if (changed) {
+          localStorage.setItem(LOCAL_STORAGE_REGISTRATIONS_KEY, JSON.stringify(parsedRegs));
+          window.dispatchEvent(new Event('registrations_updated'));
+        }
+      }
+    } catch (_) {}
+
+    // Migrar también en category_limits si existía
+    try {
+      const limits = await getCategoryLimits();
+      if (limits && limits[oldLabel] !== undefined) {
+        limits[newLabel] = limits[oldLabel];
+        delete limits[oldLabel];
+        await saveCategoryLimits(limits);
+      }
+    } catch (_) {}
+  }
+
+  await saveCategories(updated);
+  return updated;
+}
+
+export async function deleteCategory(catId, catLabel = '') {
+  const current = await getCategories();
+  const updated = current.filter(c => c.id !== catId);
+
+  // Si había límite específico, eliminarlo de category_limits
+  if (catLabel) {
+    try {
+      const limits = await getCategoryLimits();
+      if (limits && limits[catLabel] !== undefined) {
+        delete limits[catLabel];
+        await saveCategoryLimits(limits);
+      }
+    } catch (_) {}
+  }
+
+  await saveCategories(updated);
+  return updated;
+}
+
+export function subscribeToCategories(callback) {
+  getCategories().then(cats => callback(cats)).catch(() => {});
+
+  const handleUpdate = () => {
+    getCategories().then(cats => callback(cats)).catch(() => {});
+  };
+
+  window.addEventListener('categories_updated', handleUpdate);
+  window.addEventListener('storage', handleUpdate);
+
+  const client = getSupabaseClient();
+  let channel = null;
+
+  if (client) {
+    try {
+      const channelId = `realtime_cats_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+      channel = client
+        .channel(channelId)
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'tournament_config', filter: 'key=eq.tournament_categories' },
+          async () => {
+            try {
+              const fresh = await getCategories();
+              callback(fresh);
+            } catch (err) {
+              console.warn('Error refrescando categorías en tiempo real:', err);
+            }
+          }
+        )
+        .subscribe();
+    } catch (e) {
+      console.warn('No se pudo inicializar canal realtime para categorías:', e);
+    }
+  }
+
+  return () => {
+    window.removeEventListener('categories_updated', handleUpdate);
+    window.removeEventListener('storage', handleUpdate);
+    if (channel && client) {
+      client.removeChannel(channel);
+    }
+  };
 }
 
 

@@ -31,35 +31,15 @@ import {
   getCategoryLimits, 
   DEFAULT_MAX_PAIRS_PER_CATEGORY,
   subscribeToLandingConfig,
+  getCategories,
+  subscribeToCategories,
+  DEFAULT_CATEGORIAS,
   DEFAULT_LANDING_CONFIG,
   DEFAULT_BENEFICIOS_INVERSION
 } from '../services/supabase';
 import { sendConfirmationEmails } from '../services/emailService';
 
-export const CATEGORIAS = [
-  // Masculino: 2da a 7ma
-  { id: '2da-masc', label: '2da Masculino', group: 'Masculino' },
-  { id: '3ra-masc', label: '3ra Masculino', group: 'Masculino' },
-  { id: '4ta-masc', label: '4ta Masculino', group: 'Masculino' },
-  { id: '5ta-masc', label: '5ta Masculino', group: 'Masculino' },
-  { id: '6ta-masc', label: '6ta Masculino', group: 'Masculino' },
-  { id: '7ma-masc', label: '7ma Masculino', group: 'Masculino' },
-
-  // Máster Masculino: +45 y +55
-  { id: 'master-45-masc', label: 'Master +45 Masculino', group: 'Máster Masculino' },
-  { id: 'master-55-masc', label: 'Master +55 Masculino', group: 'Máster Masculino' },
-
-  // Femenino: Suma 5, 3ra a 7ma
-  { id: 'suma-5-fem', label: 'Suma 5 Femenino', group: 'Femenino' },
-  { id: '3ra-fem', label: '3ra Femenino', group: 'Femenino' },
-  { id: '4ta-fem', label: '4ta Femenino', group: 'Femenino' },
-  { id: '5ta-fem', label: '5ta Femenino', group: 'Femenino' },
-  { id: '6ta-fem', label: '6ta Femenino', group: 'Femenino' },
-  { id: '7ma-fem', label: '7ma Femenino', group: 'Femenino' },
-
-  // Máster Femenino
-  { id: 'master-fem', label: 'Master Femenino', group: 'Máster Femenino' },
-];
+export const CATEGORIAS = DEFAULT_CATEGORIAS;
 
 export const TALLAS_FRANELA = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 export const LADOS_JUEGO = ['Derecha', 'Revés', 'Ambos'];
@@ -106,6 +86,7 @@ export default function RegistrationForm({ onSuccess }) {
   const [submitError, setSubmitError] = useState(null);
   const [existingRegistrations, setExistingRegistrations] = useState([]);
   const [categoryLimits, setCategoryLimits] = useState({});
+  const [categoriesList, setCategoriesList] = useState(DEFAULT_CATEGORIAS);
 
   // Cargar cupos actuales y configuración
   useEffect(() => {
@@ -115,8 +96,10 @@ export default function RegistrationForm({ onSuccess }) {
         setExistingRegistrations(regs);
         const limits = await getCategoryLimits();
         setCategoryLimits(limits);
+        const cats = await getCategories();
+        if (cats && cats.length > 0) setCategoriesList(cats);
       } catch (err) {
-        console.error('Error cargando conteo de parejas:', err);
+        console.error('Error cargando datos del torneo:', err);
       }
     }
     loadData();
@@ -128,8 +111,15 @@ export default function RegistrationForm({ onSuccess }) {
       }
     });
 
+    const unsubCats = subscribeToCategories((cats) => {
+      if (cats && cats.length > 0) {
+        setCategoriesList(cats);
+      }
+    });
+
     return () => {
       if (typeof unsubConfig === 'function') unsubConfig();
+      if (typeof unsubCats === 'function') unsubCats();
     };
   }, []);
 
@@ -839,37 +829,29 @@ export default function RegistrationForm({ onSuccess }) {
               >
                 <option value="">-- Selecciona la categoría de competencia --</option>
                 
-                <optgroup label="Masculino (2da a 7ma)" className="bg-[#0a389c] text-white font-semibold">
-                  {CATEGORIAS.filter(c => c.group === 'Masculino').map(cat => (
-                    <option key={cat.id} value={cat.label} className="text-white font-normal bg-[#071f5c]">
-                      {cat.label}
-                    </option>
-                  ))}
-                </optgroup>
-
-                <optgroup label="Máster Masculino (+45 y +55)" className="bg-[#0a389c] text-[#A3E229] font-semibold">
-                  {CATEGORIAS.filter(c => c.group === 'Máster Masculino').map(cat => (
-                    <option key={cat.id} value={cat.label} className="text-white font-normal bg-[#071f5c]">
-                      {cat.label}
-                    </option>
-                  ))}
-                </optgroup>
-
-                <optgroup label="Femenino (Suma 5, 3ra a 7ma)" className="bg-[#0a389c] text-white font-semibold">
-                  {CATEGORIAS.filter(c => c.group === 'Femenino').map(cat => (
-                    <option key={cat.id} value={cat.label} className="text-white font-normal bg-[#071f5c]">
-                      {cat.label}
-                    </option>
-                  ))}
-                </optgroup>
-
-                <optgroup label="Máster Femenino" className="bg-[#0a389c] text-[#A3E229] font-semibold">
-                  {CATEGORIAS.filter(c => c.group === 'Máster Femenino').map(cat => (
-                    <option key={cat.id} value={cat.label} className="text-white font-normal bg-[#071f5c]">
-                      {cat.label}
-                    </option>
-                  ))}
-                </optgroup>
+                {Array.from(new Set(categoriesList.map(c => (typeof c === 'object' && c?.group) ? c.group : 'Otras Categorías'))).map(grp => (
+                  <optgroup 
+                    key={grp} 
+                    label={
+                      grp === 'Masculino' ? 'Masculino (2da a 7ma)' :
+                      grp === 'Máster Masculino' ? 'Máster Masculino (+40 y +55)' :
+                      grp === 'Femenino' ? 'Femenino (Suma 5, 3ra a 7ma)' :
+                      grp === 'Máster Femenino' ? 'Máster Femenino' :
+                      grp
+                    } 
+                    className={`bg-[#0a389c] ${String(grp).toLowerCase().includes('master') || String(grp).toLowerCase().includes('máster') ? 'text-[#A3E229]' : 'text-white'} font-semibold`}
+                  >
+                    {categoriesList.filter(c => ((typeof c === 'object' && c?.group) ? c.group : 'Otras Categorías') === grp).map((cat, idx) => {
+                      const catLabel = typeof cat === 'string' ? cat : (cat?.label || '');
+                      const catKey = (typeof cat === 'object' && cat?.id) ? cat.id : `cat_${idx}`;
+                      return (
+                        <option key={catKey} value={catLabel} className="text-white font-normal bg-[#071f5c]">
+                          {catLabel}
+                        </option>
+                      );
+                    })}
+                  </optgroup>
+                ))}
               </select>
 
               {errors.categoria && (
